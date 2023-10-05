@@ -3,6 +3,7 @@ import {
   IonButtons,
   IonContent,
   IonHeader,
+  IonIcon,
   IonInput,
   IonItem,
   IonList,
@@ -12,6 +13,7 @@ import {
   IonToolbar,
   useIonRouter,
 } from "@ionic/react";
+import { cloudUploadOutline } from "ionicons/icons";
 import { Link } from "react-router-dom";
 
 const UploadKey: React.FC = () => {
@@ -27,6 +29,9 @@ const UploadKey: React.FC = () => {
         </IonToolbar>
       </IonHeader>
       <IonContent>
+        <IonButton>
+          <IonIcon icon={cloudUploadOutline} />
+        </IonButton>
         <p>Upload the key</p>
         <IonButton routerLink="/Welcome">Comfirm</IonButton>
       </IonContent>
