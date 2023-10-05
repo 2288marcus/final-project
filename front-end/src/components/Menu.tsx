@@ -25,6 +25,7 @@ import {
   trashSharp,
   warningOutline,
   warningSharp,
+  searchCircleOutline,
 } from "ionicons/icons";
 import "./Menu.css";
 
@@ -67,10 +68,16 @@ const appPages: AppPage[] = [
     mdIcon: trashSharp,
   },
   {
-    title: "Index",
-    url: ".../index",
+    title: "Profile",
+    url: "/ProfilePage",
     iosIcon: warningOutline,
     mdIcon: warningSharp,
+  },
+  {
+    title: "Requirement",
+    url: "/RequirementPage",
+    iosIcon: searchCircleOutline,
+    mdIcon: searchCircleOutline,
   },
 ];
 
@@ -84,7 +91,7 @@ const Menu: React.FC = () => {
       <IonContent>
         <IonList id="inbox-list">
           <IonListHeader>Inbox</IonListHeader>
-          <IonNote>hi@ionicframework.com</IonNote>
+          <IonNote>user@template.com</IonNote>
           {appPages.map((appPage, index) => {
             return (
               <IonMenuToggle key={index} autoHide={false}>

@@ -14,8 +14,8 @@ import {
 } from "@ionic/react";
 import { Link } from "react-router-dom";
 
-const RegisterPage: React.FC = () => {
-  const title = "Register";
+const ProfilePage: React.FC = () => {
+  const title = "(User update) Person Profile";
 
   return (
     <IonPage>
@@ -35,21 +35,19 @@ const RegisterPage: React.FC = () => {
           </IonToolbar>
         </IonHeader>
         <IonList>
-          <IonItem>
-            <IonInput type="email" label="Email" />
-          </IonItem>
-          <IonItem>
-            <IonInput type="password" label="Password" />
-          </IonItem>
+          <IonInput>Name:</IonInput>
+          <IonInput>Phone Number:</IonInput>
+          {/* ///////////////image///////////////// */}
+          <IonButton>CV upload</IonButton>
+
+          <IonInput>Service History</IonInput>
+
+          <IonInput>Contact Comment</IonInput>
         </IonList>
-        <IonButton>Signup</IonButton>
-        <p>
-          Already have an account?
-          <IonButton routerLink="/login">Login</IonButton>
-        </p>
+        <IonButton>Update</IonButton>
       </IonContent>
     </IonPage>
   );
 };
 
-export default RegisterPage;
+export default ProfilePage;

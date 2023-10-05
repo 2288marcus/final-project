@@ -31,6 +31,8 @@ import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import JobList from "./pages/JobList";
 import BookmarkList from "./pages/BookmarkList";
+import ProfilePage from "./pages/ProfilePage";
+import RequirementPage from "./pages/RequirementPage";
 
 setupIonicReact();
 
@@ -58,6 +60,12 @@ const App: React.FC = () => {
             </Route>
             <Route path="/BookmarkList" exact={true}>
               <BookmarkList />
+            </Route>
+            <Route path="/ProfilePage" exact={true}>
+              <ProfilePage />
+            </Route>
+            <Route path="/RequirementPage" exact={true}>
+              <RequirementPage />
             </Route>
           </IonRouterOutlet>
         </IonSplitPane>
