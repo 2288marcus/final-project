@@ -15,7 +15,15 @@ import {
   IonInfiniteScrollContent,
   IonAvatar,
   IonLabel,
+  IonSearchbar,
+  IonAccordion,
+  IonAccordionGroup,
 } from "@ionic/react";
+import "./JobList.css";
+
+function Fake() {
+  return <div className="real"></div>;
+}
 
 const JobList: React.FC = () => {
   const title = "JobList";
@@ -42,10 +50,12 @@ const JobList: React.FC = () => {
           <IonButtons slot="start">
             <IonMenuButton />
           </IonButtons>
-          <IonTitle>{title}</IonTitle>
+          <IonList class="SH">
+            <IonTitle>{title}</IonTitle>
+            <IonSearchbar animated={true} placeholder="Search"></IonSearchbar>
+          </IonList>
         </IonToolbar>
       </IonHeader>
-
       <IonContent fullscreen className="ion-padding">
         <IonHeader collapse="condense">
           <IonToolbar>
@@ -54,6 +64,27 @@ const JobList: React.FC = () => {
         </IonHeader>
 
         <IonContent>
+          <Fake></Fake>
+          <IonAccordionGroup>
+            <IonAccordion value="first">
+              <IonItem slot="header" color="light">
+                <IonLabel>Common Tag</IonLabel>
+              </IonItem>
+              <div slot="content">
+                <IonButton>Education</IonButton>
+                <IonButton>Cleaning</IonButton>
+                <IonButton>Logistics</IonButton>
+                <IonButton>Sport</IonButton>
+                <IonButton>Travel</IonButton>
+                <IonButton>Food and Beverage</IonButton>
+                <IonButton>IT</IonButton>
+                <IonButton>Photography</IonButton>
+                <IonButton>Journalist</IonButton>
+                <IonButton>Designer</IonButton>
+              </div>
+            </IonAccordion>
+          </IonAccordionGroup>
+
           <IonList>
             {items.map((item, index) => (
               <IonItem key={item}>
@@ -67,6 +98,7 @@ const JobList: React.FC = () => {
               </IonItem>
             ))}
           </IonList>
+
           <IonInfiniteScroll
             onIonInfinite={(ev) => {
               generateItems();
