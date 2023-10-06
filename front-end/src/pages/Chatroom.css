@@ -1,0 +1,10 @@
+.chat-message-container {
+  margin: 0.5rem;
+  display: flex;
+}
+.chat-message-box {
+  background-color: #0089dfd5;
+  max-width: 80%;
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+}

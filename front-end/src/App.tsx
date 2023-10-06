@@ -40,6 +40,7 @@ import UploadKey from "./pages/UploadKey";
 import Welcome from "./pages/Welcome";
 import Chatroom from "./pages/Chatroom";
 import HomePage from "./pages/HomePage";
+import ChatroomList from "./pages/ChatroomList";
 
 setupIonicReact();
 
