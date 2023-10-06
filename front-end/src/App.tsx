@@ -94,7 +94,9 @@ const App: React.FC = () => {
                 <Route path="/Chatroom" exact={true}>
                   <Chatroom />
                 </Route>
-
+                <Route path="/ChatroomList" exact={true}>
+                  <ChatroomList />
+                </Route>
                 <Route path="/SettingPage" exact={true}>
                   <SettingPage />
                 </Route>
