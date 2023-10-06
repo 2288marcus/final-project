@@ -15,9 +15,16 @@ import {
 import { Link } from "react-router-dom";
 import { useMaskito } from "@maskito/react";
 import React, { useState } from "react";
+import {
+  is_email,
+  is_hk_mobile_phone,
+  to_full_hk_mobile_phone,
+} from "@beenotung/tslib/validate";
 
 const RegisterPage: React.FC = () => {
   const title = "Register";
+
+  const [state, setState] = useState({ email: "" });
 
   const HKIDMask = useMaskito({
     options: {
@@ -27,11 +34,33 @@ const RegisterPage: React.FC = () => {
         ...Array(6).fill(/\d/),
         " ",
         "(",
-        ...Array(1).fill(/\d/),
+        /[A-Z0-9]/,
         ")",
       ],
     },
   });
+
+  const validateHKID = (hkid: string) => {
+    // 根据您的要求，只验证 hkid 的格式，不使用完整的 mask
+    const hkidRegex = /^[A-Z]{1,2}\d{6}\([A-Z0-9]\)$/;
+    return hkidRegex.test(hkid);
+  };
+
+  const validateHKID2 = (ev: Event) => {
+    const value = (ev.target as HTMLInputElement).value;
+
+    setIsValid(undefined);
+
+    if (value === "") return;
+
+    const isValidHKID = validateHKID(value);
+
+    if (isValidHKID) {
+      setIsValid(true);
+    } else {
+      setIsValid(false);
+    }
+  };
 
   const cardMask = useMaskito({
     options: {
@@ -46,6 +75,27 @@ const RegisterPage: React.FC = () => {
       ],
     },
   });
+
+  const validatePhone = (phone: string) => {
+    const phoneRegex = /^\d{4}-\d{4}$/;
+    return phoneRegex.test(phone);
+  };
+
+  const validatePhone2 = (ev: Event) => {
+    const value = (ev.target as HTMLInputElement).value;
+
+    setIsValid(undefined);
+
+    if (value === "") return;
+
+    const isValidPhone = validatePhone(value);
+
+    if (isValidPhone) {
+      setIsValid(true);
+    } else {
+      setIsValid(false);
+    }
+  };
 
   const phoneMask = useMaskito({
     options: {
@@ -70,38 +120,43 @@ const RegisterPage: React.FC = () => {
     },
   });
 
-  const validateHKID = (value: string) => {
-    const firstChar = value.charAt(0);
-    const lastChar = value.charAt(value.length - 1);
-    const isValidFirstChar = /^[A-Z]$/.test(firstChar);
-    const isValidLastChar = /^[A-Z0-9]$/.test(lastChar);
-    return isValidFirstChar && isValidLastChar;
-  };
-
-  const [isTouched, setIsTouched] = useState(false);
+  // const validateHKID = (value: string) => {
+  //   const firstChar = value.charAt(0);
+  //   const lastChar = value.charAt(value.length - 1);
+  //   const isValidFirstChar = /^[A-Z]$/.test(firstChar);
+  //   const isValidLastChar = /^[A-Z0-9]$/.test(lastChar);
+  //   return isValidFirstChar && isValidLastChar;
+  // };
+  const [isTouchedHKID, setIsTouchedHKID] = useState(false);
+  const [isTouchedEmail, setIsTouchedEmail] = useState(false);
+  const [isTouchedPhone, setIsTouchedPhone] = useState(false);
   const [isValid, setIsValid] = useState<boolean>();
 
-  const validateEmail = (email: string) => {
-    return email.match(
-      /^(?=.{1,254}$)(?=.{1,64}@)[a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+)*@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/
-    );
-  };
+  const isEmailValid = is_email(state.email);
 
-  const validate = (ev: Event) => {
-    const value = (ev.target as HTMLInputElement).value;
+  const canSubmit = isEmailValid;
 
-    setIsValid(undefined);
+  // const validateEmail = (email: string) => {
+  //   return email.match(
+  //     /^(?=.{1,254}$)(?=.{1,64}@)[a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+)*@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/
+  //   );
+  // };
 
-    if (value === "") return;
+  // const validateEmail2 = (ev: Event) => {
+  //   const value = (ev.target as HTMLInputElement).value;
 
-    const isValidEmail = validateEmail(value);
+  //   setIsValid(undefined);
 
-    if (isValidEmail && value.includes("@") && value.includes(".")) {
-      setIsValid(true);
-    } else {
-      setIsValid(false);
-    }
-  };
+  //   if (value === "") return;
+
+  //   const isValidEmail = validateEmail(value);
+
+  //   if (isValidEmail && value.includes("@") && value.includes(".")) {
+  //     setIsValid(true);
+  //   } else {
+  //     setIsValid(false);
+  //   }
+  // };
 
   return (
     <IonPage>
@@ -132,9 +187,13 @@ const RegisterPage: React.FC = () => {
               label="Full Name"
             />
           </IonItem>
-
           <IonItem>
             <IonInput
+              onIonInput={(event) => validateHKID2(event)}
+              onIonBlur={() => setIsTouchedHKID(true)}
+              className={`${isValid && "ion-valid"} ${
+                isValid === false && "ion-invalid"
+              } ${isTouchedHKID && "ion-touched"}`}
               labelPlacement="floating"
               // helperText="Enter Your Hong Kong Identity Card"
               // errorText="Invalid email"
@@ -145,6 +204,7 @@ const RegisterPage: React.FC = () => {
                 }
               }}
               type="text"
+              fill="solid"
               label="Hong Kong Identity Card"
               placeholder="X XXXXXX (X)"
               onIonChange={(e) => {
@@ -189,21 +249,35 @@ const RegisterPage: React.FC = () => {
           </IonItem>
           <IonItem>
             <IonInput
-              className={`${isValid && "ion-valid"} ${
-                isValid === false && "ion-invalid"
-              } ${isTouched && "ion-touched"}`}
+              value={state.email}
+              onIonInput={(e) =>
+                setState({ ...state, email: e.detail.value || "" })
+              }
+              className={
+                state.email && !isEmailValid
+                  ? "ion-invalid ion-touched"
+                  : state.email && isEmailValid
+                  ? "ion-valid ion-touched"
+                  : ""
+              }
+              // className={`${isValid && "ion-valid"} ${
+              //   isValid === false && "ion-invalid"
+              // } ${isTouchedEmail && "ion-touched"}`}
               type="email"
               fill="solid"
               label="Email"
               labelPlacement="floating"
               // helperText="Enter a valid email"
               // errorText="Invalid email"
-              onIonInput={(event) => validate(event)}
-              onIonBlur={() => setIsTouched(true)} // 设置isTouched为true
+              // onIonInput={(event) => validateEmail2(event)}
+              // onIonBlur={() => setIsTouchedEmail(true)} // 设置isTouched为true
             ></IonInput>
           </IonItem>
+          <p>{state.email}</p>
         </IonList>
-        <IonButton routerLink="/drawKey">SignUp</IonButton>
+        <IonButton routerLink="/drawKey" disabled={!canSubmit}>
+          SignUp
+        </IonButton>
         <p>
           Already have an account?
           <IonButton routerLink="/login">Login</IonButton>
