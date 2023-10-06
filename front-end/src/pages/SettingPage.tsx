@@ -20,7 +20,7 @@ import {
 } from "@ionic/react";
 
 const SettingPage: React.FC = () => {
-  const title = "SettingPage";
+  const title = "Setting";
   return (
     <IonPage>
       <IonHeader>

@@ -29,9 +29,16 @@ import {
   settingsOutline,
   settingsSharp,
   searchCircle,
+  chatbox,
+  person,
+  personCircle,
+  mail,
+  reader,
+  earth,
 } from "ionicons/icons";
 import "./Menu.css";
 import useToken from "../hooks/useToken";
+import ProfilePage from "../pages/ProfilePage";
 
 interface AppPage {
   url: string;
@@ -50,8 +57,8 @@ const appPages: AppPage[] = [
   {
     title: "Services",
     url: "/JobList",
-    iosIcon: paperPlaneOutline,
-    mdIcon: paperPlaneSharp,
+    iosIcon: earth,
+    mdIcon: earth,
   },
   // {
   //   title: "BookmarkList",
@@ -62,26 +69,26 @@ const appPages: AppPage[] = [
   {
     title: "Chatroom",
     url: "/Chatroom",
-    iosIcon: archiveOutline,
-    mdIcon: archiveSharp,
+    iosIcon: "",
+    mdIcon: "",
   },
   {
     title: "ChatroomList",
     url: "/ChatroomList",
-    iosIcon: trashOutline,
-    mdIcon: trashSharp,
+    iosIcon: mail,
+    mdIcon: mail,
   },
   {
     title: "Profile",
     url: "/ProfilePage",
-    iosIcon: warningOutline,
-    mdIcon: warningSharp,
+    iosIcon: personCircle,
+    mdIcon: personCircle,
   },
   {
     title: "Requirement",
     url: "/RequirementPage",
-    iosIcon: searchCircleOutline,
-    mdIcon: searchCircle,
+    iosIcon: reader,
+    mdIcon: reader,
   },
   {
     title: "Setting",
@@ -89,12 +96,12 @@ const appPages: AppPage[] = [
     iosIcon: settingsOutline,
     mdIcon: settingsSharp,
   },
-  {
-    title: "Home Page",
-    url: "/HomePage",
-    iosIcon: trashOutline,
-    mdIcon: trashSharp,
-  },
+  // {
+  //   title: "Home",
+  //   url: "/HomePage",
+  //   iosIcon: trashOutline,
+  //   mdIcon: trashSharp,
+  // },
 ];
 
 const labels = ["Family", "Friends", "Notes", "Work", "Travel", "Reminders"];
