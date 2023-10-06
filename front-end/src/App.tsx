@@ -50,7 +50,8 @@ const App: React.FC = () => {
     <IonApp>
       <IonReactRouter>
         <IonRouterOutlet>
-          <Route path="/" exact={true}>
+          {/* prepare for individual page */}
+          {/* <Route path="/" exact={true}>
             <Redirect to="/login" />
           </Route>
           <Route path="/login" exact={true}>
@@ -58,7 +59,7 @@ const App: React.FC = () => {
           </Route>
           <Route path="/register" exact={true}>
             <RegisterPage />
-          </Route>
+          </Route> */}
 
           <Route>
             <IonSplitPane contentId="main">
@@ -67,9 +68,19 @@ const App: React.FC = () => {
                 <Route path="/folder/:name" exact={true}>
                   <Page />
                 </Route>
+                <Route path="/" exact={true}>
+                  <LoginPage />
+                </Route>
+                <Route path="/login" exact={true}>
+                  <LoginPage />
+                </Route>
+                <Route path="/register" exact={true}>
+                  <RegisterPage />
+                </Route>
                 <Route path="/JobList" exact={true}>
                   <JobList />
                 </Route>
+
                 <Route path="/BookmarkList" exact={true}>
                   <BookmarkList />
                 </Route>
