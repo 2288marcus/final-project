@@ -50,7 +50,7 @@ const App: React.FC = () => {
     <IonApp>
       <IonReactRouter>
         <IonRouterOutlet>
-          {/* prepare for individual page */}
+          {/* prepare for individual page (FRD009) */}
           {/* <Route path="/" exact={true}>
             <Redirect to="/login" />
           </Route>
