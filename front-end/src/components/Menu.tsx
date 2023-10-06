@@ -80,12 +80,6 @@ const appPages: AppPage[] = [
     iosIcon: searchCircleOutline,
     mdIcon: searchCircleOutline,
   },
-  {
-    title: "Home Page",
-    url: "/HomePage",
-    iosIcon: trashOutline,
-    mdIcon: trashSharp,
-  },
 ];
 
 const labels = ["Family", "Friends", "Notes", "Work", "Travel", "Reminders"];
