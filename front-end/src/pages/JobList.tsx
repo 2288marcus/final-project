@@ -1,3 +1,4 @@
+import React, { useState, useEffect } from "react";
 import {
   IonButton,
   IonButtons,
@@ -10,11 +11,29 @@ import {
   IonPage,
   IonTitle,
   IonToolbar,
-  IonSearchbar,
+  IonInfiniteScroll,
+  IonInfiniteScrollContent,
+  IonAvatar,
+  IonLabel,
 } from "@ionic/react";
 
 const JobList: React.FC = () => {
   const title = "JobList";
+
+  const [items, setItems] = useState<string[]>([]);
+
+  const generateItems = () => {
+    const newItems = [];
+    for (let i = 0; i < 50; i++) {
+      newItems.push(`Item ${1 + items.length + i}`);
+    }
+    setItems([...items, ...newItems]);
+  };
+
+  useEffect(() => {
+    generateItems();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <IonPage>
@@ -33,17 +52,32 @@ const JobList: React.FC = () => {
             <IonTitle size="large">{title}</IonTitle>
           </IonToolbar>
         </IonHeader>
-        <IonSearchbar
-          animated={true}
-          placeholder="Search for Service"
-        ></IonSearchbar>
-        <IonList>
-          <IonItem routerLink="/ProfileCheckPage"> JobList 1 </IonItem>
-          <IonItem routerLink="/ProfileCheckPage"> JobList 2 </IonItem>
-          <IonItem routerLink="/ProfileCheckPage"> JobList 3 </IonItem>
-          <IonItem routerLink="/ProfileCheckPage"> JobList 4 </IonItem>
-          <IonItem routerLink="/ProfileCheckPage"> JobList 5 </IonItem>
-        </IonList>
+
+        <IonContent>
+          <IonList>
+            {items.map((item, index) => (
+              <IonItem key={item}>
+                <IonAvatar slot="start">
+                  <img
+                    src={"https://picsum.photos/80/80?random=" + index}
+                    alt="avatar"
+                  />
+                </IonAvatar>
+                <IonLabel>{item}</IonLabel>
+              </IonItem>
+            ))}
+          </IonList>
+          <IonInfiniteScroll
+            onIonInfinite={(ev) => {
+              generateItems();
+              setTimeout(() => ev.target.complete(), 500);
+            }}
+          >
+            <IonInfiniteScrollContent></IonInfiniteScrollContent>
+          </IonInfiniteScroll>
+        </IonContent>
+
+        {/* <IonButton routerLink="/">hk</IonButton> */}
       </IonContent>
     </IonPage>
   );

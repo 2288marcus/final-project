@@ -33,7 +33,11 @@ import JobList from "./pages/JobList";
 import BookmarkList from "./pages/BookmarkList";
 import ProfilePage from "./pages/ProfilePage";
 import RequirementPage from "./pages/RequirementPage";
-import ProfileCheckPage from "./pages/ProfileCheckPage";
+import DrawKey from "./pages/DrawKey";
+import DownloadKey from "./pages/DownloadKey";
+import UploadKey from "./pages/UploadKey";
+import Welcome from "./pages/Welcome";
+import Chatroom from "./pages/Chatroom";
 
 setupIonicReact();
 
@@ -68,8 +72,20 @@ const App: React.FC = () => {
             <Route path="/RequirementPage" exact={true}>
               <RequirementPage />
             </Route>
-            <Route path="/ProfileCheckPage" exact={true}>
-              <ProfileCheckPage />
+            <Route path="/DrawKey" exact={true}>
+              <DrawKey />
+            </Route>
+            <Route path="/DownloadKey" exact={true}>
+              <DownloadKey />
+            </Route>
+            <Route path="/UploadKey" exact={true}>
+              <UploadKey />
+            </Route>
+            <Route path="/welcome" exact={true}>
+              <Welcome />
+            </Route>
+            <Route path="/Chatroom" exact={true}>
+              <Chatroom />
             </Route>
           </IonRouterOutlet>
         </IonSplitPane>

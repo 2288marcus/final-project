@@ -65,7 +65,7 @@ const LoginPage: React.FC = () => {
           <IonItem>
             <IonInput
               type="password"
-              label="Password"
+              label="password"
               labelPlacement="floating"
               value={user.password}
               onIonChange={(e) =>
@@ -75,7 +75,7 @@ const LoginPage: React.FC = () => {
           </IonItem>
         </IonList>
         <IonButton onClick={submit}>Login</IonButton>
-        <p>{error}</p>
+        {/* <p>{error}</p> */}
         Haven't an account?
         <IonButton routerLink="/register">Signup</IonButton>
       </IonContent>
