@@ -135,7 +135,7 @@ const Chatroom: React.FC = () => {
                   {
                     // position: "absolute",
                     // display: "flex",
-                    // right: 0,
+                    // right: "100px",
                     // bottom: 0,
                     // lineHeight: "160px",
                     // pointerEvents: "auto",

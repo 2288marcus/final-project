@@ -3,7 +3,7 @@
   display: flex;
 }
 .chat-message-box {
-  background-color: #0089dfd5;
+  /* background-color: #0089dfd5; */
   max-width: 80%;
   padding: 0.5rem;
   border-radius: 0.5rem;

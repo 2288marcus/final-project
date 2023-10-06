@@ -41,9 +41,9 @@ const RegisterPage: React.FC = () => {
           <IonItem>
             <IonInput type="email" label="Email" />
           </IonItem>
-          {/* <IonItem>
-            <IonInput type="password" label="Password" />
-          </IonItem> */}
+          <IonItem>
+            <IonInput type="number" label="HKID" />
+          </IonItem>
         </IonList>
         <IonButton routerLink="/drawKey">SignUp</IonButton>
         <p>

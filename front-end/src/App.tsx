@@ -39,6 +39,7 @@ import UploadKey from "./pages/UploadKey";
 import Welcome from "./pages/Welcome";
 import Chatroom from "./pages/Chatroom";
 import ChatroomList from "./pages/ChatroomList";
+import SettingPage from "./pages/SettingPage";
 
 setupIonicReact();
 
@@ -90,6 +91,9 @@ const App: React.FC = () => {
             </Route>
             <Route path="/ChatroomList" exact={true}>
               <ChatroomList />
+            </Route>
+            <Route path="/SettingPage" exact={true}>
+              <SettingPage />
             </Route>
           </IonRouterOutlet>
         </IonSplitPane>
