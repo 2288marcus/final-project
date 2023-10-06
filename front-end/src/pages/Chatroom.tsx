@@ -41,35 +41,53 @@ const Chatroom: React.FC = () => {
           <IonTitle>{title}</IonTitle>
         </IonToolbar>
       </IonHeader>
+      <IonContent>
+        {new Array(100).fill(0).map((_, i) => (
+          <p>{i + 1}</p>
+        ))}
+        {/* <IonFab vertical="bottom">
+          <IonFabButton>
+            <IonIcon icon={add}></IonIcon>
+          </IonFabButton>
+          <IonFabList side="top">
+            <IonFabButton>
+              <IonIcon icon={document}></IonIcon>
+            </IonFabButton>
+            <IonFabButton>
+              <IonIcon icon={image}></IonIcon>
+            </IonFabButton>
+            <IonFabButton>
+              <IonIcon icon={videocam}></IonIcon>
+            </IonFabButton>
+            <IonFabButton>
+              <IonIcon icon={camera}></IonIcon>
+            </IonFabButton>
+          </IonFabList>
+        </IonFab> */}
+      </IonContent>
       <IonFooter>
         <IonItem>
-          <IonTextarea autoGrow />
+          <IonButtons>
+            <IonButton>
+              <IonIcon icon={document}></IonIcon>
+            </IonButton>
+            <IonButton>
+              <IonIcon icon={image}></IonIcon>
+            </IonButton>
+            <IonButton>
+              <IonIcon icon={videocam}></IonIcon>
+            </IonButton>
+            <IonButton>
+              <IonIcon icon={camera}></IonIcon>
+            </IonButton>
+          </IonButtons>
+        </IonItem>
+        <IonItem>
+          <IonTextarea autoGrow placeholder="Message" />
           <IonButtons slot="end">
-            <IonFab vertical="top">
-              <IonFabButton color="secondary">
-                <IonIcon icon={paperPlane}></IonIcon>
-              </IonFabButton>
-              <IonFabList side="start">
-                <IonFabButton color="dark">
-                  <IonIcon icon={image}></IonIcon>
-                </IonFabButton>
-                <IonFabButton color="dark">
-                  <IonIcon icon={videocam}></IonIcon>
-                </IonFabButton>
-                <IonFabButton color="dark">
-                  <IonIcon icon={camera}></IonIcon>
-                </IonFabButton>
-                <IonFabButton color="dark">
-                  <IonIcon icon={mic}></IonIcon>
-                </IonFabButton>
-                <IonFabButton color="dark">
-                  <IonIcon icon={document}></IonIcon>
-                </IonFabButton>
-              </IonFabList>
-            </IonFab>
-            {/* <IonButton>
-              <IonIcon slot="end" icon={paperPlane}></IonIcon>
-            </IonButton> */}
+            <IonButton>
+              <IonIcon icon={paperPlane}></IonIcon>
+            </IonButton>
           </IonButtons>
         </IonItem>
       </IonFooter>
