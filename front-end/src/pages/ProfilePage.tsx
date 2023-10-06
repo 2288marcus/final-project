@@ -1,6 +1,7 @@
 import {
   IonButton,
   IonButtons,
+  IonCardHeader,
   IonContent,
   IonHeader,
   IonInput,
@@ -13,6 +14,7 @@ import {
   useIonRouter,
 } from "@ionic/react";
 import { Link } from "react-router-dom";
+import "./ProfilePage.css";
 
 const ProfilePage: React.FC = () => {
   const title = "(User update) Person Profile";
@@ -35,16 +37,36 @@ const ProfilePage: React.FC = () => {
           </IonToolbar>
         </IonHeader>
         <IonList>
-          <IonInput>Name:</IonInput>
-          <IonInput>Phone Number:</IonInput>
-          {/* ///////////////image///////////////// */}
-          <IonButton>CV upload</IonButton>
-
-          <IonInput>Service History</IonInput>
-
-          <IonInput>Contact Comment</IonInput>
+          <IonCardHeader className="Hd">Information</IonCardHeader>
+          <br />
+          <IonItem>
+            <IonInput label="Name" />
+          </IonItem>
+          <IonItem>
+            <IonInput label="Phone Number" />
+            <IonInput label="Email" />
+          </IonItem>
+          <br />
+          <IonItem>
+            <IonInput>Description</IonInput>
+          </IonItem>
+          <IonItem>
+            <IonItem>Optional:</IonItem>
+            <IonButton>CV upload</IonButton>
+          </IonItem>
+          <br />
+          <br />
+          <br />
+          <IonCardHeader className="Hd">Pasword update</IonCardHeader>
+          <IonItem>
+            <IonInput
+              type="password"
+              label="New Pasword"
+              labelPlacement="floating"
+            ></IonInput>
+          </IonItem>
         </IonList>
-        <IonButton>Update</IonButton>
+        <IonButton>Send</IonButton>
       </IonContent>
     </IonPage>
   );

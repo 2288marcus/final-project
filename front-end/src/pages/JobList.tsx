@@ -10,6 +10,7 @@ import {
   IonPage,
   IonTitle,
   IonToolbar,
+  IonSearchbar,
 } from "@ionic/react";
 
 const JobList: React.FC = () => {
@@ -32,16 +33,17 @@ const JobList: React.FC = () => {
             <IonTitle size="large">{title}</IonTitle>
           </IonToolbar>
         </IonHeader>
-
+        <IonSearchbar
+          animated={true}
+          placeholder="Search for Service"
+        ></IonSearchbar>
         <IonList>
-          <IonItem> JobList 1 </IonItem>
-          <IonItem> JobList 2 </IonItem>
-          <IonItem> JobList 3 </IonItem>
-          <IonItem> JobList 4 </IonItem>
-          <IonItem> JobList 5 </IonItem>
+          <IonItem routerLink="/ProfileCheckPage"> JobList 1 </IonItem>
+          <IonItem routerLink="/ProfileCheckPage"> JobList 2 </IonItem>
+          <IonItem routerLink="/ProfileCheckPage"> JobList 3 </IonItem>
+          <IonItem routerLink="/ProfileCheckPage"> JobList 4 </IonItem>
+          <IonItem routerLink="/ProfileCheckPage"> JobList 5 </IonItem>
         </IonList>
-
-        {/* <IonButton routerLink="/">hk</IonButton> */}
       </IonContent>
     </IonPage>
   );

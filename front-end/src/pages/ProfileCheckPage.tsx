@@ -1,6 +1,7 @@
 import {
   IonButton,
   IonButtons,
+  IonCardHeader,
   IonContent,
   IonHeader,
   IonInput,
@@ -10,10 +11,11 @@ import {
   IonPage,
   IonTitle,
   IonToolbar,
+  useIonRouter,
 } from "@ionic/react";
 
-const BookmarkList: React.FC = () => {
-  const title = "BookmarkList";
+const ProfileCheckPage: React.FC = () => {
+  const title = "ProfileCheckPage";
 
   return (
     <IonPage>
@@ -32,17 +34,28 @@ const BookmarkList: React.FC = () => {
             <IonTitle size="large">{title}</IonTitle>
           </IonToolbar>
         </IonHeader>
-
         <IonList>
-          <IonItem routerLink="/ProfileCheckPage"> Job 1 </IonItem>
-          <IonItem routerLink="/ProfileCheckPage"> Job 2 </IonItem>
-          <IonItem routerLink="/ProfileCheckPage"> Job 3 </IonItem>
-          <IonItem routerLink="/ProfileCheckPage"> Job 4 </IonItem>
-          <IonItem routerLink="/ProfileCheckPage"> Job 5 </IonItem>
+          <IonCardHeader className="Hd">Information</IonCardHeader>
+          <br />
+          <IonItem>
+            <IonItem>Name</IonItem>
+          </IonItem>
+          <IonItem>
+            <IonItem>Phone Number</IonItem>
+            <IonItem>Email</IonItem>
+          </IonItem>
+          <IonItem>
+            <IonItem>Description</IonItem>
+          </IonItem>
+          <br />
+          <form>
+            <IonItem>Services History</IonItem>
+            <IonItem>Client command</IonItem>
+          </form>
         </IonList>
       </IonContent>
     </IonPage>
   );
 };
 
-export default BookmarkList;
+export default ProfileCheckPage;

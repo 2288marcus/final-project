@@ -33,6 +33,7 @@ import JobList from "./pages/JobList";
 import BookmarkList from "./pages/BookmarkList";
 import ProfilePage from "./pages/ProfilePage";
 import RequirementPage from "./pages/RequirementPage";
+import ProfileCheckPage from "./pages/ProfileCheckPage";
 
 setupIonicReact();
 
@@ -66,6 +67,9 @@ const App: React.FC = () => {
             </Route>
             <Route path="/RequirementPage" exact={true}>
               <RequirementPage />
+            </Route>
+            <Route path="/ProfileCheckPage" exact={true}>
+              <ProfileCheckPage />
             </Route>
           </IonRouterOutlet>
         </IonSplitPane>
