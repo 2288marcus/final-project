@@ -21,6 +21,7 @@ import {
   paperPlane,
   videocam,
 } from "ionicons/icons";
+// import "./Page.css";
 
 const Chatroom: React.FC = () => {
   const title = "Chatroom";
@@ -60,9 +61,14 @@ const Chatroom: React.FC = () => {
             placeholder="Message"
             style={{ marginTop: "10px" }}
           />
-          <IonButtons slot="end">
-            <IonButton>
-              <IonIcon icon={paperPlane}></IonIcon>
+          <IonButtons>
+            <IonButton
+              style={{
+                background: "#1DA1F2",
+                borderRadius: "33%",
+              }}
+            >
+              <IonIcon icon={paperPlane} />
             </IonButton>
           </IonButtons>
         </IonItem>

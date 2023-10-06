@@ -61,12 +61,12 @@ const appPages: AppPage[] = [
     iosIcon: archiveOutline,
     mdIcon: archiveSharp,
   },
-  // {
-  //   title: "Trash",
-  //   url: "/page/Trash",
-  //   iosIcon: trashOutline,
-  //   mdIcon: trashSharp,
-  // },
+  {
+    title: "ChatroomList",
+    url: "/ChatroomList",
+    iosIcon: trashOutline,
+    mdIcon: trashSharp,
+  },
   {
     title: "Profile",
     url: "/ProfilePage",
