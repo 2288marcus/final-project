@@ -19,9 +19,7 @@ import {
 
 const BookmarkList: React.FC = () => {
   const title = "BookmarkList";
-
   const [items, setItems] = useState<string[]>([]);
-
   const generateItems = () => {
     const newItems = [];
     for (let i = 0; i < 50; i++) {
@@ -76,8 +74,6 @@ const BookmarkList: React.FC = () => {
             <IonInfiniteScrollContent></IonInfiniteScrollContent>
           </IonInfiniteScroll>
         </IonContent>
-
-        {/* <IonButton routerLink="/">hk</IonButton> */}
       </IonContent>
     </IonPage>
   );

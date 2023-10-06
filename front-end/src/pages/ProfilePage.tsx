@@ -54,17 +54,6 @@ const ProfilePage: React.FC = () => {
             <IonItem>Optional:</IonItem>
             <IonButton>CV upload</IonButton>
           </IonItem>
-          <br />
-          <br />
-          <br />
-          <IonCardHeader className="Hd">Pasword update</IonCardHeader>
-          <IonItem>
-            <IonInput
-              type="password"
-              label="New Pasword"
-              labelPlacement="floating"
-            ></IonInput>
-          </IonItem>
         </IonList>
         <IonButton>Send</IonButton>
       </IonContent>

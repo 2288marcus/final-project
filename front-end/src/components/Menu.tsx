@@ -28,6 +28,7 @@ import {
   searchCircleOutline,
 } from "ionicons/icons";
 import "./Menu.css";
+import useToken from "../hooks/useToken";
 
 interface AppPage {
   url: string;
@@ -49,12 +50,12 @@ const appPages: AppPage[] = [
     iosIcon: paperPlaneOutline,
     mdIcon: paperPlaneSharp,
   },
-  {
-    title: "BookmarkList",
-    url: "/BookmarkList",
-    iosIcon: heartOutline,
-    mdIcon: heartSharp,
-  },
+  // {
+  //   title: "BookmarkList",
+  //   url: "/BookmarkList",
+  //   iosIcon: heartOutline,
+  //   mdIcon: heartSharp,
+  // },
   {
     title: "Chatroom",
     url: "/Chatroom",
@@ -79,19 +80,26 @@ const appPages: AppPage[] = [
     iosIcon: searchCircleOutline,
     mdIcon: searchCircleOutline,
   },
+  {
+    title: "Home Page",
+    url: "/HomePage",
+    iosIcon: trashOutline,
+    mdIcon: trashSharp,
+  },
 ];
 
 const labels = ["Family", "Friends", "Notes", "Work", "Travel", "Reminders"];
 
 const Menu: React.FC = () => {
   const location = useLocation();
+  const token = useToken();
 
   return (
     <IonMenu contentId="main" type="overlay">
       <IonContent>
         <IonList id="inbox-list">
-          <IonListHeader>Inbox</IonListHeader>
-          <IonNote>user@template.com</IonNote>
+          <IonListHeader>Fair</IonListHeader>
+          <IonNote>Trade</IonNote>
           {appPages.map((appPage, index) => {
             return (
               <IonMenuToggle key={index} autoHide={false}>
