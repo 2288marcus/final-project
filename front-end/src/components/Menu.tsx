@@ -26,6 +26,9 @@ import {
   warningOutline,
   warningSharp,
   searchCircleOutline,
+  settingsOutline,
+  settingsSharp,
+  searchCircle,
 } from "ionicons/icons";
 import "./Menu.css";
 import useToken from "../hooks/useToken";
@@ -78,7 +81,13 @@ const appPages: AppPage[] = [
     title: "Requirement",
     url: "/RequirementPage",
     iosIcon: searchCircleOutline,
-    mdIcon: searchCircleOutline,
+    mdIcon: searchCircle,
+  },
+  {
+    title: "Setting",
+    url: "/SettingPage",
+    iosIcon: settingsOutline,
+    mdIcon: settingsSharp,
   },
 ];
 

@@ -41,6 +41,7 @@ import Welcome from "./pages/Welcome";
 import Chatroom from "./pages/Chatroom";
 import HomePage from "./pages/HomePage";
 import ChatroomList from "./pages/ChatroomList";
+import SettingPage from "./pages/SettingPage";
 
 setupIonicReact();
 
@@ -93,8 +94,11 @@ const App: React.FC = () => {
                 <Route path="/Chatroom" exact={true}>
                   <Chatroom />
                 </Route>
-                <Route path="/HomePage" exact={true}>
-                  <HomePage />
+                <Route path="/ChatroomList" exact={true}>
+                  <ChatroomList />
+                </Route>
+                <Route path="/SettingPage" exact={true}>
+                  <SettingPage />
                 </Route>
               </IonRouterOutlet>
             </IonSplitPane>
