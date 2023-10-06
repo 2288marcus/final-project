@@ -16,6 +16,7 @@ import {
   IonSegment,
   IonSegmentButton,
   IonLabel,
+  IonToggle,
 } from "@ionic/react";
 
 const SettingPage: React.FC = () => {
@@ -31,14 +32,20 @@ const SettingPage: React.FC = () => {
         </IonToolbar>
       </IonHeader>
       <IonContent>
-        <IonSegment value="default">
-          <IonSegmentButton value="default">
-            <IonLabel>Dark</IonLabel>
-          </IonSegmentButton>
-          <IonSegmentButton value="segment">
-            <IonLabel>Light</IonLabel>
-          </IonSegmentButton>
-        </IonSegment>
+        <IonList>
+          <IonItem>
+            <IonToggle>Receive Push Notifications</IonToggle>
+          </IonItem>
+          <IonItem>
+            <IonToggle>Receive Emails</IonToggle>
+          </IonItem>
+          <IonItem>
+            <IonToggle>Receive Text Messages</IonToggle>
+          </IonItem>
+          <IonItem>
+            <IonToggle>Dark Mode</IonToggle>
+          </IonItem>
+        </IonList>
       </IonContent>
     </IonPage>
   );
