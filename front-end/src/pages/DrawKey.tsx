@@ -72,7 +72,9 @@ const DrawKey: React.FC = () => {
         </IonToolbar>
       </IonHeader>
       <IonContent className="ion-padding">
+        <div>Draw the key</div>
         <IonButton onClick={handleReset}>Reset</IonButton>
+
         <div
           style={{
             border: "1px solid",
@@ -98,7 +100,6 @@ const DrawKey: React.FC = () => {
               // stroke-dasharray="5, 2" // 设置虚线样式
             />
           </svg>
-          <div>Draw the key</div>
         </div>
         <div className="">
           <div className="ion-margin ion-text-center">

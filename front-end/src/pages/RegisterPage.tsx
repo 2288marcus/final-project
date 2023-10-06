@@ -47,7 +47,11 @@ const RegisterPage: React.FC = () => {
   };
 
   const validateHKID2 = (ev: Event) => {
-    const value = (ev.target as HTMLInputElement).value;
+    const inputElement = ev.target as HTMLInputElement | null;
+
+    if (!inputElement) return;
+
+    const value = inputElement.value;
 
     setIsValid(undefined);
 
@@ -57,8 +61,10 @@ const RegisterPage: React.FC = () => {
 
     if (isValidHKID) {
       setIsValid(true);
+      // inputElement.classList.add("ion-touched");
     } else {
       setIsValid(false);
+      // inputElement.classList.remove("ion-valid");
     }
   };
 
@@ -206,7 +212,7 @@ const RegisterPage: React.FC = () => {
               type="text"
               fill="solid"
               label="Hong Kong Identity Card"
-              placeholder="X XXXXXX (X)"
+              placeholder="A 123456 (7)"
               onIonChange={(e) => {
                 const value = e.detail.value as string;
                 const isValid = validateHKID(value);
@@ -234,7 +240,6 @@ const RegisterPage: React.FC = () => {
           </IonItem>
           <IonItem>
             <IonInput
-              labelPlacement="floating"
               // helperText="Enter a Phone number"
               // errorText="Invalid email"
               ref={async (phoneInput) => {
@@ -243,7 +248,10 @@ const RegisterPage: React.FC = () => {
                   phoneMask(input);
                 }
               }}
+              type="text"
+              fill="solid"
               label="HK phone number"
+              labelPlacement="floating"
               placeholder="+(852) xxxx-xxxx"
             ></IonInput>
           </IonItem>
@@ -260,17 +268,11 @@ const RegisterPage: React.FC = () => {
                   ? "ion-valid ion-touched"
                   : ""
               }
-              // className={`${isValid && "ion-valid"} ${
-              //   isValid === false && "ion-invalid"
-              // } ${isTouchedEmail && "ion-touched"}`}
               type="email"
               fill="solid"
               label="Email"
               labelPlacement="floating"
-              // helperText="Enter a valid email"
-              // errorText="Invalid email"
-              // onIonInput={(event) => validateEmail2(event)}
-              // onIonBlur={() => setIsTouchedEmail(true)} // 设置isTouched为true
+              placeholder="example@mail.com"
             ></IonInput>
           </IonItem>
           <p>{state.email}</p>
