@@ -65,7 +65,7 @@ const LoginPage: React.FC = () => {
           <IonItem>
             <IonInput
               type="password"
-              label="password"
+              label="Private Key"
               labelPlacement="floating"
               value={user.password}
               onIonChange={(e) =>

@@ -14,8 +14,24 @@ import {
 } from "@ionic/react";
 import { Link } from "react-router-dom";
 import { useMaskito } from "@maskito/react";
+import React, { useState } from "react";
+
 const RegisterPage: React.FC = () => {
   const title = "Register";
+
+  const HKIDMask = useMaskito({
+    options: {
+      mask: [
+        /[A-Z]/, // 第一个字符限制为英文字母
+        " ",
+        ...Array(6).fill(/\d/),
+        " ",
+        "(",
+        ...Array(1).fill(/\d/),
+        ")",
+      ],
+    },
+  });
 
   const cardMask = useMaskito({
     options: {
@@ -27,8 +43,6 @@ const RegisterPage: React.FC = () => {
         ...Array(4).fill(/\d/),
         " ",
         ...Array(4).fill(/\d/),
-        " ",
-        ...Array(3).fill(/\d/),
       ],
     },
   });
@@ -56,6 +70,39 @@ const RegisterPage: React.FC = () => {
     },
   });
 
+  const validateHKID = (value: string) => {
+    const firstChar = value.charAt(0);
+    const lastChar = value.charAt(value.length - 1);
+    const isValidFirstChar = /^[A-Z]$/.test(firstChar);
+    const isValidLastChar = /^[A-Z0-9]$/.test(lastChar);
+    return isValidFirstChar && isValidLastChar;
+  };
+
+  const [isTouched, setIsTouched] = useState(false);
+  const [isValid, setIsValid] = useState<boolean>();
+
+  const validateEmail = (email: string) => {
+    return email.match(
+      /^(?=.{1,254}$)(?=.{1,64}@)[a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+)*@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/
+    );
+  };
+
+  const validate = (ev: Event) => {
+    const value = (ev.target as HTMLInputElement).value;
+
+    setIsValid(undefined);
+
+    if (value === "") return;
+
+    const isValidEmail = validateEmail(value);
+
+    if (isValidEmail && value.includes("@") && value.includes(".")) {
+      setIsValid(true);
+    } else {
+      setIsValid(false);
+    }
+  };
+
   return (
     <IonPage>
       <IonHeader>
@@ -75,16 +122,46 @@ const RegisterPage: React.FC = () => {
         </IonHeader>
         <IonList>
           <IonItem>
-            <IonInput type="text" label="username" />
-          </IonItem>
-          <IonItem>
-            <IonInput type="email" label="Email" />
-          </IonItem>
-          <IonItem>
-            <IonInput type="number" label="HKID" />
+            <IonInput labelPlacement="floating" type="text" label="Username" />
           </IonItem>
           <IonItem>
             <IonInput
+              labelPlacement="floating"
+              helperText="as shown on HKID"
+              type="text"
+              label="Full Name"
+            />
+          </IonItem>
+
+          <IonItem>
+            <IonInput
+              labelPlacement="floating"
+              // helperText="Enter Your Hong Kong Identity Card"
+              // errorText="Invalid email"
+              ref={async (phoneInput) => {
+                if (phoneInput) {
+                  const input = await phoneInput.getInputElement();
+                  HKIDMask(input);
+                }
+              }}
+              type="text"
+              label="Hong Kong Identity Card"
+              placeholder="X XXXXXX (X)"
+              onIonChange={(e) => {
+                const value = e.detail.value as string;
+                const isValid = validateHKID(value);
+                if (!isValid) {
+                  // 根据需要显示错误信息或执行其他操作
+                  console.log("Invalid HKID");
+                }
+              }}
+            />
+          </IonItem>
+          <IonItem>
+            <IonInput
+              labelPlacement="floating"
+              // helperText="Enter a Card number"
+              // errorText="Invalid email"
               ref={async (cardRef) => {
                 if (cardRef) {
                   const input = await cardRef.getInputElement();
@@ -97,6 +174,9 @@ const RegisterPage: React.FC = () => {
           </IonItem>
           <IonItem>
             <IonInput
+              labelPlacement="floating"
+              // helperText="Enter a Phone number"
+              // errorText="Invalid email"
               ref={async (phoneInput) => {
                 if (phoneInput) {
                   const input = await phoneInput.getInputElement();
@@ -105,6 +185,21 @@ const RegisterPage: React.FC = () => {
               }}
               label="HK phone number"
               placeholder="+(852) xxxx-xxxx"
+            ></IonInput>
+          </IonItem>
+          <IonItem>
+            <IonInput
+              className={`${isValid && "ion-valid"} ${
+                isValid === false && "ion-invalid"
+              } ${isTouched && "ion-touched"}`}
+              type="email"
+              fill="solid"
+              label="Email"
+              labelPlacement="floating"
+              // helperText="Enter a valid email"
+              // errorText="Invalid email"
+              onIonInput={(event) => validate(event)}
+              onIonBlur={() => setIsTouched(true)} // 设置isTouched为true
             ></IonInput>
           </IonItem>
         </IonList>
