@@ -78,7 +78,7 @@ const DrawKey: React.FC = () => {
         <div
           style={{
             border: "1px solid",
-            padding: "1rem",
+            // padding: "1rem",
             display: "flex",
             height: "20rem",
             maxHeight: "50vh",
@@ -101,7 +101,7 @@ const DrawKey: React.FC = () => {
             />
           </svg>
         </div>
-        <div className="">
+        <div>
           <div className="ion-margin ion-text-center">
             Progress: {(progress * 100).toFixed(1)}%
           </div>

@@ -35,6 +35,7 @@ import {
   mail,
   reader,
   earth,
+  link,
 } from "ionicons/icons";
 import "./Menu.css";
 import useToken from "../hooks/useToken";
@@ -96,12 +97,12 @@ const appPages: AppPage[] = [
     iosIcon: settingsOutline,
     mdIcon: settingsSharp,
   },
-  // {
-  //   title: "Home",
-  //   url: "/HomePage",
-  //   iosIcon: trashOutline,
-  //   mdIcon: trashSharp,
-  // },
+  {
+    title: "BlockChain",
+    url: "/Blockchain",
+    iosIcon: link,
+    mdIcon: link,
+  },
 ];
 
 const labels = ["Family", "Friends", "Notes", "Work", "Travel", "Reminders"];

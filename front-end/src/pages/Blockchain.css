@@ -1,0 +1,20 @@
+.card {
+  margin: 0 auto;
+  /* margin-top: 10px; */
+  width: 60%;
+  /* padding: 20px; */
+  /* border-radius: 10px; */
+  /* background-color: #fff; */
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  display: grid;
+  /* grid-template-columns: 1fr 1fr; */
+}
+.icon {
+  /* width: 100px; */
+  margin: 0 auto;
+  /* height: 100px; */
+  display: flex;
+  /* justify-content: center; */
+  /* align-items: center; */
+  padding: 10px;
+}

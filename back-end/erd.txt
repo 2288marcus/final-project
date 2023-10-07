@@ -19,9 +19,11 @@ user
 ----
 id integer PK
 username varchar(32) unique
+fullName varchar(32) 
+HKID varchar(8) unique
 email varchar(255) unique
-password_hash varchar(255)
-description text
+public_key varchar(255) unique
+HK_phone varchar(8) unique
 human_verification boolean
 cv_upload varchar(255)
 

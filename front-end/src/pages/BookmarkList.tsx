@@ -43,14 +43,12 @@ const BookmarkList: React.FC = () => {
           <IonTitle>{title}</IonTitle>
         </IonToolbar>
       </IonHeader>
-
       <IonContent fullscreen className="ion-padding">
         <IonHeader collapse="condense">
           <IonToolbar>
             <IonTitle size="large">{title}</IonTitle>
           </IonToolbar>
         </IonHeader>
-
         <IonContent>
           <IonList>
             {items.map((item, index) => (
