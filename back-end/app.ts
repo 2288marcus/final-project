@@ -8,7 +8,7 @@ const knex = Knex(knexConfig)
 //
 import express, { Express } from 'express'
 import http, { Server as HTTPServer } from 'http'
-import { User, userRoute } from './routes/userRoute'
+// import { User, userRoute } from './routes/userRoute'
 import expressSession from 'express-session'
 import path from 'path'
 // import { client } from './utils/pg'
@@ -21,14 +21,14 @@ app.use(express.static('pubic'))
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
 
-// 設定 session，用於儲存用戶登入狀態
-app.use(
-  expressSession({
-    secret: 'Tecky Academy teaches typescript',
-    resave: true,
-    saveUninitialized: true,
-  }),
-)
+// // 設定 session，用於儲存用戶登入狀態
+// app.use(
+//   expressSession({
+//     secret: 'Tecky Academy teaches typescript',
+//     resave: true,
+//     saveUninitialized: true,
+//   }),
+// )
 
 const server: HTTPServer = http.createServer(app)
 
@@ -48,10 +48,10 @@ io.on('connection', (socket: Socket) => {
   })
 })
 
-// 設定 404 頁面
-app.use((req, res) => {
-  res.sendFile(path.resolve('public', '404.html'))
-})
+// // 設定 404 頁面
+// app.use((req, res) => {
+//   res.sendFile(path.resolve('public', '404.html'))
+// })
 
 let port = 8100
 server.listen(port, () => {

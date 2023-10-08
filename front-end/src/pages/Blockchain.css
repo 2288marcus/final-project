@@ -18,3 +18,15 @@
   /* align-items: center; */
   padding: 10px;
 }
+
+.show {
+  display: block;
+}
+
+.break-word {
+  word-break: break-all;
+}
+
+h5 {
+  color: white;
+}
