@@ -1,5 +1,5 @@
 import Knex from 'knex'
-import { print } from 'listening-on'
+// import { print } from 'listening-on'
 
 const knexConfigs = require('./knexfile')
 const configMode = process.env.NODE_ENV || 'development'
@@ -56,5 +56,5 @@ io.on('connection', (socket: Socket) => {
 let port = 8100
 server.listen(port, () => {
   //   console.log('Server running at port 5173')
-  print(port)
+  // print(port)
 })

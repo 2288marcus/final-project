@@ -43,6 +43,7 @@ import HomePage from "./pages/HomePage";
 import ChatroomList from "./pages/ChatroomList";
 import SettingPage from "./pages/SettingPage";
 import Blockchain from "./pages/Blockchain";
+import Test from "./pages/test";
 
 setupIonicReact();
 
@@ -113,6 +114,9 @@ const App: React.FC = () => {
                 </Route>
                 <Route path="/Blockchain" exact={true}>
                   <Blockchain />
+                </Route>
+                <Route path="/test" exact={true}>
+                  <Test />
                 </Route>
               </IonRouterOutlet>
             </IonSplitPane>
