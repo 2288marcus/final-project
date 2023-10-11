@@ -39,7 +39,6 @@ import {
 } from "ionicons/icons";
 import "./Menu.css";
 import useToken from "../hooks/useToken";
-import ProfilePage from "../pages/ProfilePage";
 
 interface AppPage {
   url: string;
@@ -57,7 +56,7 @@ const appPages: AppPage[] = [
   },
   {
     title: "Services",
-    url: "/JobList",
+    url: "/Index",
     iosIcon: earth,
     mdIcon: earth,
   },
@@ -105,7 +104,7 @@ const appPages: AppPage[] = [
   },
 ];
 
-const labels = ["Family", "Friends", "Notes", "Work", "Travel", "Reminders"];
+const labels = ["1", "2", "3", "4", "5", "6"];
 
 const Menu: React.FC = () => {
   const location = useLocation();

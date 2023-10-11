@@ -16,9 +16,13 @@ import {
 import React, { useState, ChangeEvent } from "react";
 import { Link } from "react-router-dom";
 import "./ProfilePage.css";
+import { useForm, SubmitHandler } from "react-hook-form";
 
-const ProfilePage: React.FC = () => {
+const Test: React.FC = () => {
   const title = "(User update) Person Profile";
+
+  const { register, handleSubmit } = useForm();
+  const onSubmit = (data: any) => console.log("data:", data);
 
   ///////////////////////////
 
@@ -58,30 +62,49 @@ const ProfilePage: React.FC = () => {
         <IonList>
           <IonCardHeader className="Hd">Information</IonCardHeader>
           <br />
-          <IonItem>
-            <IonInput label="Name" />
-          </IonItem>
-          <IonItem>
-            <IonInput label="Phone Number" />
-            <IonInput label="Email" />
-          </IonItem>
-          <br />
-          <IonItem>
-            <IonInput>Description</IonInput>
-          </IonItem>
-          <IonItem>
-            <IonItem>Optional:</IonItem>
-            {/* ///////////////////////////////////////////////// */}
-            <input type="file" name="file" id="file"></input>
-            <IonButton onClick={handleUpload}>CV upload 2</IonButton>
-            {/* ///////////////////////////////////////////////// */}
-            {/* <IonButton</IonButton> */}
-          </IonItem>
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <IonItem>
+              <IonInput label="Name" {...register("name")} />
+            </IonItem>
+            <IonItem>
+              <IonInput label="Phone Number" />
+              <IonInput label="Email" />
+            </IonItem>
+            <br />
+            <IonItem>
+              <IonInput>Description</IonInput>
+            </IonItem>
+            <IonItem>
+              <input
+                type="file"
+                accept=".pdf,.doc,.docx"
+                onChange={handleFileChange}
+                hidden
+                id="file-input"
+              />
+              <label htmlFor="file-input">
+                {selectedFile ? selectedFile.name : "Optional:"}
+              </label>
+              <IonButton
+                onClick={() => {
+                  const fileInput = document.getElementById(
+                    "file-input"
+                  ) as HTMLInputElement;
+                  fileInput.click();
+                }}
+                fill="outline"
+                expand="block"
+              >
+                CV Upload
+              </IonButton>
+            </IonItem>
+
+            <IonButton type="submit">Send</IonButton>
+          </form>
         </IonList>
-        <IonButton>Send</IonButton>
       </IonContent>
     </IonPage>
   );
 };
 
-export default ProfilePage;
+export default Test;

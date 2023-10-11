@@ -1,96 +1,91 @@
+import React, { useState } from "react";
 import {
-  IonButton,
-  IonButtons,
-  IonCardHeader,
-  IonContent,
-  IonHeader,
-  IonInput,
-  IonItem,
+  IonSegment,
+  IonSegmentButton,
+  IonLabel,
   IonList,
-  IonMenuButton,
-  IonPage,
-  IonTitle,
-  IonToolbar,
-  useIonRouter,
+  IonItem,
+  IonContent,
 } from "@ionic/react";
-import React, { useState, ChangeEvent } from "react";
-import { Link } from "react-router-dom";
-import "./ProfilePage.css";
-import { useForm, SubmitHandler } from "react-hook-form";
 
-const Test: React.FC = () => {
-  const title = "(User update) Person Profile";
+const JobList: React.FC = () => {
+  const title = "JobList";
+  const [selectedSegment, setSelectedSegment] = useState<string>("default");
 
-  const { register, handleSubmit } = useForm();
-  const onSubmit = (data: any) => console.log("data:", data);
-
-  ///////////////////////////
-
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
-
-  const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    setSelectedFile(file || null);
+  const handleSegmentChange = (value: string | undefined) => {
+    if (value) {
+      setSelectedSegment(value);
+    }
   };
-
-  const handleUpload = () => {
-    console.log("Uploading");
-    // if (selectedFile) {
-    //   // 在這裡處理上傳PDF的邏輯
-    //   console.log("上傳的PDF文件:", selectedFile);
-    // }
+  const renderList = () => {
+    switch (selectedSegment) {
+      case "default":
+        return (
+          <IonList>
+            <IonItem>
+              <IonLabel>Item 1</IonLabel>
+            </IonItem>
+            <IonItem>
+              <IonLabel>Item 2</IonLabel>
+            </IonItem>
+            <IonItem>
+              <IonLabel>Item 3</IonLabel>
+            </IonItem>
+          </IonList>
+        );
+      case "segment":
+        return (
+          <IonList>
+            <IonItem>
+              <IonLabel>Segment Item 1</IonLabel>
+            </IonItem>
+            <IonItem>
+              <IonLabel>Segment Item 2</IonLabel>
+            </IonItem>
+            <IonItem>
+              <IonLabel>Segment Item 3</IonLabel>
+            </IonItem>
+          </IonList>
+        );
+      case "buttons":
+        return (
+          <IonList>
+            <IonItem>
+              <IonLabel>Button Item 1</IonLabel>
+            </IonItem>
+            <IonItem>
+              <IonLabel>Button Item 2</IonLabel>
+            </IonItem>
+            <IonItem>
+              <IonLabel>Button Item 3</IonLabel>
+            </IonItem>
+          </IonList>
+        );
+      default:
+        return null;
+    }
   };
-  ///////////////////////////
 
   return (
-    <IonPage>
-      <IonHeader>
-        <IonToolbar>
-          <IonButtons slot="start">
-            <IonMenuButton />
-          </IonButtons>
-          <IonTitle>{title}</IonTitle>
-        </IonToolbar>
-      </IonHeader>
+    <IonContent>
+      <IonSegment
+        value={selectedSegment}
+        onIonChange={(e) => handleSegmentChange(e.detail.value)}
+      >
+        <IonSegmentButton value="default">
+          <IonLabel>Default</IonLabel>
+        </IonSegmentButton>
+        <IonSegmentButton value="segment">
+          <IonLabel>Segment</IonLabel>
+        </IonSegmentButton>
+        <IonSegmentButton value="buttons">
+          <IonLabel>Button</IonLabel>
+        </IonSegmentButton>
+      </IonSegment>
 
-      <IonContent fullscreen className="ion-padding">
-        <IonHeader collapse="condense">
-          <IonToolbar>
-            <IonTitle size="large">{title}</IonTitle>
-          </IonToolbar>
-        </IonHeader>
-        <IonList>
-          <IonCardHeader className="Hd">Information</IonCardHeader>
-          <br />
-          <form onSubmit={handleSubmit(onSubmit)}>
-            <IonItem>
-              <IonInput label="Name" {...register("name")} />
-            </IonItem>
-            <IonItem>
-              <IonInput label="Phone Number" />
-              <IonInput label="Email" />
-            </IonItem>
-            <br />
-            <IonItem>
-              <IonInput>Description</IonInput>
-            </IonItem>
-            <IonItem>
-              <IonItem>Optional:</IonItem>
-              {/* ///////////////////////////////////////////////// */}
-              <input
-                type="file"
-                id="file"
-                {...register("file", { required: true })}
-              />
-              {/* ///////////////////////////////////////////////// */}
-              {/* <IonButton</IonButton> */}
-            </IonItem>
-            <IonButton type="submit">Send</IonButton>
-          </form>
-        </IonList>
-      </IonContent>
-    </IonPage>
+      {renderList()}
+    </IonContent>
   );
 };
 
-export default Test;
+export default JobList;

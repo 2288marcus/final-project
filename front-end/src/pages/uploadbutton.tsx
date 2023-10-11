@@ -18,7 +18,7 @@ const UploadPDFButton: React.FC = () => {
 
   return (
     <div>
-      <IonInput type="file" accept=".pdf" onIonChange={handleFileChange} />
+      <input type="file" name="file" id="file"></input>
       <IonButton onClick={handleUpload}>上傳PDF</IonButton>
     </div>
   );

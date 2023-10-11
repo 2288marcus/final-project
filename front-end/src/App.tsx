@@ -31,6 +31,8 @@ import "./theme/variables.css";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import JobList from "./pages/JobList";
+import UserList from "./pages/UserList";
+import Index from "./pages/Index";
 import BookmarkList from "./pages/BookmarkList";
 import ProfilePage from "./pages/ProfilePage";
 import RequirementPage from "./pages/RequirementPage";
@@ -79,7 +81,13 @@ const App: React.FC = () => {
                 <Route path="/register" exact={true}>
                   <RegisterPage />
                 </Route>
-                <Route path="/JobList" exact={true}>
+                <Route path="/Index" exact={true}>
+                  <Index />
+                </Route>
+                <Route path="/UserList" exact={true}>
+                  <UserList />
+                </Route>
+                <Route path="/Joblist" exact={true}>
                   <JobList />
                 </Route>
                 <Route path="/BookmarkList" exact={true}>

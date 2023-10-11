@@ -25,15 +25,15 @@ function Fake() {
   return <div className="real"></div>;
 }
 
-const JobList: React.FC = () => {
-  const title = "JobList";
+const UserList: React.FC = () => {
+  const title = "UserList";
 
   const [items, setItems] = useState<string[]>([]);
 
   const generateItems = () => {
     const newItems = [];
     for (let i = 0; i < 50; i++) {
-      newItems.push(`Job ${1 + items.length + i}`);
+      newItems.push(`UserList ${1 + items.length + i}`);
     }
     setItems([...items, ...newItems]);
   };
@@ -136,4 +136,4 @@ const JobList: React.FC = () => {
   );
 };
 
-export default JobList;
+export default UserList;

@@ -1,0 +1,28 @@
+.SH {
+  display: flex;
+}
+
+.d-flex {
+  display: flex;
+}
+
+.align-center {
+  align-items: center;
+}
+
+.tag-list {
+  display: flex;
+  gap: 8px;
+}
+
+[hidden] {
+  display: none;
+}
+
+.author-name {
+  font-size: 2rem;
+}
+
+.col {
+  flex-direction: column;
+}
