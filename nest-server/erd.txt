@@ -75,8 +75,6 @@ contract
 id integer PK
 buyer_user_id integer FK >- user.id
 seller_user_id integer FK >- user.id
-job_status integer
-details text
 start_time timestamp
 estimated_finish_time timestamp
 claim_finish_time timestamp NULL
@@ -106,7 +104,7 @@ user_id integer FK >0- user.id
 content integer
 
 
-# zoom: 0.910
+# zoom: 0.737
 # view: (115, 35)
 # text-bg: #6495ed
 # text-color: #000000
@@ -116,10 +114,10 @@ content integer
 # table-text: #000000
 # user (645, 44)
 # job_comment (413, 399)
-# job (827, 413)
+# job (779, 344)
 # job_tag (438, 680)
 # tag (821, 647)
 # bookmark (287, 101)
-# contract (1255, 108)
+# contract (1167, 126)
 # transaction (1196, 628)
-# chat_message (1131, -23)
+# chat_message (1019, -24)

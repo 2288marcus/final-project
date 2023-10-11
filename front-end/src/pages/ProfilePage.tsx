@@ -12,8 +12,9 @@ import {
   IonTitle,
   IonToolbar,
   useIonRouter,
+  IonRefresher,
 } from "@ionic/react";
-import React, { useState, ChangeEvent } from "react";
+import React, { useState, ChangeEvent, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
 import "./ProfilePage.css";
 import { useForm, SubmitHandler } from "react-hook-form";
@@ -40,6 +41,26 @@ const Test: React.FC = () => {
     //   console.log("上傳的PDF文件:", selectedFile);
     // }
   };
+
+  const [displayInformation, setDisplayInformation] = useState<{
+    username: string;
+  }>();
+
+  async function getProfile() {
+    let res = await fetch("http://localhost:3000/user/profile/1");
+    let user = await res.json();
+    console.log(user);
+
+    if (user) {
+      setDisplayInformation({ username: user.username });
+    }
+
+    return;
+  }
+
+  useEffect(() => {
+    getProfile();
+  }, []);
   ///////////////////////////
 
   return (
@@ -49,7 +70,7 @@ const Test: React.FC = () => {
           <IonButtons slot="start">
             <IonMenuButton />
           </IonButtons>
-          <IonTitle>{title}</IonTitle>
+          <IonTitle>{title} </IonTitle>
         </IonToolbar>
       </IonHeader>
 
@@ -60,7 +81,7 @@ const Test: React.FC = () => {
           </IonToolbar>
         </IonHeader>
         <IonList>
-          <IonCardHeader className="Hd">Information</IonCardHeader>
+          <IonCardHeader className="Hd">Information </IonCardHeader>
           <br />
           <form onSubmit={handleSubmit(onSubmit)}>
             <IonItem>
@@ -72,6 +93,7 @@ const Test: React.FC = () => {
             </IonItem>
             <br />
             <IonItem>
+              <IonButton></IonButton>
               <IonInput>Description</IonInput>
             </IonItem>
             <IonItem>
@@ -102,6 +124,9 @@ const Test: React.FC = () => {
             <IonButton type="submit">Send</IonButton>
           </form>
         </IonList>
+        <IonItem>
+          <div>username: {displayInformation?.username || "Loading"}</div>
+        </IonItem>
       </IonContent>
     </IonPage>
   );

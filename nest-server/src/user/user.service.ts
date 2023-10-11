@@ -12,7 +12,7 @@ export class UserService {
   }
 
   async getProfile(id: number) {
-    return await this.knex.select('*').from('user').first()
+    return await this.knex.select('*').from('user').where({ id }).first()
   }
   updateProfile(
     id: number,
