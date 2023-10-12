@@ -22,10 +22,10 @@ username varchar(32) unique
 fullName varchar(32) 
 HKID varchar(8) unique
 email varchar(255) unique
-public_key char(64) unique
+public_key char(64) unique null
 HK_phone varchar(8) unique
-human_verification boolean
-cv_upload varchar(255)
+human_verification boolean null
+cv_upload varchar(255) null
 
 
 job_comment
