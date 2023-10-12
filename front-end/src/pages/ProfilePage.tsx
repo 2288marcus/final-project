@@ -218,7 +218,7 @@ const ProfilePage: React.FC = () => {
               Username: {displayInformation?.username || "Loading"}
             </IonItem>
             <IonItem lines="none">
-              (+852) Phone: {displayInformation?.HK_phone || "Loading"}
+              (+852) Phone: {displayInformation?.hk_phone || "Loading"}
             </IonItem>
           </IonItem>
           <IonItem>
@@ -231,7 +231,7 @@ const ProfilePage: React.FC = () => {
               Full Name: {displayInformation?.fullName || "Loading"}
             </IonItem>
             <IonItem lines="none">
-              HKID: {displayInformation?.HKID || "Loading"}
+              HKID: {displayInformation?.hkId || "Loading"}
             </IonItem>
           </IonItem>
           <IonItem>
