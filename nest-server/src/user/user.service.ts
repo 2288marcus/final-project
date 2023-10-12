@@ -21,13 +21,14 @@ export class UserService {
     return {}
   }
 
-  async signup(input: any) {
+  async signUp(input: any) {
     return await this.knex
       .insert({
         username: input.username,
         email: input.email,
-        HKID: input.HKID,
-        HK_phone: input.HK_phone,
+        hkId: input.hkId,
+        card: input.card,
+        hk_phone: input.hk_phone,
         fullName: input.fullName,
       })
       .into('user')

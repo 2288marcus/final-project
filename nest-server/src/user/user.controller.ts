@@ -90,19 +90,19 @@ export class UserController {
     console.log(file)
   }
 
-  @Post('signup')
-  async signup(@Body() body) {
+  @Post('signUp')
+  async signUp(@Body() body) {
     let input = object({
       body: object({
         email: email(),
         username: string(),
-        fullname: string(),
-        hkid: string(),
-        // cardnumber: string(),
+        fullName: string(),
+        hkId: string(),
+        card: string(),
         hk_phone: string(),
       }),
     }).parse({ body })
-    let result = await this.userService.signup(input.body)
+    let result = await this.userService.signUp(input.body)
     return result
   }
 }

@@ -43,9 +43,9 @@ const ProfilePage: React.FC = () => {
     created_at: string;
     updated_at: string;
     fullName: string;
-    HKID: string;
+    hkId: string;
     public_key: string;
-    HK_phone: string;
+    hk_phone: string;
   }>();
 
   async function getProfile() {
@@ -56,14 +56,12 @@ const ProfilePage: React.FC = () => {
     if (user) {
       setDisplayInformation(user);
     }
-
     return;
   }
 
   useEffect(() => {
     getProfile();
   }, []);
-  ///////////////////////////
 
   return (
     <IonPage>
@@ -130,11 +128,11 @@ const ProfilePage: React.FC = () => {
         </IonList>
       </IonContent>
       <IonFooter>
-        <div>HKID: {displayInformation?.HKID || "Loading"}</div>
+        <div>HKID: {displayInformation?.hkId || "Loading"}</div>
         <div>Username: {displayInformation?.username || "Loading"}</div>
         <div>Full Name: {displayInformation?.fullName || "Loading"}</div>
         <div>Email: {displayInformation?.email || "Loading"}</div>
-        <div>HK Phone: {displayInformation?.HK_phone || "Loading"}</div>
+        <div>HK Phone: {displayInformation?.hk_phone || "Loading"}</div>
         <div>
           Human Verification:
           {displayInformation?.human_verification || "Loading"}

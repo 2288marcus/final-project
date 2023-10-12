@@ -10,31 +10,25 @@ import {
   IonPage,
   IonTitle,
   IonToolbar,
-  useIonRouter,
 } from "@ionic/react";
-import { Link } from "react-router-dom";
 import { useMaskito } from "@maskito/react";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useForm, SubmitHandler, set } from "react-hook-form";
-import {
-  is_email,
-  is_hk_mobile_phone,
-  to_full_hk_mobile_phone,
-} from "@beenotung/tslib/validate";
+import { is_email } from "@beenotung/tslib/validate";
 
 const RegisterPage: React.FC = () => {
   const title = "Register";
 
   const [stateUsername, setStateUsername] = useState({ username: "" });
   const [stateEmail, setStateEmail] = useState({ email: "" });
-  const [stateHKID, setStateHKID] = useState({ HKID: "" });
+  const [stateHKID, setStateHKID] = useState({ hkId: "" });
   const [stateCard, setStateCard] = useState({ card: "" });
-  const [statePhone, setStatePhone] = useState({ phone: "" });
+  const [statePhone, setStatePhone] = useState({ hk_phone: "" });
 
-  const validateUsername = (username: string) => {
-    const usernameRegex = /^[a-zA-Z0-9]{6,}$/;
-    return usernameRegex.test(username);
-  };
+  // const validateUsername = (username: string) => {
+  //   const usernameRegex = /^[a-zA-Z0-9]{6,}$/;
+  //   return usernameRegex.test(username);
+  // };
 
   // const validateUsername2 = (ev: Event) => {
   //   const value = (ev.target as HTMLInputElement).value;
@@ -70,48 +64,10 @@ const RegisterPage: React.FC = () => {
     return hkidRegex.test(HKID);
   };
 
-  // const validateHKID2 = (ev: Event) => {
-  //   const inputElement = ev.target as HTMLInputElement | null;
-
-  //   if (!inputElement) return;
-
-  //   const value = inputElement.value;
-
-  //   setIsValidHKID(undefined);
-
-  //   if (value === "") return;
-
-  //   const isValidHKID = validateHKID(value);
-
-  //   if (isValidHKID) {
-  //     setIsValidHKID(true);
-  //     // inputElement.classList.add("ion-touched");
-  //   } else {
-  //     setIsValidHKID(false);
-  //     // inputElement.classList.remove("ion-valid");
-  //   }
-  // };
-
   const validateCard = (card: string) => {
     const cardRegex = /^\d{4} \d{4} \d{4} \d{4}$/;
     return cardRegex.test(card);
   };
-
-  // const validateCard2 = (ev: Event) => {
-  //   const value = (ev.target as HTMLInputElement).value;
-
-  //   setIsValidCard(undefined);
-
-  //   if (value === "") return;
-
-  //   const isValidCard = validateCard(value);
-
-  //   if (isValidCard) {
-  //     setIsValidCard(true);
-  //   } else {
-  //     setIsValidCard(false);
-  //   }
-  // };
 
   const cardMask = useMaskito({
     options: {
@@ -127,25 +83,9 @@ const RegisterPage: React.FC = () => {
     },
   });
 
-  const validatePhone = (phone: string) => {
-    const phoneRegex = /^\d{4}-\d{4}$/;
-    return phoneRegex.test(phone);
-  };
-
-  // const validatePhone2 = (ev: Event) => {
-  //   const value = (ev.target as HTMLInputElement).value;
-
-  //   setIsValidPhone(undefined);
-
-  //   if (value === "") return;
-
-  //   const isValidPhone = validatePhone(value);
-
-  //   if (isValidPhone) {
-  //     setIsValidPhone(true);
-  //   } else {
-  //     setIsValidPhone(false);
-  //   }
+  // const validatePhone = (phone: string) => {
+  //   const phoneRegex = /^\d{4}-\d{4}$/;
+  //   return phoneRegex.test(phone);
   // };
 
   const phoneMask = useMaskito({
@@ -177,11 +117,35 @@ const RegisterPage: React.FC = () => {
   const canSubmit = isEmailValid;
 
   const onSubmit = (data: any) => {
-    data["HKID"] = HKID;
-    data["Card"] = Card;
-    data["phone"] = phone;
+    // 移除卡号中的空格
+    const cardNumber = data.card.replace(/\s+/g, "");
+
+    data.card = cardNumber;
+
+    data["hkId"] = HKID;
+    // data["card"] = Card;
+    data["hk_phone"] = phone;
     console.log("data:", data);
+
+    // 发送POST请求到后端
+    fetch("http://localhost:3000/user/signUp", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    })
+      .then((response) => response.json())
+      .then((responseData) => {
+        // 处理后端响应
+        console.log(responseData);
+      })
+      .catch((error) => {
+        // 处理错误
+        console.error(error);
+      });
   };
+
   return (
     <IonPage>
       <IonHeader>
@@ -228,14 +192,14 @@ const RegisterPage: React.FC = () => {
             <IonItem>
               <IonInput //HKID
                 onIonInput={(e) => {
-                  setStateHKID({ ...stateHKID, HKID: e.detail.value || "" });
+                  setStateHKID({ ...stateHKID, hkId: e.detail.value || "" });
                   setHKID(e.detail.value as string);
                 }}
-                {...register("HKID")}
+                {...register("hkId")}
                 className={
-                  stateHKID.HKID && !isTouchedHKID
+                  stateHKID.hkId && !isTouchedHKID
                     ? "ion-invalid ion-touched"
-                    : stateHKID.HKID && isTouchedHKID
+                    : stateHKID.hkId && isTouchedHKID
                     ? "ion-valid ion-touched"
                     : ""
                 }
@@ -295,9 +259,9 @@ const RegisterPage: React.FC = () => {
             <IonItem>
               <IonInput //phone
                 className={
-                  statePhone.phone && !isTouchedPhone
+                  statePhone.hk_phone && !isTouchedPhone
                     ? "ion-invalid ion-touched"
-                    : statePhone.phone && isTouchedPhone
+                    : statePhone.hk_phone && isTouchedPhone
                     ? "ion-valid ion-touched"
                     : ""
                 }
