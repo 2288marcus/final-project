@@ -196,7 +196,7 @@ const Index: React.FC = () => {
                 id: 3,
                 name: "g",
                 tags: ["sport", "travel", "IT"],
-                title: "Teach me ride",
+                title: "help",
               },
             ].map((item) => (
               <IonCard key={item.id}>

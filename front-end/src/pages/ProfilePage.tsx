@@ -19,7 +19,7 @@ import { Link } from "react-router-dom";
 import "./ProfilePage.css";
 import { useForm, SubmitHandler } from "react-hook-form";
 
-const Test: React.FC = () => {
+const ProfilePage: React.FC = () => {
   const title = "(User update) Person Profile";
 
   const { register, handleSubmit } = useForm();
@@ -32,14 +32,6 @@ const Test: React.FC = () => {
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     setSelectedFile(file || null);
-  };
-
-  const handleUpload = () => {
-    console.log("Uploading");
-    // if (selectedFile) {
-    //   // 在這裡處理上傳PDF的邏輯
-    //   console.log("上傳的PDF文件:", selectedFile);
-    // }
   };
 
   const [displayInformation, setDisplayInformation] = useState<{
@@ -93,10 +85,10 @@ const Test: React.FC = () => {
             </IonItem>
             <br />
             <IonItem>
-              <IonButton></IonButton>
               <IonInput>Description</IonInput>
             </IonItem>
             <IonItem>
+              Optional:
               <input
                 type="file"
                 accept=".pdf,.doc,.docx"
@@ -104,9 +96,9 @@ const Test: React.FC = () => {
                 hidden
                 id="file-input"
               />
-              <label htmlFor="file-input">
+              {/* <label htmlFor="file-input">
                 {selectedFile ? selectedFile.name : "Optional:"}
-              </label>
+              </label> */}
               <IonButton
                 onClick={() => {
                   const fileInput = document.getElementById(
@@ -121,7 +113,9 @@ const Test: React.FC = () => {
               </IonButton>
             </IonItem>
 
-            <IonButton type="submit">Send</IonButton>
+            <IonButton type="submit" expand="full">
+              Send
+            </IonButton>
           </form>
         </IonList>
         <IonItem>
@@ -132,4 +126,4 @@ const Test: React.FC = () => {
   );
 };
 
-export default Test;
+export default ProfilePage;
