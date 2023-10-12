@@ -15,6 +15,7 @@ import {
 import { Link } from "react-router-dom";
 import { useMaskito } from "@maskito/react";
 import React, { useState } from "react";
+import { useForm, SubmitHandler } from "react-hook-form";
 import {
   is_email,
   is_hk_mobile_phone,
@@ -30,12 +31,10 @@ const RegisterPage: React.FC = () => {
     options: {
       mask: [
         /[A-Z]/, // 第一个字符限制为英文字母
-        " ",
+
         ...Array(6).fill(/\d/),
-        " ",
-        "(",
+
         /[A-Z0-9]/,
-        ")",
       ],
     },
   });
@@ -105,24 +104,7 @@ const RegisterPage: React.FC = () => {
 
   const phoneMask = useMaskito({
     options: {
-      mask: [
-        "+",
-        "(",
-        "8",
-        "5",
-        "2",
-        ")",
-        " ",
-        /\d/,
-        /\d/,
-        /\d/,
-        /\d/,
-        "-",
-        /\d/,
-        /\d/,
-        /\d/,
-        /\d/,
-      ],
+      mask: [/\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/],
     },
   });
 
@@ -136,11 +118,10 @@ const RegisterPage: React.FC = () => {
   const [isTouchedHKID, setIsTouchedHKID] = useState(false);
   const [isTouchedEmail, setIsTouchedEmail] = useState(false);
   const [isTouchedPhone, setIsTouchedPhone] = useState(false);
+  const [hkId, setHkId] = useState<string>();
+  const [hkPhone, setHkPhone] = useState<string>();
+  const [email, setEmail] = useState<string>();
   const [isValid, setIsValid] = useState<boolean>();
-
-  const isEmailValid = is_email(state.email);
-
-  const canSubmit = isEmailValid;
 
   // const validateEmail = (email: string) => {
   //   return email.match(
@@ -163,7 +144,12 @@ const RegisterPage: React.FC = () => {
   //     setIsValid(false);
   //   }
   // };
+  const { register, handleSubmit } = useForm();
+  const isEmailValid = is_email(email as string);
 
+  const canSubmit = isEmailValid;
+
+  const onSubmit = (data: any) => console.log("data:", data);
   return (
     <IonPage>
       <IonHeader>
@@ -182,104 +168,122 @@ const RegisterPage: React.FC = () => {
           </IonToolbar>
         </IonHeader>
         <IonList>
-          <IonItem>
-            <IonInput labelPlacement="floating" type="text" label="Username" />
-          </IonItem>
-          <IonItem>
-            <IonInput
-              labelPlacement="floating"
-              helperText="as shown on HKID"
-              type="text"
-              label="Full Name"
-            />
-          </IonItem>
-          <IonItem>
-            <IonInput
-              onIonInput={(event) => validateHKID2(event)}
-              onIonBlur={() => setIsTouchedHKID(true)}
-              className={`${isValid && "ion-valid"} ${
-                isValid === false && "ion-invalid"
-              } ${isTouchedHKID && "ion-touched"}`}
-              labelPlacement="floating"
-              // helperText="Enter Your Hong Kong Identity Card"
-              // errorText="Invalid email"
-              ref={async (phoneInput) => {
-                if (phoneInput) {
-                  const input = await phoneInput.getInputElement();
-                  HKIDMask(input);
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <IonItem>
+              <IonInput
+                labelPlacement="floating"
+                type="text"
+                label="Username"
+                {...register("username")}
+              />
+            </IonItem>
+            <IonItem>
+              <IonInput
+                labelPlacement="floating"
+                helperText="as shown on HKID"
+                type="text"
+                label="Full Name"
+                {...register("fullName")}
+              />
+            </IonItem>
+            <IonItem>
+              <IonInput
+                onIonInput={(event) => validateHKID2(event)}
+                onIonBlur={() => setIsTouchedHKID(true)}
+                className={`${isValid && "ion-valid"} ${
+                  isValid === false && "ion-invalid"
+                } ${isTouchedHKID && "ion-touched"}`}
+                labelPlacement="floating"
+                // ref={async (phoneInput) => {
+                //   if (phoneInput) {
+                //     const input = await phoneInput.getInputElement();
+                //     HKIDMask(input);
+                //   }
+                // }}
+                {...register("HKID")}
+                type="text"
+                fill="solid"
+                label="Hong Kong Identity Card"
+                placeholder="A 123456 (7)"
+                onIonChange={(e) => {
+                  const value = e.detail.value as string;
+                  const isValid = validateHKID(value);
+                  if (!isValid) {
+                    // 根据需要显示错误信息或执行其他操作
+                    console.log("Invalid HKID");
+                  }
+                  setHkId(value);
+                }}
+              />
+            </IonItem>
+            <IonItem>
+              <IonInput
+                labelPlacement="floating"
+                // helperText="Enter a Card number"
+                // errorText="Invalid email"
+                ref={async (cardRef) => {
+                  if (cardRef) {
+                    const input = await cardRef.getInputElement();
+                    cardMask(input);
+                  }
+                }}
+                label="Card number"
+                placeholder="0000 0000 0000 0000"
+              ></IonInput>
+            </IonItem>
+            <IonItem>
+              <IonInput
+                // helperText="Enter a Phone number"
+                // errorText="Invalid email"
+                // ref={async (phoneInput) => {
+                //   if (phoneInput) {
+                //     const input = await phoneInput.getInputElement();
+                //     phoneMask(input);
+                //   }
+                // }}
+                {...register("HK phone")}
+                type="text"
+                fill="solid"
+                label="HK phone number"
+                labelPlacement="floating"
+                placeholder="+(852) xxxx-xxxx"
+                onIonChange={(e) => {
+                  setHkPhone(e.detail.value as string);
+                }}
+              ></IonInput>
+            </IonItem>
+            <IonItem>
+              <IonInput
+                // value={state.email}
+                onIonInput={(e) => {
+                  setState({ ...state, email: e.detail.value || "" });
+                  setEmail(e.detail.value as string);
+                }}
+                {...register("email")}
+                className={
+                  state.email && !isEmailValid
+                    ? "ion-invalid ion-touched"
+                    : state.email && isEmailValid
+                    ? "ion-valid ion-touched"
+                    : ""
                 }
-              }}
-              type="text"
-              fill="solid"
-              label="Hong Kong Identity Card"
-              placeholder="A 123456 (7)"
-              onIonChange={(e) => {
-                const value = e.detail.value as string;
-                const isValid = validateHKID(value);
-                if (!isValid) {
-                  // 根据需要显示错误信息或执行其他操作
-                  console.log("Invalid HKID");
-                }
-              }}
-            />
-          </IonItem>
-          <IonItem>
-            <IonInput
-              labelPlacement="floating"
-              // helperText="Enter a Card number"
-              // errorText="Invalid email"
-              ref={async (cardRef) => {
-                if (cardRef) {
-                  const input = await cardRef.getInputElement();
-                  cardMask(input);
-                }
-              }}
-              label="Card number"
-              placeholder="0000 0000 0000 0000"
-            ></IonInput>
-          </IonItem>
-          <IonItem>
-            <IonInput
-              // helperText="Enter a Phone number"
-              // errorText="Invalid email"
-              ref={async (phoneInput) => {
-                if (phoneInput) {
-                  const input = await phoneInput.getInputElement();
-                  phoneMask(input);
-                }
-              }}
-              type="text"
-              fill="solid"
-              label="HK phone number"
-              labelPlacement="floating"
-              placeholder="+(852) xxxx-xxxx"
-            ></IonInput>
-          </IonItem>
-          <IonItem>
-            <IonInput
-              value={state.email}
-              onIonInput={(e) =>
-                setState({ ...state, email: e.detail.value || "" })
-              }
-              className={
-                state.email && !isEmailValid
-                  ? "ion-invalid ion-touched"
-                  : state.email && isEmailValid
-                  ? "ion-valid ion-touched"
-                  : ""
-              }
-              type="email"
-              fill="solid"
-              label="Email"
-              labelPlacement="floating"
-              placeholder="example@mail.com"
-            ></IonInput>
-          </IonItem>
-          <p>{state.email}</p>
+                type="email"
+                fill="solid"
+                label="Email"
+                labelPlacement="floating"
+                placeholder="example@mail.com"
+              ></IonInput>
+            </IonItem>
+            <IonButton
+              type="submit"
+              routerLink="/drawKey"
+              disabled={!canSubmit}
+            >
+              SignUp
+            </IonButton>
+          </form>
+          {/* <p>{state.email}</p> */}
         </IonList>
-        <IonButton routerLink="/drawKey" disabled={!canSubmit}>
-          SignUp
-        </IonButton>
         <p>
           Already have an account?
           <IonButton routerLink="/login">Login</IonButton>
