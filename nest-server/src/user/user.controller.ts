@@ -89,4 +89,20 @@ export class UserController {
   uploadFile(@UploadedFile() file: Express.Multer.File) {
     console.log(file)
   }
+
+  @Post('signup')
+  async signup(@Body() body) {
+    let input = object({
+      body: object({
+        email: email(),
+        username: string(),
+        fullname: string(),
+        hkid: string(),
+        // cardnumber: string(),
+        hk_phone: string(),
+      }),
+    }).parse({ body })
+    let result = await this.userService.signup(input.body)
+    return result
+  }
 }

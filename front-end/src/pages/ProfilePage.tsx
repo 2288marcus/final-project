@@ -36,6 +36,15 @@ const ProfilePage: React.FC = () => {
 
   const [displayInformation, setDisplayInformation] = useState<{
     username: string;
+    email: string;
+    human_verification: boolean;
+    cv_upload: string;
+    created_at: string;
+    updated_at: string;
+    fullName: string;
+    HKID: string;
+    public_key: string;
+    HK_phone: string;
   }>();
 
   async function getProfile() {
@@ -44,7 +53,18 @@ const ProfilePage: React.FC = () => {
     console.log(user);
 
     if (user) {
-      setDisplayInformation({ username: user.username });
+      setDisplayInformation({
+        username: user.username,
+        email: user.email,
+        human_verification: user.human_verification,
+        cv_upload: user.cv_upload,
+        created_at: user.created_at,
+        updated_at: user.updated_at,
+        fullName: user.fullName,
+        HKID: user.HKID,
+        public_key: user.public_key,
+        HK_phone: user.HK_phone,
+      });
     }
 
     return;
@@ -118,10 +138,20 @@ const ProfilePage: React.FC = () => {
             </IonButton>
           </form>
         </IonList>
-        <IonItem>
-          <div>username: {displayInformation?.username || "Loading"}</div>
-        </IonItem>
       </IonContent>
+      <div>Username: {displayInformation?.username || "Loading"}</div>
+      <div>Full Name: {displayInformation?.fullName || "Loading"}</div>
+      <div>Email: {displayInformation?.email || "Loading"}</div>
+      <div>HK Phone: {displayInformation?.HK_phone || "Loading"}</div>
+      <div>HKID: {displayInformation?.HKID || "Loading"}</div>
+      <div>
+        Human Verification:
+        {displayInformation?.human_verification || "Loading"}
+      </div>
+      <div>CV: {displayInformation?.cv_upload || "Loading"}</div>
+      <div>Public Key: {displayInformation?.public_key || "Loading"}</div>
+      <div>created_at: {displayInformation?.created_at || "Loading"}</div>
+      <div>updated_at: {displayInformation?.updated_at || "Loading"}</div>
     </IonPage>
   );
 };
