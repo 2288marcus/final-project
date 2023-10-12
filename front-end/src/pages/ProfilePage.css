@@ -1,3 +1,17 @@
-.Hd {
+/* .Hd {
   color: red;
+} */
+.profilecard {
+  /* background-color: limegreen; */
+}
+.IonItem {
+  /* justify-content: space-around; */
+}
+
+.ProfilePage .session-title {
+  width: 100%;
+  text-align: center;
+  margin: 0.5rem;
+  font-size: 1.25rem;
+  font-size: 1.125rem;
 }
