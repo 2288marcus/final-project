@@ -13,11 +13,15 @@ import {
   IonToolbar,
   useIonRouter,
   IonRefresher,
-  IonFooter,
-  IonItemDivider,
-  IonIcon,
   IonCard,
   IonLabel,
+  IonItemDivider,
+  IonItemGroup,
+  IonListHeader,
+  IonRow,
+  IonCol,
+  IonCardContent,
+  IonIcon,
 } from "@ionic/react";
 import React, { useState, ChangeEvent, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
@@ -54,25 +58,57 @@ const ProfilePage: React.FC = () => {
     created_at: string;
     updated_at: string;
     fullName: string;
-    hkId: string;
+    HKID: string;
     public_key: string;
-    hk_phone: string;
+    HK_phone: string;
   }>();
 
   async function getProfile() {
-    let res = await fetch("http://localhost:3000/user/profile/1");
-    let user = await res.json();
-    console.log(user);
-
-    if (user) {
-      setDisplayInformation(user);
+    try {
+      let res = await fetch("http://localhost:3000/user/profile/1");
+      let json = await res.json();
+      let { user, error } = json;
+      if (error) {
+        throw new Error(error);
+      }
+      if (user) {
+        setDisplayInformation({
+          username: user.username,
+          email: user.email,
+          human_verification: user.human_verification,
+          cv_upload: user.cv_upload,
+          created_at: user.created_at,
+          updated_at: user.updated_at,
+          fullName: user.fullName,
+          HKID: user.HKID,
+          public_key: user.public_key,
+          HK_phone: user.HK_phone,
+        });
+      }
+    } catch (error) {
+      console.error(error);
+      // sample data
+      setDisplayInformation({
+        username: "alicewong123",
+        email: "x",
+        human_verification: true,
+        cv_upload: "x",
+        created_at: "x",
+        updated_at: "x",
+        fullName: "Alice Wong",
+        HKID: "x",
+        public_key: "x",
+        HK_phone: "x",
+      });
     }
+
     return;
   }
 
   useEffect(() => {
     getProfile();
   }, []);
+  ///////////////////////////
 
   const [mode, setMode] = useState("view");
 
@@ -305,21 +341,6 @@ const ProfilePage: React.FC = () => {
           </form>
         </IonList>
       </IonContent>
-      <IonFooter>
-        <div>HKID: {displayInformation?.hkId || "Loading"}</div>
-        <div>Username: {displayInformation?.username || "Loading"}</div>
-        <div>Full Name: {displayInformation?.fullName || "Loading"}</div>
-        <div>Email: {displayInformation?.email || "Loading"}</div>
-        <div>HK Phone: {displayInformation?.hk_phone || "Loading"}</div>
-        <div>
-          Human Verification:
-          {displayInformation?.human_verification || "Loading"}
-        </div>
-        <div>CV: {displayInformation?.cv_upload || "Loading"}</div>
-        <div>Public Key: {displayInformation?.public_key || "Loading"}</div>
-        <div>created_at: {displayInformation?.created_at || "Loading"}</div>
-        <div>updated_at: {displayInformation?.updated_at || "Loading"}</div>
-      </IonFooter>
     </IonPage>
   );
 };

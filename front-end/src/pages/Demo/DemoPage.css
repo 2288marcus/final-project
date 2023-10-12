@@ -1,0 +1,16 @@
+.DemoPage .session-title {
+  width: 100%;
+  text-align: center;
+  margin: 0.5rem;
+  font-size: 1.25rem;
+  font-size: 1.125rem;
+}
+
+.DemoPage .HalfInputFieldContainer {
+  gap: 1rem;
+  justify-content: space-between;
+}
+
+.DemoPage .HalfInputField {
+  min-width: calc((100% - 1rem) / 2);
+}

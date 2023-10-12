@@ -46,6 +46,7 @@ import ChatroomList from "./pages/ChatroomList";
 import SettingPage from "./pages/SettingPage";
 import Blockchain from "./pages/Blockchain";
 import Test from "./pages/test";
+import EditPage from "./pages/Demo/EditPage";
 
 setupIonicReact();
 
@@ -95,6 +96,12 @@ const App: React.FC = () => {
                 </Route>
                 <Route path="/ProfilePage" exact={true}>
                   <ProfilePage />
+                </Route>
+                <Route path="/Demo/Create" exact={true}>
+                  <ProfilePage />
+                </Route>
+                <Route path="/Demo/Edit" exact={true}>
+                  <EditPage />
                 </Route>
                 <Route path="/RequirementPage" exact={true}>
                   <RequirementPage />
