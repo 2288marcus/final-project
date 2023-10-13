@@ -1,83 +1,108 @@
 import {
   IonButton,
   IonButtons,
-  IonCardHeader,
   IonContent,
   IonHeader,
   IonInput,
   IonItem,
-  IonList,
   IonMenuButton,
   IonPage,
   IonTitle,
   IonToolbar,
-  useIonRouter,
-  IonRefresher,
-  IonFooter,
-  IonItemDivider,
-  IonIcon,
   IonCard,
   IonLabel,
+  IonItemDivider,
+  IonIcon,
+  setupIonicReact,
 } from "@ionic/react";
-import React, { useState, ChangeEvent, useEffect, useCallback } from "react";
-import { Link } from "react-router-dom";
+import React, { useState, useEffect } from "react";
 import "./ProfilePage.css";
-import { useForm, SubmitHandler } from "react-hook-form";
-import { IonContext } from "@ionic/react/dist/types/contexts/IonContext";
-import {
-  calendarClear,
-  close,
-  closeCircle,
-  create,
-  save,
-} from "ionicons/icons";
+import { close, cloudUpload, create, save } from "ionicons/icons";
+import { selectFile } from "@beenotung/tslib/file";
 
-const ProfilePage: React.FC = () => {
-  const title = "(User update) Person Profile";
-  const { register, handleSubmit } = useForm();
-  const onSubmit = (data: any) => console.log("data:", data);
+type Profile = {
+  username: string;
+  email: string;
+  human_verification: boolean;
+  cv_upload: string;
+  created_at: string;
+  updated_at: string;
+  fullName: string;
+  HKID: string;
+  public_key: string;
+  HK_phone: string;
+};
 
-  ///////////////////////////
+async function getProfile() {
+  let res = await fetch("http://localhost:3000/user/profile/7");
+  let user = await res.json();
+  console.log(user);
+}
 
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+const Test: React.FC = () => {
+  const title = "Information";
 
-  const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    setSelectedFile(file || null);
-  };
+  const [editingField, setEditingField] = useState<keyof Profile>();
 
-  const [displayInformation, setDisplayInformation] = useState<{
-    username: string;
-    email: string;
-    human_verification: boolean;
-    cv_upload: string;
-    created_at: string;
-    updated_at: string;
-    fullName: string;
-    hkId: string;
-    public_key: string;
-    hk_phone: string;
-  }>();
+  const [profile, setProfile] = useState<Profile>();
 
   async function getProfile() {
-    let res = await fetch("http://localhost:3000/user/profile/7");
-    let user = await res.json();
-    console.log(user);
-
-    if (user) {
-      setDisplayInformation(user);
-    }
-    return;
+    setProfile({
+      username: "alicewong123",
+      email: "x",
+      human_verification: true,
+      cv_upload: "x.pdf",
+      created_at: "x",
+      updated_at: "x",
+      fullName: "Alice Wong",
+      HKID: "x",
+      public_key: "x",
+      HK_phone: "x",
+    });
   }
 
   useEffect(() => {
-    getProfile();
+    setTimeout(() => {
+      getProfile();
+    }, 1000);
   }, []);
+  ///////////////////////////
 
-  const [mode, setMode] = useState("view");
+  const profileContext: ProfileContext | null = profile
+    ? {
+        profile,
+        setProfile,
+        resetProfile: getProfile,
+        editingField,
+        setEditingField,
+      }
+    : null;
+
+  const [draftFile, setDraftFile] = useState<File>();
+  const [uploadState, setUploadState] = useState("idle");
+
+  async function selectCVFile() {
+    let [file] = await selectFile({
+      accept: ".pdf,.doc,.docx",
+    });
+    if (!file) return;
+    setDraftFile(file);
+  }
+
+  async function uploadCVFile() {
+    setUploadState("upload");
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+      setDraftFile(undefined);
+    } catch (error) {
+      // show error
+    } finally {
+      setUploadState("idle");
+    }
+  }
 
   return (
-    <IonPage className="ProfilePage">
+    <IonPage className="Profile">
       <IonHeader>
         <IonToolbar>
           <IonButtons slot="start">
@@ -94,234 +119,245 @@ const ProfilePage: React.FC = () => {
           </IonToolbar>
         </IonHeader>
 
-        <div>before</div>
         <IonItemDivider>
           {/* <div className="session-title">Personal Information</div> */}
-          <div className="session-title d-flex ion-justify-content-between ion-align-items-center">
-            <div>
-              {mode == "edit" ? (
+          <div className="session-title">Personal Information</div>
+        </IonItemDivider>
+        <IonCard>
+          {!profileContext ? (
+            <p className="ion-text-center">Loading Profile...</p>
+          ) : (
+            <>
+              <ProfileField
+                profileContext={profileContext}
+                label="Username:"
+                field="username"
+                editable
+              />
+              <ProfileField
+                profileContext={profileContext}
+                label="Public Key:"
+                field="public_key"
+              />
+
+              <div className="d-flex-md HalfInputFieldContainer">
+                <ProfileField
+                  profileContext={profileContext}
+                  label="Full Name:"
+                  field="fullName"
+                  editable
+                />
+                <ProfileField
+                  profileContext={profileContext}
+                  label="Phone(+852):"
+                  field="HK_phone"
+                  editable
+                />
+              </div>
+              <ProfileField
+                profileContext={profileContext}
+                label="Email:"
+                field="email"
+                editable
+              />
+              <div className="d-flex-md HalfInputFieldContainer">
+                <ProfileField
+                  profileContext={profileContext}
+                  label="HKID:"
+                  field="HKID"
+                />
+                <ProfileField
+                  profileContext={profileContext}
+                  label="Human Verification:"
+                  field="human_verification"
+                />
+              </div>
+              <div className="d-flex-md HalfInputFieldContainer">
+                <ProfileField
+                  profileContext={profileContext}
+                  label="Created Date:"
+                  field="created_at"
+                />
+                <ProfileField
+                  profileContext={profileContext}
+                  label="Update Date:"
+                  field="updated_at"
+                />
+              </div>
+              {/* <div className="d-flex-md HalfInputFieldContainer">
+                <ProfileField
+                  profileContext={profileContext}
+                  label="CV:"
+                  field="cv_upload"
+                  editable
+                />
+              </div> */}
+              <IonItem>
+                <IonLabel position="fixed">CV:</IonLabel>
+                <div>{draftFile?.name || profileContext.profile.cv_upload}</div>
+                <IonButtons>
+                  <IonButton
+                    size="small"
+                    color="primary"
+                    onClick={selectCVFile}
+                  >
+                    <IonIcon src={cloudUpload} slot="icon-only"></IonIcon>
+                  </IonButton>
+                </IonButtons>
+              </IonItem>
+              <div className="d-flex">
                 <IonButton
-                  slot="end"
-                  size="small"
                   color="dark"
-                  onClick={() => setMode("view")}
+                  className="flex-grow ion-no-margin"
+                  expand="full"
+                  onClick={() => setDraftFile(undefined)}
+                  hidden={!draftFile || uploadState == "upload"}
                 >
                   <IonIcon src={close} slot="icon-only"></IonIcon>
                 </IonButton>
-              ) : null}
-            </div>
-            <div>Personal Information</div>
-            <div>
-              {mode != "edit" ? (
                 <IonButton
-                  slot="end"
-                  size="small"
-                  onClick={() => setMode("edit")}
+                  color="success"
+                  className="flex-grow ion-no-margin"
+                  expand="full"
+                  onClick={uploadCVFile}
+                  hidden={!draftFile || uploadState == "upload"}
                 >
-                  <IonIcon src={create} slot="icon-only"></IonIcon>
+                  <IonIcon src={save} slot="icon-only"></IonIcon>
                 </IonButton>
-              ) : (
-                <>
-                  <IonButton
-                    slot="end"
-                    size="small"
-                    color="success"
-                    onClick={() => setMode("save")}
-                  >
-                    <IonIcon src={save} slot="icon-only"></IonIcon>
-                  </IonButton>
-                </>
-              )}
-            </div>
-          </div>
-        </IonItemDivider>
-        <div>edit all</div>
-
-        <IonCard>
-          {!displayInformation ? (
-            <p className="ion-text-center">Loading Profile...</p>
-          ) : (
-            <>
-              <IonItem>
-                <IonLabel position="fixed">Username</IonLabel>
-                <IonInput value={displayInformation.username}></IonInput>
-              </IonItem>
-              <IonItem>
-                <IonLabel position="fixed" color="danger">
-                  Email
-                </IonLabel>
-                <IonInput></IonInput>
-              </IonItem>
-              <IonItem>
-                <IonLabel position="fixed">Full Name</IonLabel>
-                <IonInput
-                  value={displayInformation.fullName}
-                  readonly={mode == "view"}
-                ></IonInput>
-              </IonItem>
+                <IonButton
+                  color="success"
+                  className="flex-grow ion-no-margin"
+                  expand="full"
+                  disabled
+                  hidden={uploadState != "upload"}
+                >
+                  Uploading ...
+                </IonButton>
+              </div>
             </>
           )}
         </IonCard>
-        <div>edit each</div>
-        <IonCard>
-          {!displayInformation ? (
-            <p className="ion-text-center">Loading Profile...</p>
-          ) : (
-            <>
-              <IonCardHeader>Mode: {mode}</IonCardHeader>
-              <IonItem>
-                <IonLabel position="fixed">Username</IonLabel>
-                <IonInput value={displayInformation.username}></IonInput>
-              </IonItem>
-              <IonItem>
-                <IonLabel position="fixed" color="danger">
-                  Email
-                </IonLabel>
-                <IonInput></IonInput>
-              </IonItem>
-              <IonItem>
-                <IonLabel position="fixed">Full Name</IonLabel>
-                <IonInput
-                  value={displayInformation.fullName}
-                  readonly={mode == "view"}
-                ></IonInput>
-                {mode == "view" ? (
-                  <IonButton
-                    slot="end"
-                    size="small"
-                    onClick={() => setMode("edit")}
-                  >
-                    <IonIcon src={create} slot="icon-only"></IonIcon>
-                  </IonButton>
-                ) : (
-                  <IonButton
-                    slot="end"
-                    size="small"
-                    color="success"
-                    onClick={() => setMode("view")}
-                  >
-                    <IonIcon src={save} slot="icon-only"></IonIcon>
-                  </IonButton>
-                )}
-              </IonItem>
-            </>
-          )}
-        </IonCard>
-        <div>after</div>
-
-        <IonItemDivider>
-          <IonTitle size="small">Personal Information</IonTitle>
-        </IonItemDivider>
-        <IonCard className="profilecard">
-          <IonItem>
-            <IonItem lines="none">
-              Username: {displayInformation?.username || "Loading"}
-            </IonItem>
-            <IonItem lines="none">
-              (+852) Phone: {displayInformation?.hk_phone || "Loading"}
-            </IonItem>
-          </IonItem>
-          <IonItem>
-            <IonItem lines="none">
-              Email: {displayInformation?.email || "Loading"}
-            </IonItem>
-          </IonItem>
-          <IonItem>
-            <IonItem lines="none">
-              Full Name: {displayInformation?.fullName || "Loading"}
-            </IonItem>
-            <IonItem lines="none">
-              HKID: {displayInformation?.hkId || "Loading"}
-            </IonItem>
-          </IonItem>
-          <IonItem>
-            <IonItem lines="none">
-              Created at: {displayInformation?.created_at || "Loading"}
-            </IonItem>
-            <IonItem lines="none">
-              Updated at: {displayInformation?.updated_at || "Loading"}
-            </IonItem>
-          </IonItem>
-          <IonItem>
-            <IonItem lines="none">
-              Public Key: {displayInformation?.public_key || "Loading"}
-            </IonItem>
-            <IonItem lines="none">
-              Human Verification:
-              {displayInformation?.human_verification || "Loading"}
-            </IonItem>
-          </IonItem>
-          <IonItem>
-            <IonItem> CV:{displayInformation?.cv_upload || "Loading"}</IonItem>
-          </IonItem>
-        </IonCard>
-        <br />
-
-        <IonList>
-          <IonItemDivider>
-            <IonTitle size="small">Information Update</IonTitle>
-          </IonItemDivider>
-          <form onSubmit={handleSubmit(onSubmit)}>
-            <IonItem>
-              <IonInput label="Username" {...register("name")} />
-            </IonItem>
-            <IonItem>
-              <IonInput label="Phone Number" />
-              <IonInput label="Email" />
-            </IonItem>
-            <br />
-            <IonItem>
-              <IonInput>Description</IonInput>
-            </IonItem>
-            <IonItem>
-              Optional:
-              <input
-                type="file"
-                accept=".pdf,.doc,.docx"
-                onChange={handleFileChange}
-                hidden
-                id="file-input"
-              />
-              {/* <label htmlFor="file-input">
-                {selectedFile ? selectedFile.name : "Optional:"}
-              </label> */}
-              <IonButton
-                onClick={() => {
-                  const fileInput = document.getElementById(
-                    "file-input"
-                  ) as HTMLInputElement;
-                  fileInput.click();
-                }}
-                fill="outline"
-                expand="block"
-              >
-                CV Upload
-              </IonButton>
-            </IonItem>
-
-            <IonButton type="submit" expand="full">
-              Send
-            </IonButton>
-          </form>
-        </IonList>
       </IonContent>
-      <IonFooter>
-        <div>HKID: {displayInformation?.hkId || "Loading"}</div>
-        <div>Username: {displayInformation?.username || "Loading"}</div>
-        <div>Full Name: {displayInformation?.fullName || "Loading"}</div>
-        <div>Email: {displayInformation?.email || "Loading"}</div>
-        <div>HK Phone: {displayInformation?.hk_phone || "Loading"}</div>
-        <div>
-          Human Verification:
-          {displayInformation?.human_verification || "Loading"}
-        </div>
-        <div>CV: {displayInformation?.cv_upload || "Loading"}</div>
-        <div>Public Key: {displayInformation?.public_key || "Loading"}</div>
-        <div>created_at: {displayInformation?.created_at || "Loading"}</div>
-        <div>updated_at: {displayInformation?.updated_at || "Loading"}</div>
-      </IonFooter> */}
     </IonPage>
   );
 };
 
-export default ProfilePage;
+type ProfileContext = {
+  profile: Profile;
+  setProfile(value: Profile): void;
+  resetProfile(): void;
+  editingField?: keyof Profile;
+  setEditingField(value?: keyof Profile): void;
+};
+
+function ProfileField(props: {
+  profileContext: ProfileContext;
+  label: string;
+  field: keyof Profile;
+  editable?: boolean;
+}) {
+  type Mode = "view" | "edit" | "cancel" | "save";
+
+  const [mode, setMode] = useState<Mode>("view");
+
+  async function saveProfile() {
+    // TODO post to server
+    setTimeout(() => {
+      setMode("view");
+    }, 5000);
+  }
+
+  const { field, editable } = props;
+  const { setEditingField, resetProfile, profile, setProfile, editingField } =
+    props.profileContext;
+
+  const shouldResetEditingField = mode != "edit" && editingField == field;
+
+  useEffect(() => {
+    if (shouldResetEditingField) {
+      setEditingField();
+    }
+    switch (mode) {
+      case "edit":
+        setEditingField(field);
+        return;
+      case "cancel":
+        resetProfile();
+        setMode("view");
+        return;
+      case "save":
+        saveProfile();
+        return;
+    }
+  }, [
+    shouldResetEditingField,
+    mode,
+    setEditingField,
+    saveProfile,
+    resetProfile,
+    field,
+  ]);
+
+  return (
+    <div className="flex-grow HalfInputField">
+      <IonItem>
+        <IonLabel position={mode == "view" ? "fixed" : "floating"}>
+          {props.label}
+        </IonLabel>
+        <IonInput
+          value={String(profile[field])}
+          onIonChange={(e) =>
+            setProfile({
+              ...profile,
+              [props.field]: e.detail.value || "",
+            })
+          }
+          readonly={mode != "edit"}
+        />
+        <IonButtons slot="end">
+          <IonButton
+            slot="end"
+            size="small"
+            color="primary"
+            onClick={() => setMode("edit")}
+            hidden={!editable || mode != "view"}
+            disabled={editingField && editingField != field}
+          >
+            <IonIcon src={create} slot="icon-only"></IonIcon>
+          </IonButton>
+        </IonButtons>
+      </IonItem>
+      <div className="d-flex">
+        <IonButton
+          color="dark"
+          className="flex-grow ion-no-margin"
+          expand="full"
+          onClick={() => setMode("cancel")}
+          hidden={mode != "edit"}
+        >
+          <IonIcon src={close} slot="icon-only"></IonIcon>
+        </IonButton>
+        <IonButton
+          color="success"
+          className="flex-grow ion-no-margin"
+          expand="full"
+          onClick={() => setMode("save")}
+          hidden={mode != "edit"}
+        >
+          <IonIcon src={save} slot="icon-only"></IonIcon>
+        </IonButton>
+        <IonButton
+          color="success"
+          className="flex-grow ion-no-margin"
+          expand="full"
+          disabled
+          hidden={mode != "save"}
+        >
+          Saving ...
+        </IonButton>
+      </div>
+    </div>
+  );
+}
+
+export default Test;

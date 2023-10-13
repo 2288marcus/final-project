@@ -1,17 +1,21 @@
-/* .Hd {
-  color: red;
-} */
-.profilecard {
-  /* background-color: limegreen; */
-}
-.IonItem {
-  /* justify-content: space-around; */
-}
-
-.ProfilePage .session-title {
+.Profile .session-title {
   width: 100%;
   text-align: center;
   margin: 0.5rem;
   font-size: 1.25rem;
   font-size: 1.125rem;
+}
+
+.Profile .HalfInputFieldContainer {
+  gap: 1rem;
+  justify-content: space-between;
+}
+
+.Profile .HalfInputField {
+  min-width: calc((100% - 1rem) / 2);
+}
+
+.Profile .HalfInputField ion-label {
+  min-width: fit-content;
+  /* min-width: 16ch; */
 }

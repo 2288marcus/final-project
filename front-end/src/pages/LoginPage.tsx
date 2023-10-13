@@ -74,7 +74,7 @@ const LoginPage: React.FC = () => {
             />
           </IonItem>
         </IonList>
-        <IonButton onClick={submit} routerLink="/joblist">
+        <IonButton onClick={submit} routerLink="/index">
           Login
         </IonButton>
         <p>Haven't an account?</p>

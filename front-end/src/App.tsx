@@ -30,9 +30,7 @@ import "./theme/global.css";
 import "./theme/variables.css";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
-import JobList from "./pages/JobList";
-import UserList from "./pages/UserList";
-import Index from "./pages/Index";
+import HomePage from "./pages/HomePage";
 import BookmarkList from "./pages/BookmarkList";
 import ProfilePage from "./pages/ProfilePage";
 import RequirementPage from "./pages/RequirementPage";
@@ -41,7 +39,6 @@ import DownloadKey from "./pages/DownloadKey";
 import UploadKey from "./pages/UploadKey";
 import Welcome from "./pages/Welcome";
 import Chatroom from "./pages/Chatroom";
-import HomePage from "./pages/HomePage";
 import ChatroomList from "./pages/ChatroomList";
 import SettingPage from "./pages/SettingPage";
 import Blockchain from "./pages/Blockchain";
@@ -82,14 +79,8 @@ const App: React.FC = () => {
                 <Route path="/register" exact={true}>
                   <RegisterPage />
                 </Route>
-                <Route path="/Index" exact={true}>
-                  <Index />
-                </Route>
-                <Route path="/UserList" exact={true}>
-                  <UserList />
-                </Route>
-                <Route path="/Joblist" exact={true}>
-                  <JobList />
+                <Route path="/home" exact={true}>
+                  <HomePage />
                 </Route>
                 <Route path="/BookmarkList" exact={true}>
                   <BookmarkList />

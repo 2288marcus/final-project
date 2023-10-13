@@ -55,8 +55,8 @@ const appPages: AppPage[] = [
     mdIcon: mailSharp,
   },
   {
-    title: "Services",
-    url: "/Index",
+    title: "Home",
+    url: "/home",
     iosIcon: earth,
     mdIcon: earth,
   },
