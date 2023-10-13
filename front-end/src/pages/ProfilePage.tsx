@@ -307,7 +307,7 @@ const ProfilePage: React.FC = () => {
           </form>
         </IonList>
       </IonContent>
-      <IonFooter>
+      {/* <IonFooter>
         <div>HKID: {displayInformation?.HKID || "Loading"}</div>
         <div>Username: {displayInformation?.username || "Loading"}</div>
         <div>Full Name: {displayInformation?.fullName || "Loading"}</div>
@@ -321,7 +321,7 @@ const ProfilePage: React.FC = () => {
         <div>Public Key: {displayInformation?.public_key || "Loading"}</div>
         <div>created_at: {displayInformation?.created_at || "Loading"}</div>
         <div>updated_at: {displayInformation?.updated_at || "Loading"}</div>
-      </IonFooter>
+      </IonFooter> */}
     </IonPage>
   );
 };
