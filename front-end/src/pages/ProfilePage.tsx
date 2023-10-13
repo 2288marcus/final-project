@@ -319,7 +319,7 @@ const ProfilePage: React.FC = () => {
         <div>Public Key: {displayInformation?.public_key || "Loading"}</div>
         <div>created_at: {displayInformation?.created_at || "Loading"}</div>
         <div>updated_at: {displayInformation?.updated_at || "Loading"}</div>
-      </IonFooter> */}
+      </IonFooter>
     </IonPage>
   );
 };
