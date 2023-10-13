@@ -2,6 +2,9 @@ import {
   Body,
   Controller,
   Get,
+  Header,
+  Headers,
+  NotImplementedException,
   Param,
   Patch,
   Post,
@@ -19,6 +22,12 @@ import { extname } from 'path'
 export class UserController {
   constructor(private userService: UserService) {}
 
+  @Get('profile')
+  getSelfProfile(@Headers('Authorization') authorization) {
+    let user_id = 1
+    return this.userService.getSelfProfile(user_id)
+  }
+
   @Get('profile/:id')
   getProfile(@Param() params) {
     let input = object({
@@ -26,7 +35,7 @@ export class UserController {
         id: id(),
       }),
     }).parse({ params })
-    return this.userService.getProfile(input.params.id)
+    return this.userService.getPublicProfile(input.params.id)
   }
 
   @Patch(':profile')

@@ -19,64 +19,53 @@ import React, { useState, useEffect } from "react";
 import "./ProfilePage.css";
 import { close, cloudUpload, create, save } from "ionicons/icons";
 import { selectFile } from "@beenotung/tslib/file";
+import { api_origin, get } from "../api/config";
+import { ParseResult, boolean, nullable, object, string } from "cast.ts";
+import useGet from "../hooks/useGet";
 
-type Profile = {
-  username: string;
-  email: string;
-  human_verification: boolean;
-  cv_upload: string;
-  created_at: string;
-  updated_at: string;
-  fullName: string;
-  HKID: string;
-  public_key: string;
-  HK_phone: string;
-};
+let getProfileParser = object({
+  profile: object({
+    username: string(),
+    email: string(),
+    human_verification: boolean(),
+    cv_upload: nullable(string()),
+    created_at: string(),
+    updated_at: string(),
+    fullName: string(),
+    HKID: string(),
+    public_key: string(),
+    HK_phone: string(),
+  }),
+});
 
-async function getProfile() {
-  let res = await fetch("http://localhost:3000/user/profile/7");
-  let user = await res.json();
-  console.log(user);
-}
+type Profile = ParseResult<typeof getProfileParser>["profile"];
 
 const Test: React.FC = () => {
   const title = "Information";
 
   const [editingField, setEditingField] = useState<keyof Profile>();
 
-  const [profile, setProfile] = useState<Profile>();
+  const getProfileResult = useGet("/user/profile", getProfileParser);
 
-  async function getProfile() {
-    setProfile({
-      username: "alicewong123",
-      email: "x",
-      human_verification: true,
-      cv_upload: "x.pdf",
-      created_at: "x",
-      updated_at: "x",
-      fullName: "Alice Wong",
-      HKID: "x",
-      public_key: "x",
-      HK_phone: "x",
-    });
+  function setProfile(profile: Profile) {
+    getProfileResult.setData({ profile });
   }
+  const resetProfile = getProfileResult.reload;
 
-  useEffect(() => {
-    setTimeout(() => {
-      getProfile();
-    }, 1000);
-  }, []);
+  // setProfile({
+  //   username: "alicewong123",
+  //   email: "x",
+  //   human_verification: true,
+  //   cv_upload: "x.pdf",
+  //   created_at: "x",
+  //   updated_at: "x",
+  //   fullName: "Alice Wong",
+  //   HKID: "x",
+  //   public_key: "x",
+  //   HK_phone: "x",
+  // });
+
   ///////////////////////////
-
-  const profileContext: ProfileContext | null = profile
-    ? {
-        profile,
-        setProfile,
-        resetProfile: getProfile,
-        editingField,
-        setEditingField,
-      }
-    : null;
 
   const [draftFile, setDraftFile] = useState<File>();
   const [uploadState, setUploadState] = useState("idle");
@@ -124,118 +113,129 @@ const Test: React.FC = () => {
           <div className="session-title">Personal Information</div>
         </IonItemDivider>
         <IonCard>
-          {!profileContext ? (
-            <p className="ion-text-center">Loading Profile...</p>
-          ) : (
-            <>
-              <ProfileField
-                profileContext={profileContext}
-                label="Username:"
-                field="username"
-                editable
-              />
-              <ProfileField
-                profileContext={profileContext}
-                label="Public Key:"
-                field="public_key"
-              />
+          {getProfileResult.render((json) => {
+            const profile = json.profile;
+            const profileContext: ProfileContext = {
+              profile,
+              setProfile,
+              resetProfile,
+              editingField,
+              setEditingField,
+            };
 
-              <div className="d-flex-md HalfInputFieldContainer">
+            return (
+              <>
                 <ProfileField
                   profileContext={profileContext}
-                  label="Full Name:"
-                  field="fullName"
+                  label="Username:"
+                  field="username"
                   editable
                 />
                 <ProfileField
                   profileContext={profileContext}
-                  label="Phone(+852):"
-                  field="HK_phone"
+                  label="Public Key:"
+                  field="public_key"
+                />
+
+                <div className="d-flex-md HalfInputFieldContainer">
+                  <ProfileField
+                    profileContext={profileContext}
+                    label="Full Name:"
+                    field="fullName"
+                    editable
+                  />
+                  <ProfileField
+                    profileContext={profileContext}
+                    label="Phone(+852):"
+                    field="HK_phone"
+                    editable
+                  />
+                </div>
+                <ProfileField
+                  profileContext={profileContext}
+                  label="Email:"
+                  field="email"
                   editable
                 />
-              </div>
-              <ProfileField
-                profileContext={profileContext}
-                label="Email:"
-                field="email"
-                editable
-              />
-              <div className="d-flex-md HalfInputFieldContainer">
-                <ProfileField
-                  profileContext={profileContext}
-                  label="HKID:"
-                  field="HKID"
-                />
-                <ProfileField
-                  profileContext={profileContext}
-                  label="Human Verification:"
-                  field="human_verification"
-                />
-              </div>
-              <div className="d-flex-md HalfInputFieldContainer">
-                <ProfileField
-                  profileContext={profileContext}
-                  label="Created Date:"
-                  field="created_at"
-                />
-                <ProfileField
-                  profileContext={profileContext}
-                  label="Update Date:"
-                  field="updated_at"
-                />
-              </div>
-              {/* <div className="d-flex-md HalfInputFieldContainer">
-                <ProfileField
-                  profileContext={profileContext}
-                  label="CV:"
-                  field="cv_upload"
-                  editable
-                />
-              </div> */}
-              <IonItem>
-                <IonLabel position="fixed">CV:</IonLabel>
-                <div>{draftFile?.name || profileContext.profile.cv_upload}</div>
-                <IonButtons>
+                <div className="d-flex-md HalfInputFieldContainer">
+                  <ProfileField
+                    profileContext={profileContext}
+                    label="HKID:"
+                    field="HKID"
+                  />
+                  <ProfileField
+                    profileContext={profileContext}
+                    label="Human Verification:"
+                    field="human_verification"
+                  />
+                </div>
+                <div className="d-flex-md HalfInputFieldContainer">
+                  <ProfileField
+                    profileContext={profileContext}
+                    label="Created Date:"
+                    field="created_at"
+                  />
+                  <ProfileField
+                    profileContext={profileContext}
+                    label="Update Date:"
+                    field="updated_at"
+                  />
+                </div>
+                {/* <div className="d-flex-md HalfInputFieldContainer">
+   <ProfileField
+     profileContext={profileContext}
+     label="CV:"
+     field="cv_upload"
+     editable
+   />
+ </div> */}
+                <IonItem>
+                  <IonLabel position="fixed">CV:</IonLabel>
+                  <div>
+                    {draftFile?.name || profileContext.profile.cv_upload}
+                  </div>
+                  <IonButtons>
+                    <IonButton
+                      size="small"
+                      color="primary"
+                      onClick={selectCVFile}
+                    >
+                      <IonIcon src={cloudUpload} slot="icon-only"></IonIcon>
+                    </IonButton>
+                  </IonButtons>
+                </IonItem>
+                <div className="d-flex">
                   <IonButton
-                    size="small"
-                    color="primary"
-                    onClick={selectCVFile}
+                    color="dark"
+                    className="flex-grow ion-no-margin"
+                    expand="full"
+                    onClick={() => setDraftFile(undefined)}
+                    hidden={!draftFile || uploadState == "upload"}
                   >
-                    <IonIcon src={cloudUpload} slot="icon-only"></IonIcon>
+                    <IonIcon src={close} slot="icon-only"></IonIcon>
                   </IonButton>
-                </IonButtons>
-              </IonItem>
-              <div className="d-flex">
-                <IonButton
-                  color="dark"
-                  className="flex-grow ion-no-margin"
-                  expand="full"
-                  onClick={() => setDraftFile(undefined)}
-                  hidden={!draftFile || uploadState == "upload"}
-                >
-                  <IonIcon src={close} slot="icon-only"></IonIcon>
-                </IonButton>
-                <IonButton
-                  color="success"
-                  className="flex-grow ion-no-margin"
-                  expand="full"
-                  onClick={uploadCVFile}
-                  hidden={!draftFile || uploadState == "upload"}
-                >
-                  <IonIcon src={save} slot="icon-only"></IonIcon>
-                </IonButton>
-                <IonButton
-                  color="success"
-                  className="flex-grow ion-no-margin"
-                  expand="full"
-                  disabled
-                  hidden={uploadState != "upload"}
-                >
-                  Uploading ...
-                </IonButton>
-              </div>
-            </>
-          )}
+                  <IonButton
+                    color="success"
+                    className="flex-grow ion-no-margin"
+                    expand="full"
+                    onClick={uploadCVFile}
+                    hidden={!draftFile || uploadState == "upload"}
+                  >
+                    <IonIcon src={save} slot="icon-only"></IonIcon>
+                  </IonButton>
+                  <IonButton
+                    color="success"
+                    className="flex-grow ion-no-margin"
+                    expand="full"
+                    disabled
+                    hidden={uploadState != "upload"}
+                  >
+                    Uploading ...
+                  </IonButton>
+                </div>
+              </>
+            );
+          })}
         </IonCard>
       </IonContent>
     </IonPage>
