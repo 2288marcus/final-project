@@ -1,12 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   IonButton,
   IonButtons,
   IonContent,
   IonHeader,
-  IonInput,
-  IonItem,
-  IonList,
   IonMenuButton,
   IonPage,
   IonProgressBar,
@@ -14,12 +11,14 @@ import {
   IonToolbar,
   useIonRouter,
 } from "@ionic/react";
-import { Link } from "react-router-dom";
 import forge from "node-forge";
 
-interface Coordinate {
+interface Track {
   x: number;
   y: number;
+  r: number;
+  g: number;
+  b: number;
 }
 
 const DrawKey: React.FC = () => {
@@ -28,7 +27,31 @@ const DrawKey: React.FC = () => {
   const [seed, setSeed] = useState("");
   const [progress, setProgress] = useState(0);
   const [keypair, setKeyPair] = useState<forge.pki.KeyPair | undefined>();
-  const [track, setTrack] = useState<Coordinate[]>([]);
+  const [tracks, setTracks] = useState<Track[]>([]);
+
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+
+  useEffect(() => {
+    let canvas = canvasRef.current;
+    if (!canvas) return;
+    let context = canvas.getContext("2d");
+    if (!context) return;
+    let rect = canvas.getBoundingClientRect();
+    canvas.width = rect.width;
+    canvas.height = rect.height;
+    context.clearRect(0, 0, canvas.width, canvas.height);
+    for (let track of tracks) {
+      let maxR = 10;
+      let step = 1;
+      let a = 0.15;
+      for (let size = 1; size < maxR; size += step) {
+        context.fillStyle = `rgba(${track.r}, ${track.g}, ${track.b}, ${a})`;
+        context.beginPath();
+        context.arc(track.x, track.y, size, 0, 2 * Math.PI);
+        context.fill();
+      }
+    }
+  }, [canvasRef.current, tracks]);
 
   useEffect(() => {
     if (progress >= 1) {
@@ -36,31 +59,41 @@ const DrawKey: React.FC = () => {
         seed: forge.util.decode64(seed),
       });
       setKeyPair(keypair);
+    } else {
+      setKeyPair(undefined);
     }
   }, [seed, progress]);
 
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    setProgress(Math.min(progress + 0.004, 1));
+  const handleMouseMove = (e: React.MouseEvent<HTMLElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+
+    const newTracks: Track[] = [
+      ...tracks,
+      {
+        x,
+        y,
+        r: Math.floor(Math.random() * 256),
+        g: Math.floor(Math.random() * 256),
+        b: Math.floor(Math.random() * 256),
+      },
+    ];
+    setTracks(newTracks);
+
     const hash = forge.sha256.create();
-    hash.update(seed + e.movementX + e.movementY);
+    hash.update(JSON.stringify(newTracks));
     setSeed(forge.util.encode64(hash.digest().bytes()));
 
-    const { clientX, clientY } = e;
-    setTrack((prevTrack) => [...prevTrack, { x: clientX, y: clientY }]);
+    setProgress(Math.min(progress + 0.003, 1));
   };
 
   const handleReset = () => {
     setProgress(0);
     setSeed("");
-    setTrack([]); // 清空绘图轨迹
+    setTracks([]); // 清空绘图轨迹
   };
 
-  const getRandomRGB = () => {
-    const red = Math.floor(Math.random() * 256);
-    const green = Math.floor(Math.random() * 256);
-    const blue = Math.floor(Math.random() * 256);
-    return `rgb(${red}, ${green}, ${blue})`;
-  };
   return (
     <IonPage>
       <IonHeader>
@@ -75,32 +108,20 @@ const DrawKey: React.FC = () => {
         <div>Draw the key</div>
         <IonButton onClick={handleReset}>Reset</IonButton>
 
-        <div
+        <canvas
+          ref={canvasRef}
           style={{
             border: "1px solid",
             // padding: "1rem",
             display: "flex",
             height: "20rem",
             maxHeight: "50vh",
+            width: "100%",
             justifyContent: "center",
             alignItems: "center",
           }}
           onMouseMove={handleMouseMove}
-        >
-          {/* 绘制轨迹 */}
-          <svg width="100%" height="100%">
-            <polyline
-              points={track.map((point) => `${point.x},${point.y}`).join(" ")}
-              fill="none"
-              stroke={getRandomRGB()} // 设置为彩色值，例如 "blue", "#FF0000", "rgb(255, 0, 0)" 等
-              stroke-opacity="0.8" // 设置不透明度
-              stroke-width="2" // 设置宽度
-              stroke-linecap="round" // 设置线条端点形状
-              stroke-linejoin="round" // 设置线条相交处形状
-              // stroke-dasharray="5, 2" // 设置虚线样式
-            />
-          </svg>
-        </div>
+        ></canvas>
         <div>
           <div className="ion-margin ion-text-center">
             Progress: {(progress * 100).toFixed(1)}%

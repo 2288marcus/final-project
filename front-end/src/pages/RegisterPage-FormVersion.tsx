@@ -13,7 +13,7 @@ import {
 } from "@ionic/react";
 import { useMaskito } from "@maskito/react";
 import React, { useState, useEffect } from "react";
-import { useForm, SubmitHandler, set } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { is_email } from "@beenotung/tslib/validate";
 
 const RegisterPage: React.FC = () => {
