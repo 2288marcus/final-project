@@ -60,7 +60,7 @@ const ProfilePage: React.FC = () => {
   }>();
 
   async function getProfile() {
-    let res = await fetch("http://localhost:3000/user/profile/1");
+    let res = await fetch("http://localhost:3000/user/profile/7");
     let user = await res.json();
     console.log(user);
 
