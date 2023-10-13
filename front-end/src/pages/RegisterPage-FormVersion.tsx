@@ -15,13 +15,12 @@ import { useMaskito } from "@maskito/react";
 import React, { useState, useEffect } from "react";
 import { useForm, SubmitHandler, set } from "react-hook-form";
 import { is_email } from "@beenotung/tslib/validate";
-import { language } from "ionicons/icons";
-import { prop } from "@beenotung/tslib";
 
 const RegisterPage: React.FC = () => {
   const title = "Register";
 
   const [stateUsername, setStateUsername] = useState({ username: "" });
+  const [stateEmail, setStateEmail] = useState({ email: "" });
   const [stateHKID, setStateHKID] = useState({ hkId: "" });
   const [stateCard, setStateCard] = useState({ card: "" });
   const [statePhone, setStatePhone] = useState({ hk_phone: "" });
@@ -96,6 +95,7 @@ const RegisterPage: React.FC = () => {
   });
 
   const [isTouchedHKID, setIsTouchedHKID] = useState(false);
+  const [isTouchedEmail, setIsTouchedEmail] = useState(false);
   const [isTouchedPhone, setIsTouchedPhone] = useState(false);
   const [isTouchedCard, setIsTouchedCard] = useState(false);
   const [isTouchedUsername, setIsTouchedUsername] = useState(false);
@@ -103,23 +103,15 @@ const RegisterPage: React.FC = () => {
   const [HKID, setHKID] = useState<string>();
   const [Card, setCard] = useState<string>();
   const [phone, setPhone] = useState<string>();
+  const [email, setEmail] = useState<string>();
   const [username, setUsername] = useState<string>();
 
   const [IsValidUsername, setIsValidUsername] = useState<boolean>();
   const [IsValidHKID, setIsValidHKID] = useState<boolean>();
   const [IsValidPhone, setIsValidPhone] = useState<boolean>();
   const [IsValidCard, setIsValidCard] = useState<boolean>();
-
+  const isEmailValid = is_email(email as string);
   const { register, handleSubmit } = useForm();
-
-  const [state, setState] = useState({ email: "", username: "" });
-  type State = typeof state;
-
-  function update(patch: Partial<State>) {
-    setState((state) => ({ ...state, ...patch }));
-  }
-
-  const isEmailValid = is_email(state.email);
 
   const canSubmit = isEmailValid;
   // IsValidHKID &&
@@ -154,38 +146,6 @@ const RegisterPage: React.FC = () => {
       });
   };
 
-  function renderField(props: {
-    field: keyof State;
-    type: "email" | "text" | "tel";
-    label: string;
-    placeholder: string;
-  }) {
-    const { field } = props;
-    const value = state[field];
-    return (
-      <IonItem>
-        <IonInput
-          value={value}
-          onIonInput={(e) => {
-            update({ [props.field]: e.detail.value || "" });
-          }}
-          className={
-            value && !isEmailValid
-              ? "ion-invalid ion-touched"
-              : value && isEmailValid
-              ? "ion-valid ion-touched"
-              : ""
-          }
-          type={props.type}
-          fill="solid"
-          label={props.label}
-          labelPlacement="floating"
-          placeholder="example@mail.com"
-        ></IonInput>
-      </IonItem>
-    );
-  }
-
   return (
     <IonPage>
       <IonHeader>
@@ -211,7 +171,7 @@ const RegisterPage: React.FC = () => {
                 labelPlacement="floating"
                 className={`${IsValidUsername && "ion-valid"} ${
                   IsValidUsername === false && "ion-invalid"
-                } ${isTouchedUsername && "ion-touched"}`}
+                } ${isTouchedEmail && "ion-touched"}`}
                 fill="solid"
                 type="text"
                 label="Username"
@@ -321,14 +281,15 @@ const RegisterPage: React.FC = () => {
             </IonItem>
             <IonItem>
               <IonInput //email
-                value={state.email}
                 onIonInput={(e) => {
-                  update({ email: e.detail.value || "" });
+                  setStateEmail({ ...stateEmail, email: e.detail.value || "" });
+                  setEmail(e.detail.value as string);
                 }}
+                {...register("email")}
                 className={
-                  state.email && !isEmailValid
+                  stateEmail.email && !isEmailValid
                     ? "ion-invalid ion-touched"
-                    : state.email && isEmailValid
+                    : stateEmail.email && isEmailValid
                     ? "ion-valid ion-touched"
                     : ""
                 }
@@ -339,12 +300,6 @@ const RegisterPage: React.FC = () => {
                 placeholder="example@mail.com"
               ></IonInput>
             </IonItem>
-            {renderField({
-              field: "email",
-              type: "email",
-              label: "Email",
-              placeholder: "example@mail.com",
-            })}
             <IonButton
               type="submit"
               routerLink="/drawKey"

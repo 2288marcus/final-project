@@ -54,27 +54,25 @@ const ProfilePage: React.FC = () => {
     created_at: string;
     updated_at: string;
     fullName: string;
-    HKID: string;
+    hkId: string;
     public_key: string;
-    HK_phone: string;
+    hk_phone: string;
   }>();
 
   async function getProfile() {
-    let res = await fetch("http://localhost:3000/user/profile/1");
+    let res = await fetch("http://localhost:3000/user/profile/7");
     let user = await res.json();
     console.log(user);
 
     if (user) {
       setDisplayInformation(user);
     }
-
     return;
   }
 
   useEffect(() => {
     getProfile();
   }, []);
-  ///////////////////////////
 
   const [mode, setMode] = useState("view");
 
@@ -220,7 +218,7 @@ const ProfilePage: React.FC = () => {
               Username: {displayInformation?.username || "Loading"}
             </IonItem>
             <IonItem lines="none">
-              (+852) Phone: {displayInformation?.HK_phone || "Loading"}
+              (+852) Phone: {displayInformation?.hk_phone || "Loading"}
             </IonItem>
           </IonItem>
           <IonItem>
@@ -233,7 +231,7 @@ const ProfilePage: React.FC = () => {
               Full Name: {displayInformation?.fullName || "Loading"}
             </IonItem>
             <IonItem lines="none">
-              HKID: {displayInformation?.HKID || "Loading"}
+              HKID: {displayInformation?.hkId || "Loading"}
             </IonItem>
           </IonItem>
           <IonItem>
@@ -307,12 +305,12 @@ const ProfilePage: React.FC = () => {
           </form>
         </IonList>
       </IonContent>
-      {/* <IonFooter>
-        <div>HKID: {displayInformation?.HKID || "Loading"}</div>
+      <IonFooter>
+        <div>HKID: {displayInformation?.hkId || "Loading"}</div>
         <div>Username: {displayInformation?.username || "Loading"}</div>
         <div>Full Name: {displayInformation?.fullName || "Loading"}</div>
         <div>Email: {displayInformation?.email || "Loading"}</div>
-        <div>HK Phone: {displayInformation?.HK_phone || "Loading"}</div>
+        <div>HK Phone: {displayInformation?.hk_phone || "Loading"}</div>
         <div>
           Human Verification:
           {displayInformation?.human_verification || "Loading"}
