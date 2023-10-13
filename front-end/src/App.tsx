@@ -44,6 +44,7 @@ import SettingPage from "./pages/SettingPage";
 import Blockchain from "./pages/Blockchain";
 import Test from "./pages/test";
 import EditPage from "./pages/Demo/EditPage";
+import { routes } from "./routes";
 
 setupIonicReact();
 
@@ -79,7 +80,7 @@ const App: React.FC = () => {
                 <Route path="/register" exact={true}>
                   <RegisterPage />
                 </Route>
-                <Route path="/home" exact={true}>
+                <Route path={routes.home} exact={true}>
                   <HomePage />
                 </Route>
                 <Route path="/BookmarkList" exact={true}>

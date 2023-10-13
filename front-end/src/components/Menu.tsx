@@ -39,6 +39,7 @@ import {
 } from "ionicons/icons";
 import "./Menu.css";
 import useToken from "../hooks/useToken";
+import { routes } from "../routes";
 
 interface AppPage {
   url: string;
@@ -56,7 +57,7 @@ const appPages: AppPage[] = [
   },
   {
     title: "Home",
-    url: "/home",
+    url: routes.home,
     iosIcon: earth,
     mdIcon: earth,
   },
