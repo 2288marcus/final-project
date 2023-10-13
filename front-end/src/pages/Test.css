@@ -1,0 +1,21 @@
+.Test .session-title {
+  width: 100%;
+  text-align: center;
+  margin: 0.5rem;
+  font-size: 1.25rem;
+  font-size: 1.125rem;
+}
+
+.Test .HalfInputFieldContainer {
+  gap: 1rem;
+  justify-content: space-between;
+}
+
+.Test .HalfInputField {
+  min-width: calc((100% - 1rem) / 2);
+}
+
+.Test .HalfInputField ion-label {
+  min-width: fit-content;
+  /* min-width: 16ch; */
+}
