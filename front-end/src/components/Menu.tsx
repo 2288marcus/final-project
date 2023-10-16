@@ -80,7 +80,7 @@ const appPages: AppPage[] = [
     mdIcon: mail,
   },
   {
-    title: "Profile",
+    title: "Self-Profile",
     url: routes.ProfilePage,
     iosIcon: personCircle,
     mdIcon: personCircle,
@@ -102,6 +102,12 @@ const appPages: AppPage[] = [
     url: routes.Blockchain,
     iosIcon: link,
     mdIcon: link,
+  },
+  {
+    title: "Profile Checking",
+    url: routes.ProfileCheckPage,
+    iosIcon: personCircle,
+    mdIcon: personCircle,
   },
 ];
 

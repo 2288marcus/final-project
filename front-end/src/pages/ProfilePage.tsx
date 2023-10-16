@@ -14,6 +14,7 @@ import {
   IonItemDivider,
   IonIcon,
   setupIonicReact,
+  IonTextarea,
 } from "@ionic/react";
 import React, { useState, useEffect } from "react";
 import "./ProfilePage.css";
@@ -136,7 +137,6 @@ const Test: React.FC = () => {
                   label="Public Key:"
                   field="public_key"
                 />
-
                 <div className="d-flex-md HalfInputFieldContainer">
                   <ProfileField
                     profileContext={profileContext}
@@ -189,6 +189,11 @@ const Test: React.FC = () => {
      editable
    />
  </div> */}
+                <IonItem>
+                  <IonLabel>Description</IonLabel>
+                  <IonTextarea placeholder="Self-information" />
+                </IonItem>
+
                 <IonItem>
                   <IonLabel position="fixed">CV:</IonLabel>
                   <div>

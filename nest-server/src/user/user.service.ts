@@ -65,4 +65,19 @@ export class UserService {
       .into('user')
       .returning('id')
   }
+
+  /////////////////////////////////
+
+  async getjoblist(id: number) {
+    let profile = await this.knex
+      .select('id', 'user_id', 'title', 'description', 'price', 'type')
+      .from('job')
+      .where({ id })
+      .first()
+    // if (!profile) throw new NotFoundException('job not found by id: ' + id)
+    // profile.cv_upload = null
+    return { profile }
+  }
+
+  /////////////////////////////////
 }

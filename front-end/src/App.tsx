@@ -45,6 +45,7 @@ import Blockchain from "./pages/Blockchain";
 import Test from "./pages/test";
 import EditPage from "./pages/Demo/EditPage";
 import { routes } from "./routes";
+import ProfileCheckPage from "./pages/ProfileCheckPage";
 
 setupIonicReact();
 
@@ -124,6 +125,9 @@ const App: React.FC = () => {
                 </Route>
                 <Route path={routes.test} exact={true}>
                   <Test />
+                </Route>
+                <Route path={routes.ProfileCheckPage} exact={true}>
+                  <ProfileCheckPage />
                 </Route>
               </IonRouterOutlet>
             </IonSplitPane>

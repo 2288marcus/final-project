@@ -17,4 +17,5 @@ export let routes = {
   Edit: "/Demo/Edit",
   Create: "/Demo/Create",
   register: "/register",
+  ProfileCheckPage: "/ProfileCheckPage",
 };

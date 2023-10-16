@@ -115,4 +115,11 @@ export class UserController {
     let result = await this.userService.signUp(input.body)
     return result
   }
+  ///////////////////////////////////////
+  @Get('joblist')
+  getjoblist(@Headers('Authorization') authorization) {
+    let user_id = 15
+    return this.userService.getjoblist(user_id)
+  }
+  ///////////////////////////////////////
 }
