@@ -25,7 +25,7 @@ export class UserController {
 
   @Get('profile')
   getSelfProfile(@Headers('Authorization') authorization) {
-    let user_id = 1
+    let user_id = 15
     return this.userService.getSelfProfile(user_id)
   }
 

@@ -12,25 +12,11 @@ import {
 
 import { useLocation } from "react-router-dom";
 import {
-  archiveOutline,
-  archiveSharp,
   bookmarkOutline,
-  heartOutline,
-  heartSharp,
   mailOutline,
   mailSharp,
-  paperPlaneOutline,
-  paperPlaneSharp,
-  trashOutline,
-  trashSharp,
-  warningOutline,
-  warningSharp,
-  searchCircleOutline,
   settingsOutline,
   settingsSharp,
-  searchCircle,
-  chatbox,
-  person,
   personCircle,
   mail,
   reader,
@@ -38,7 +24,6 @@ import {
   link,
 } from "ionicons/icons";
 import "./Menu.css";
-import useToken from "../hooks/useToken";
 import { routes } from "../routes";
 import useAuth from "../hooks/useAuth";
 
@@ -48,6 +33,63 @@ interface AppPage {
   mdIcon: string;
   title: string;
 }
+
+// const appPages: AppPage[] = [
+//   {
+//     title: "Login / Register",
+//     url: routes.login,
+//     iosIcon: mailOutline,
+//     mdIcon: mailSharp,
+//   },
+//   {
+//     title: "Home",
+//     url: routes.home,
+//     iosIcon: earth,
+//     mdIcon: earth,
+//   },
+//   // {
+//   //   title: "BookmarkList",
+//   //   url: "/BookmarkList",
+//   //   iosIcon: heartOutline,
+//   //   mdIcon: heartSharp,
+//   // },
+//   {
+//     title: "Chatroom",
+//     url: routes.Chatroom,
+//     iosIcon: mail,
+//     mdIcon: mail,
+//   },
+//   {
+//     title: "ChatroomList",
+//     url: routes.ChatroomList,
+//     iosIcon: mail,
+//     mdIcon: mail,
+//   },
+//   {
+//     title: "Profile",
+//     url: routes.ProfilePage,
+//     iosIcon: personCircle,
+//     mdIcon: personCircle,
+//   },
+//   {
+//     title: "Submit Job",
+//     url: routes.submit_job,
+//     iosIcon: reader,
+//     mdIcon: reader,
+//   },
+//   {
+//     title: "Setting",
+//     url: routes.SettingPage,
+//     iosIcon: settingsOutline,
+//     mdIcon: settingsSharp,
+//   },
+//   {
+//     title: "BlockChain",
+//     url: routes.Blockchain,
+//     iosIcon: link,
+//     mdIcon: link,
+//   },
+// ];
 
 const labels = ["1", "2", "3", "4", "5", "6"];
 

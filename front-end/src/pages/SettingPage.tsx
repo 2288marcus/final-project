@@ -21,6 +21,7 @@ import {
 
 const SettingPage: React.FC = () => {
   const title = "Setting";
+  function logout() {}
   return (
     <IonPage>
       <IonHeader>
@@ -46,6 +47,11 @@ const SettingPage: React.FC = () => {
             <IonToggle>Dark Mode</IonToggle>
           </IonItem>
         </IonList>
+        <div className="ion-padding">
+          <IonButton color="dark" onClick={logout}>
+            Logout
+          </IonButton>
+        </div>
       </IonContent>
     </IonPage>
   );

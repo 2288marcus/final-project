@@ -27,6 +27,7 @@ public_key char(64) unique null
 hk_phone varchar(8) unique
 human_verification boolean null
 cv_upload varchar(255) null
+description text null
 
 
 job_comment
