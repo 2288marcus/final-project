@@ -11,6 +11,7 @@ import {
   IonToolbar,
   IonMenuButton,
   IonPage,
+  IonAlert,
 } from "@ionic/react";
 import React, { useEffect, useRef, useState } from "react";
 import forge from "node-forge";
@@ -149,6 +150,7 @@ const RegisterPage: React.FC = () => {
     helperText?: string;
     placeholder?: string;
     maxlength?: number;
+    clearInput: boolean;
     mask?: (value: string) => string;
   }) {
     const { field } = props;
@@ -181,6 +183,7 @@ const RegisterPage: React.FC = () => {
           label={props.label}
           labelPlacement="floating"
           placeholder={props.placeholder}
+          clearInput={props.clearInput}
         ></IonInput>
       </IonItem>
     );
@@ -256,6 +259,21 @@ const RegisterPage: React.FC = () => {
     setTracks([]); // 清空绘图轨迹
   };
 
+  const [privateKeyCopied, setPrivateKeyCopied] = useState(false);
+
+  const copyPrivateKey = () => {
+    if (keyPair && keyPair.privateKey) {
+      navigator.clipboard
+        .writeText(toBase64(keyPair.privateKey))
+        .then(() => {
+          setPrivateKeyCopied(false);
+        })
+        .catch((error) => {
+          console.error("Failed to copy private key:", error);
+        });
+    }
+  };
+
   return (
     <IonPage>
       <IonHeader>
@@ -277,12 +295,14 @@ const RegisterPage: React.FC = () => {
             field: "username",
             type: "text",
             label: "Username",
+            clearInput: true,
             mask: masks.username,
           })}
           {renderField({
             field: "fullName",
             type: "text",
             label: "Full Name",
+            clearInput: true,
             helperText: "as shown on HKID",
             placeholder: "Chan Tai Man",
           })}
@@ -290,6 +310,7 @@ const RegisterPage: React.FC = () => {
             field: "hkId",
             type: "text",
             label: "Hong Kong Identity Card",
+            clearInput: true,
             placeholder: "A 123456 (7)",
             mask: masks.hkId,
           })}
@@ -297,6 +318,7 @@ const RegisterPage: React.FC = () => {
             field: "hk_phone",
             type: "tel",
             label: "HK phone number",
+            clearInput: true,
             placeholder: "+(852) xxxx-xxxx",
             mask: masks.hk_phone,
           })}
@@ -304,6 +326,7 @@ const RegisterPage: React.FC = () => {
             field: "email",
             type: "email",
             label: "Email",
+            clearInput: true,
             placeholder: "example@mail.com",
           })}
         </IonList>
@@ -330,7 +353,7 @@ const RegisterPage: React.FC = () => {
             </div>
             <IonProgressBar value={progress}></IonProgressBar>
             <div className="ion-margin" style={{ fontFamily: "monospace" }}>
-              Seed: {seed || "none"}
+              {/* Seed: {seed || "none"} */}
             </div>
             {keyPair ? (
               <>
@@ -351,6 +374,21 @@ const RegisterPage: React.FC = () => {
           >
             signUp
           </IonButton>
+          <IonButton
+            id="copied-alert"
+            // disabled={privateKeyCopied}
+            disabled={progress < 1}
+            onClick={copyPrivateKey}
+          >
+            {privateKeyCopied ? "Private Key Copied" : "Copy Private Key"}
+          </IonButton>
+          <IonAlert
+            trigger="copied-alert"
+            header="Alert"
+            subHeader="private key copied."
+            // message="Private key copied"
+            buttons={["OK"]}
+          ></IonAlert>
           Already have an account?
           <IonButton routerLink="/login">Login</IonButton>
         </>

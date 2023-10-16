@@ -3,25 +3,17 @@ import {
   IonButtons,
   IonContent,
   IonHeader,
-  IonInput,
   IonItem,
   IonList,
   IonMenuButton,
   IonPage,
   IonTitle,
   IonToolbar,
-  IonInfiniteScroll,
-  IonInfiniteScrollContent,
-  IonAvatar,
-  IonSegment,
-  IonSegmentButton,
-  IonLabel,
   IonToggle,
 } from "@ionic/react";
 
 const SettingPage: React.FC = () => {
   const title = "Setting";
-  function logout() {}
   return (
     <IonPage>
       <IonHeader>
@@ -47,11 +39,6 @@ const SettingPage: React.FC = () => {
             <IonToggle>Dark Mode</IonToggle>
           </IonItem>
         </IonList>
-        <div className="ion-padding">
-          <IonButton color="dark" onClick={logout}>
-            Logout
-          </IonButton>
-        </div>
       </IonContent>
     </IonPage>
   );

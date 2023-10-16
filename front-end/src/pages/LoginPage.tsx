@@ -82,6 +82,7 @@ const LoginPage: React.FC = () => {
               type="password"
               label="Private Key"
               labelPlacement="floating"
+              clearInput={true}
               value={privateKeyBase64}
               onIonChange={(e) => setPrivateKeyBase64(e.detail.value || "")}
             />

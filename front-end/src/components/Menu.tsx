@@ -107,7 +107,7 @@ const Menu: React.FC = () => {
         }
       : {
           title: "Login / Register",
-          url: routes.home,
+          url: routes.register,
           iosIcon: mailOutline,
           mdIcon: mailSharp,
         },

@@ -52,17 +52,6 @@ const App: React.FC = () => {
     <IonApp>
       <IonReactRouter>
         <IonRouterOutlet>
-          {/* prepare for individual page (FRD009) */}
-          {/* <Route path="/" exact={true}>
-            <Redirect to="/login" />
-          </Route>
-          <Route path="/login" exact={true}>
-            <LoginPage />
-          </Route>
-          <Route path="/register" exact={true}>
-            <RegisterPage />
-          </Route> */}
-
           <Route>
             <IonSplitPane contentId="main">
               <Menu />
@@ -85,6 +74,7 @@ const App: React.FC = () => {
                 {/* <Route path="/BookmarkList" exact={true}>
                   <BookmarkList />
                 </Route> */}
+
                 <Route path={routes.ProfilePage} exact={true}>
                   <ProfilePage />
                 </Route>
