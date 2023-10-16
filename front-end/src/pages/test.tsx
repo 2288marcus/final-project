@@ -15,6 +15,7 @@ import {
   IonIcon,
   setupIonicReact,
   IonTextarea,
+  useIonRouter,
 } from "@ionic/react";
 import React, { useState, useEffect } from "react";
 import "./ProfilePage.css";
@@ -22,33 +23,40 @@ import { close, cloudUpload, create, save } from "ionicons/icons";
 import { selectFile } from "@beenotung/tslib/file";
 import { api_origin, get } from "../api/config";
 import { ParseResult, boolean, nullable, object, string } from "cast.ts";
-import useGet from "../hooks/useGethome";
+import useGet from "../hooks/useGet";
+import useAuth from "../hooks/useAuth";
+import { routes } from "../routes";
 
 let getProfileParser = object({
   profile: object({
-    user_id: string(),
-    title: string(),
-    description: string(),
-    price: string(),
-    type: string(),
+    username: string(),
+    email: string(),
+    human_verification: boolean(),
+    cv_upload: nullable(string()),
     created_at: string(),
     updated_at: string(),
+    fullName: string(),
+    HKID: string(),
+    public_key: string(),
+    HK_phone: string(),
   }),
 });
 
-type Profile = ParseResult<typeof getProfileParser>["joblist"];
+type Profile = ParseResult<typeof getProfileParser>["profile"];
 
 const Test: React.FC = () => {
   const title = "Information";
 
   const [editingField, setEditingField] = useState<keyof Profile>();
 
-  const getProfileResult = useGet("/job/profile", getProfileParser);
+  const getProfileResult = useGet("/user/profile", getProfileParser);
 
   function setProfile(profile: Profile) {
     getProfileResult.setData({ profile });
   }
   const resetProfile = getProfileResult.reload;
+
+  const auth = useAuth();
 
   // setProfile({
   //   username: "alicewong123",
@@ -63,30 +71,37 @@ const Test: React.FC = () => {
   //   HK_phone: "x",
   // });
 
-  // ///////////////////////////
+  ///////////////////////////
 
-  // const [draftFile, setDraftFile] = useState<File>();
-  // const [uploadState, setUploadState] = useState("idle");
+  const [draftFile, setDraftFile] = useState<File>();
+  const [uploadState, setUploadState] = useState("idle");
 
-  // async function selectCVFile() {
-  //   let [file] = await selectFile({
-  //     accept: ".pdf,.doc,.docx",
-  //   });
-  //   if (!file) return;
-  //   setDraftFile(file);
-  // }
+  async function selectCVFile() {
+    let [file] = await selectFile({
+      accept: ".pdf,.doc,.docx",
+    });
+    if (!file) return;
+    setDraftFile(file);
+  }
 
-  // async function uploadCVFile() {
-  //   setUploadState("upload");
-  //   try {
-  //     await new Promise((resolve) => setTimeout(resolve, 2000));
-  //     setDraftFile(undefined);
-  //   } catch (error) {
-  //     // show error
-  //   } finally {
-  //     setUploadState("idle");
-  //   }
-  // }
+  async function uploadCVFile() {
+    setUploadState("upload");
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+      setDraftFile(undefined);
+    } catch (error) {
+      // show error
+    } finally {
+      setUploadState("idle");
+    }
+  }
+
+  const router = useIonRouter();
+
+  function logout() {
+    auth.setState(null);
+    router.push(routes.login, "root");
+  }
 
   return (
     <IonPage className="Profile">
@@ -190,7 +205,7 @@ const Test: React.FC = () => {
                   <IonLabel>Description</IonLabel>
                   <IonTextarea placeholder="Self-information" />
                 </IonItem>
-{/* 
+
                 <IonItem>
                   <IonLabel position="fixed">CV:</IonLabel>
                   <div>
@@ -231,7 +246,7 @@ const Test: React.FC = () => {
                     expand="full"
                     disabled
                     hidden={uploadState != "upload"}
-                  > */}
+                  >
                     Uploading ...
                   </IonButton>
                 </div>
@@ -239,6 +254,9 @@ const Test: React.FC = () => {
             );
           })}
         </IonCard>
+        <div>
+          <IonButton onClick={logout}>Logout</IonButton>
+        </div>
       </IonContent>
     </IonPage>
   );
@@ -323,6 +341,7 @@ function ProfileField(props: {
             color="primary"
             onClick={() => setMode("edit")}
             hidden={!editable || mode != "view"}
+            disabled={editingField && editingField != field}
           >
             <IonIcon src={create} slot="icon-only"></IonIcon>
           </IonButton>

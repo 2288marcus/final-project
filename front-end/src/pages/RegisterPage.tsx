@@ -345,7 +345,7 @@ const RegisterPage: React.FC = () => {
               justifyContent: "center",
               alignItems: "center",
             }}
-            onMouseMove={handleMouseMove}
+            onMouseMove={progress == 1 ? () => {} : handleMouseMove}
           ></canvas>
           <div>
             <div className="ion-margin ion-text-center">
