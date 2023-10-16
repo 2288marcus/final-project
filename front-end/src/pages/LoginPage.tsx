@@ -92,7 +92,7 @@ const LoginPage: React.FC = () => {
           Login
         </IonButton>
         <p>Haven't an account?</p>
-        <IonButton routerLink="/register">Signup</IonButton>
+        <IonButton routerLink="/register">signUp</IonButton>
       </IonContent>
     </IonPage>
   );

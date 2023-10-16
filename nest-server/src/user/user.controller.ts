@@ -129,7 +129,7 @@ export class UserController {
     let input = object({
       body: object({
         now: number(),
-        public_key: string(),
+        public_key: string({ trim: true }),
         signature: string(),
       }),
     }).parse({ body })
