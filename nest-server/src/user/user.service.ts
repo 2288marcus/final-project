@@ -3,7 +3,7 @@ import {
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common'
-import { Knex, knex } from 'knex'
+import { Knex } from 'knex'
 import { InjectModel } from 'nest-knexjs'
 import { verifyObjectSignature } from 'src/utils/encode'
 
@@ -12,7 +12,10 @@ export class UserService {
   constructor(@InjectModel() private readonly knex: Knex) {}
 
   async getUserIdByPublicKey(public_key: string) {
-    let user = await knex('user').where({ public_key }).select('id').first()
+    let user = await this.knex('user')
+      .where({ public_key })
+      .select('id')
+      .first()
     if (!user) throw new NotFoundException('User not found by public key')
     return user.id
   }
@@ -79,20 +82,6 @@ export class UserService {
       .returning('id')
   }
 
-  /////////////////////////////////
-
-  async getjoblist(id: number) {
-    let profile = await this.knex
-      .select('id', 'user_id', 'title', 'description', 'price', 'type')
-      .from('job')
-      .where({ id })
-      .first()
-    // if (!profile) throw new NotFoundException('job not found by id: ' + id)
-    // profile.cv_upload = null
-    return { profile }
-  }
-
-  /////////////////////////////////
   async login(input: { now: number; public_key: string; signature: string }) {
     if (Date.now() - input.now > 10 * 1000)
       throw new UnauthorizedException('Signature expired')
