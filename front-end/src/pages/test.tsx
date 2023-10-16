@@ -34,7 +34,7 @@ type Profile = {
 };
 
 const Test: React.FC = () => {
-  const title = "Test Title";
+  const title = "Test page";
 
   const [editingField, setEditingField] = useState<keyof Profile>();
 

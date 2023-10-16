@@ -30,9 +30,7 @@ import "./theme/global.css";
 import "./theme/variables.css";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
-import JobList from "./pages/JobList";
-import UserList from "./pages/UserList";
-import Index from "./pages/Index";
+import HomePage from "./pages/HomePage";
 import BookmarkList from "./pages/BookmarkList";
 import ProfilePage from "./pages/ProfilePage";
 import RequirementPage from "./pages/RequirementPage";
@@ -41,12 +39,12 @@ import DownloadKey from "./pages/DownloadKey";
 import UploadKey from "./pages/UploadKey";
 import Welcome from "./pages/Welcome";
 import Chatroom from "./pages/Chatroom";
-import HomePage from "./pages/HomePage";
 import ChatroomList from "./pages/ChatroomList";
 import SettingPage from "./pages/SettingPage";
 import Blockchain from "./pages/Blockchain";
 import Test from "./pages/test";
 import EditPage from "./pages/Demo/EditPage";
+import { routes } from "./routes";
 
 setupIonicReact();
 
@@ -70,67 +68,61 @@ const App: React.FC = () => {
             <IonSplitPane contentId="main">
               <Menu />
               <IonRouterOutlet id="main">
-                <Route path="/folder/:name" exact={true}>
+                <Route path={routes.Page} exact={true}>
                   <Page />
                 </Route>
-                <Route path="/" exact={true}>
+                <Route path={routes.default} exact={true}>
                   <LoginPage />
                 </Route>
-                <Route path="/login" exact={true}>
+                <Route path={routes.login} exact={true}>
                   <LoginPage />
                 </Route>
-                <Route path="/register" exact={true}>
+                <Route path={routes.register} exact={true}>
                   <RegisterPage />
                 </Route>
-                <Route path="/Index" exact={true}>
-                  <Index />
+                <Route path={routes.home} exact={true}>
+                  <HomePage />
                 </Route>
-                <Route path="/UserList" exact={true}>
-                  <UserList />
-                </Route>
-                <Route path="/Joblist" exact={true}>
-                  <JobList />
-                </Route>
-                <Route path="/BookmarkList" exact={true}>
+                {/* <Route path="/BookmarkList" exact={true}>
                   <BookmarkList />
-                </Route>
-                <Route path="/ProfilePage" exact={true}>
+                </Route> */}
+                <Route path={routes.ProfilePage} exact={true}>
                   <ProfilePage />
                 </Route>
-                <Route path="/Demo/Create" exact={true}>
+                <Route path={routes.Create} exact={true}>
                   <ProfilePage />
                 </Route>
-                <Route path="/Demo/Edit" exact={true}>
+                <Route path={routes.Edit} exact={true}>
                   <EditPage />
                 </Route>
-                <Route path="/RequirementPage" exact={true}>
+                <Route path={routes.submit_job} exact={true}>
                   <RequirementPage />
                 </Route>
-                <Route path="/DrawKey" exact={true}>
+                <Route path={routes.DrawKey} exact={true}>
                   <DrawKey />
                 </Route>
-                <Route path="/DownloadKey" exact={true}>
+                <Route path={routes.DownloadKey} exact={true}>
                   <DownloadKey />
                 </Route>
-                <Route path="/UploadKey" exact={true}>
+                <Route path={routes.UploadKey} exact={true}>
                   <UploadKey />
                 </Route>
-                <Route path="/welcome" exact={true}>
+                <Route path={routes.welcome} exact={true}>
                   <Welcome />
                 </Route>
-                <Route path="/Chatroom" exact={true}>
+                <Route path={routes.Chatroom} exact={true}>
                   <Chatroom />
                 </Route>
-                <Route path="/ChatroomList" exact={true}>
+                <Route path={routes.ChatroomList} exact={true}>
                   <ChatroomList />
                 </Route>
-                <Route path="/SettingPage" exact={true}>
+                <Route path={routes.SettingPage} exact={true}>
                   <SettingPage />
                 </Route>
-                <Route path="/Blockchain" exact={true}>
+                <Route path={routes.Blockchain} exact={true}>
                   <Blockchain />
                 </Route>
-                <Route path="/test" exact={true}>
+                <Route path={routes.test} exact={true}>
                   <Test />
                 </Route>
               </IonRouterOutlet>

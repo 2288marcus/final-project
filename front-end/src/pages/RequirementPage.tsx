@@ -10,6 +10,8 @@ import {
   IonMenuButton,
   IonNote,
   IonPage,
+  IonSegment,
+  IonSegmentButton,
   IonText,
   IonTitle,
   IonToolbar,
@@ -58,6 +60,20 @@ const RequirementPage: React.FC = () => {
             <IonTitle size="large">{title}</IonTitle>
           </IonToolbar>
         </IonHeader>
+        <IonItem>
+          <IonSegment value="Default" className="demandoffer">
+            <IonSegmentButton value="Demand">
+              <IonLabel>Demand</IonLabel>
+            </IonSegmentButton>
+            <IonSegmentButton value="Default">
+              <IonLabel>Choose one</IonLabel>
+            </IonSegmentButton>
+
+            <IonSegmentButton value="Offer">
+              <IonLabel>Offer</IonLabel>
+            </IonSegmentButton>
+          </IonSegment>
+        </IonItem>
         <IonList>
           <IonItem>
             <IonInput type="text">Title</IonInput>
@@ -112,11 +128,6 @@ const RequirementPage: React.FC = () => {
           <br />
           <br />
           <br />
-          <p>Contact Person (Optional)</p>
-          <IonItem>
-            <IonInput label="Name" labelPlacement="floating" />
-            <IonInput label="Phone" labelPlacement="floating" />
-          </IonItem>
         </IonList>
         <IonButton>Post</IonButton>
       </IonContent>

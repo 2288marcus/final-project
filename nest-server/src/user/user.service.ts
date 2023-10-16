@@ -5,15 +5,44 @@ import { InjectModel } from 'nest-knexjs'
 @Injectable()
 export class UserService {
   constructor(@InjectModel() private readonly knex: Knex) {}
+
   async getUserIdByPublicKey(public_key: string) {
     let user = await knex('user').where({ public_key }).select('id').first()
     if (!user) throw new NotFoundException('User not found by public key')
     return user.id
   }
 
-  async getProfile(id: number) {
-    return await this.knex.select('*').from('user').where({ id }).first()
+  async getSelfProfile(id: number) {
+    let profile = await this.knex
+      .select(
+        'id',
+        'username',
+        'public_key',
+        'email',
+        'hkId as HKID',
+        'cv_upload',
+        'hk_phone as HK_phone',
+        'fullName',
+        'human_verification',
+        'created_at',
+        'updated_at',
+      )
+      .from('user')
+      .where({ id })
+      .first()
+    profile.cv_upload = null
+    return { profile }
   }
+
+  async getPublicProfile(id: number) {
+    // TODO
+    return await this.knex
+      .select('id', 'username')
+      .from('user')
+      .where({ id })
+      .first()
+  }
+
   updateProfile(
     id: number,
     profile: { email: string; desc: string; nickname: string },

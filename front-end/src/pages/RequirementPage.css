@@ -1,4 +1,4 @@
-/* .RequirementPage ion-item.half {
-  max-width: 350px;
-  display: inline-block;
-} */
+.RequirementPage .demandoffer {
+  /* max-width: 350px; */
+  background-color: rgba(190, 190, 240, 0.477);
+}

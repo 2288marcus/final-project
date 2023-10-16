@@ -39,6 +39,7 @@ import {
 } from "ionicons/icons";
 import "./Menu.css";
 import useToken from "../hooks/useToken";
+import { routes } from "../routes";
 
 interface AppPage {
   url: string;
@@ -50,13 +51,13 @@ interface AppPage {
 const appPages: AppPage[] = [
   {
     title: "Login / Register",
-    url: "/login",
+    url: routes.home,
     iosIcon: mailOutline,
     mdIcon: mailSharp,
   },
   {
-    title: "Services",
-    url: "/Index",
+    title: "Home",
+    url: routes.home,
     iosIcon: earth,
     mdIcon: earth,
   },
@@ -68,37 +69,37 @@ const appPages: AppPage[] = [
   // },
   {
     title: "Chatroom",
-    url: "/Chatroom",
-    iosIcon: "",
-    mdIcon: "",
+    url: routes.Chatroom,
+    iosIcon: mail,
+    mdIcon: mail,
   },
   {
     title: "ChatroomList",
-    url: "/ChatroomList",
+    url: routes.ChatroomList,
     iosIcon: mail,
     mdIcon: mail,
   },
   {
     title: "Profile",
-    url: "/ProfilePage",
+    url: routes.ProfilePage,
     iosIcon: personCircle,
     mdIcon: personCircle,
   },
   {
-    title: "Requirement",
-    url: "/RequirementPage",
+    title: "Submit Job",
+    url: routes.submit_job,
     iosIcon: reader,
     mdIcon: reader,
   },
   {
     title: "Setting",
-    url: "/SettingPage",
+    url: routes.SettingPage,
     iosIcon: settingsOutline,
     mdIcon: settingsSharp,
   },
   {
     title: "BlockChain",
-    url: "/Blockchain",
+    url: routes.Blockchain,
     iosIcon: link,
     mdIcon: link,
   },
