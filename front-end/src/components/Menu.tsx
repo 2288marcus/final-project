@@ -78,6 +78,12 @@ const Menu: React.FC = () => {
       iosIcon: mail,
       mdIcon: mail,
     },
+    {
+      title: "Self-Profile",
+      url: routes.ProfilePage,
+      iosIcon: personCircle,
+      mdIcon: personCircle,
+    },
 
     {
       title: "Submit Job",

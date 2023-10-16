@@ -31,6 +31,7 @@ export class UserService {
         'human_verification',
         'created_at',
         'updated_at',
+        'description',
       )
       .from('user')
       .where({ id })
