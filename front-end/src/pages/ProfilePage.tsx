@@ -15,6 +15,7 @@ import {
   IonIcon,
   setupIonicReact,
   IonTextarea,
+  useIonRouter,
 } from "@ionic/react";
 import React, { useState, useEffect } from "react";
 import "./ProfilePage.css";
@@ -23,6 +24,8 @@ import { selectFile } from "@beenotung/tslib/file";
 import { api_origin, get } from "../api/config";
 import { ParseResult, boolean, nullable, object, string } from "cast.ts";
 import useGet from "../hooks/useGet";
+import useAuth from "../hooks/useAuth";
+import { routes } from "../routes";
 
 let getProfileParser = object({
   profile: object({
@@ -52,6 +55,8 @@ const Test: React.FC = () => {
     getProfileResult.setData({ profile });
   }
   const resetProfile = getProfileResult.reload;
+
+  const auth = useAuth();
 
   // setProfile({
   //   username: "alicewong123",
@@ -89,6 +94,13 @@ const Test: React.FC = () => {
     } finally {
       setUploadState("idle");
     }
+  }
+
+  const router = useIonRouter();
+
+  function logout() {
+    auth.setState(null);
+    router.push(routes.login, "root");
   }
 
   return (
@@ -242,6 +254,9 @@ const Test: React.FC = () => {
             );
           })}
         </IonCard>
+        <div>
+          <IonButton onClick={logout}>Logout</IonButton>
+        </div>
       </IonContent>
     </IonPage>
   );

@@ -11,7 +11,6 @@ export let routes = {
   Blockchain: "/Blockchain",
   test: "/test",
   welcome: "/welcome",
-  UploadKey: "/UploadKey",
   DownloadKey: "/DownloadKey",
   DrawKey: "/DrawKey",
   Edit: "/Demo/Edit",

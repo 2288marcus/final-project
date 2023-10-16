@@ -36,7 +36,6 @@ import ProfilePage from "./pages/ProfilePage";
 import RequirementPage from "./pages/RequirementPage";
 import DrawKey from "./pages/DrawKey";
 import DownloadKey from "./pages/DownloadKey";
-import UploadKey from "./pages/UploadKey";
 import Welcome from "./pages/Welcome";
 import Chatroom from "./pages/Chatroom";
 import ChatroomList from "./pages/ChatroomList";
@@ -104,9 +103,6 @@ const App: React.FC = () => {
                 </Route>
                 <Route path={routes.DownloadKey} exact={true}>
                   <DownloadKey />
-                </Route>
-                <Route path={routes.UploadKey} exact={true}>
-                  <UploadKey />
                 </Route>
                 <Route path={routes.welcome} exact={true}>
                   <Welcome />

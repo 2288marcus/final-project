@@ -19,6 +19,9 @@ import {
   is_hk_mobile_phone,
   to_full_hk_mobile_phone,
 } from "@beenotung/tslib/validate";
+import { post } from "../api/config";
+import { object } from "cast.ts";
+import { toBase64, toHex } from "../utils/crypto";
 
 interface Track {
   x: number;
@@ -37,7 +40,6 @@ const RegisterPage: React.FC = () => {
     hkId: "",
     hk_phone: "",
     email: "",
-    // public_key: "",
   });
   const phonePrefix = "+(852) ";
   const phone = state.hk_phone.replace(phonePrefix, "");
@@ -120,40 +122,23 @@ const RegisterPage: React.FC = () => {
     isValidates.hk_phone;
 
   const submit = () => {
+    let public_key = toHex(keyPair!.publicKey);
     let data = {
       ...state,
       hk_phone: to_full_hk_mobile_phone(phone).replace("+852", ""),
       hkId: state.hkId.replace(/ /g, ""),
-      public_key: keyPair?.publicKey.toString("base64"),
+      public_key,
     };
-    console.log(
-      "data:",
-      data,
-      keyPair?.publicKey
-        .toString("base64")
-        .split(",")
-        .map((decimal) => parseInt(decimal))
-        .map((decimal) => decimal.toString(16))
-    );
+    console.log("data:", data);
 
     // 发送POST请求到后端
-    fetch("http://localhost:3000/user/signUp", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
-    })
-      .then((response) => response.json())
-      .then((responseData) => {
-        // 处理后端响应
-        console.log(responseData);
+    post("/user/signUp", data, object({}))
+      .then((res) => {
+        console.log("signUp result:", res);
       })
-      .catch((error) => {
-        // 处理错误
-        console.error(error);
+      .catch((err) => {
+        console.log("signUp fail:", err);
       });
-
     // routerLink="/drawKey"
   };
 
@@ -169,6 +154,7 @@ const RegisterPage: React.FC = () => {
     const { field } = props;
     const value = state[field];
     const isValid = isValidates[field];
+
     return (
       <IonItem>
         <IonInput
@@ -344,35 +330,21 @@ const RegisterPage: React.FC = () => {
             </div>
             <IonProgressBar value={progress}></IonProgressBar>
             <div className="ion-margin" style={{ fontFamily: "monospace" }}>
-              Seed: {seed || "(none)"}
+              Seed: {seed || "none"}
             </div>
             {keyPair ? (
               <>
                 <div className="ion-margin" style={{ fontFamily: "monospace" }}>
-                  Public Key:{" "}
-                  {Array.from(keyPair.publicKey as any).map((x) => {
-                    let s = (x as number).toString(16);
-                    if (s.length === 1) {
-                      return "0" + s;
-                    }
-                    return s;
-                  })}
+                  Public Key: {toBase64(keyPair.publicKey)}
                 </div>
                 <div className="ion-margin" style={{ fontFamily: "monospace" }}>
-                  Private Key:{" "}
-                  {Array.from(keyPair.privateKey as any).map((x) => {
-                    let s = (x as number).toString(16);
-                    if (s.length === 1) {
-                      return "0" + s;
-                    }
-                    return s;
-                  })}
+                  Private Key: {toBase64(keyPair.privateKey)}
                 </div>
               </>
             ) : null}
           </div>
           <IonButton
-            //  routerLink="/DownloadKey"
+            routerLink="/DownloadKey"
             disabled={progress < 1 || !canSubmit}
             // routerLink="/drawKey"
             onClick={submit}
