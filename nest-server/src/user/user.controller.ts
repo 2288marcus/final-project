@@ -98,7 +98,8 @@ export class UserController {
         username: string(),
         fullName: string(),
         hkId: string(),
-        card: string(),
+        public_key: string(),
+        // card: string(),
         hk_phone: string(),
       }),
     }).parse({ body })

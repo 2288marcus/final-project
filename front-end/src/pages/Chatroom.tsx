@@ -28,11 +28,11 @@ import {
   checkmarkDone,
 } from "ionicons/icons";
 import React, { useState, useEffect, useRef } from "react";
-import io from "socket.io-client";
+// import io from "socket.io-client";
 import { api_origin } from "../api/config";
 import "./Chatroom.css";
 
-const socket = io(api_origin);
+// const socket = io(api_origin);
 
 interface Message {
   id: number;
@@ -86,9 +86,9 @@ const Chatroom: React.FC = () => {
   };
 
   useEffect(() => {
-    socket.on("received-message", (message: Message) => {
-      setMessages([...messages, message]);
-    });
+    // socket.on("received-message", (message: Message) => {
+    //   setMessages([...messages, message]);
+    // });
   }, []);
 
   useEffect(() => {
