@@ -81,7 +81,7 @@ export class UserService {
 
   /////////////////////////////////
 
-  async getjoblist(id: number) {
+  async getJobList(id: number) {
     let profile = await this.knex
       .select('id', 'user_id', 'title', 'description', 'price', 'type')
       .from('job')

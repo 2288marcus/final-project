@@ -384,8 +384,8 @@ const RegisterPage: React.FC = () => {
           </IonButton>
           <IonAlert
             trigger="copied-alert"
-            header="Alert"
-            subHeader="private key copied."
+            header="private key copied."
+            // subHeader="private key copied."
             // message="Private key copied"
             buttons={["OK"]}
           ></IonAlert>
