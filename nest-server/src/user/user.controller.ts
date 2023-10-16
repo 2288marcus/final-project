@@ -18,6 +18,7 @@ import { FileInterceptor } from '@nestjs/platform-express'
 import { diskStorage } from 'multer'
 import { extname } from 'path'
 import { verifyObjectSignature } from 'src/utils/encode'
+import { routes } from '../../usersample'
 
 @Controller('user')
 export class UserController {
@@ -25,8 +26,8 @@ export class UserController {
 
   @Get('profile')
   getSelfProfile(@Headers('Authorization') authorization) {
-    let user_id = 15
-    return this.userService.getSelfProfile(user_id)
+    let user_id = routes.default
+    return this.userService.getSelfProfile(+user_id)
   }
 
   @Get('profile/:id')
