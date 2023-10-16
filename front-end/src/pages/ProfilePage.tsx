@@ -39,12 +39,13 @@ let getProfileParser = object({
     HKID: string(),
     public_key: string(),
     HK_phone: string(),
+    description: nullable(string()),
   }),
 });
 
 type Profile = ParseResult<typeof getProfileParser>["profile"];
 
-const Test: React.FC = () => {
+const ProfilePage: React.FC = () => {
   const title = "Information";
 
   const [editingField, setEditingField] = useState<keyof Profile>();
@@ -201,10 +202,12 @@ const Test: React.FC = () => {
      editable
    />
  </div> */}
-                <IonItem>
-                  <IonLabel>Description</IonLabel>
-                  <IonTextarea placeholder="Self-information" />
-                </IonItem>
+                <ProfileField
+                  profileContext={profileContext}
+                  label="Description:"
+                  field="description"
+                  editable
+                />
 
                 <IonItem>
                   <IonLabel position="fixed">CV:</IonLabel>
@@ -380,4 +383,4 @@ function ProfileField(props: {
   );
 }
 
-export default Test;
+export default ProfilePage;
