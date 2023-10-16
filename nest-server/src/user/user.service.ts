@@ -3,6 +3,7 @@ import {
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common'
+import { number, object, string } from 'cast.ts'
 import { Knex, knex } from 'knex'
 import { InjectModel } from 'nest-knexjs'
 import { verifyObjectSignature } from 'src/utils/encode'
@@ -113,6 +114,26 @@ export class UserService {
     if (!user)
       throw new UnauthorizedException('This public key is not registered')
 
-    return { id: user.id }
+    return { id: user.id as number }
+  }
+
+  async authorize(authorization?: string) {
+    if (!authorization)
+      throw new UnauthorizedException('Missing authorization header')
+    let json
+    try {
+      let parts = authorization.split('.')
+      json = { now: parts[0], public_key: parts[1], signature: parts[2] }
+    } catch (error) {
+      throw new UnauthorizedException('Invalid authorization header')
+    }
+    console.log('auth json:', json)
+    let input = object({
+      now: number(),
+      public_key: string(),
+      signature: string(),
+    }).parse(json)
+    let user = await this.login(input)
+    return user.id
   }
 }

@@ -13,8 +13,6 @@ import {
   IonLabel,
   IonItemDivider,
   IonIcon,
-  setupIonicReact,
-  IonTextarea,
   useIonRouter,
 } from "@ionic/react";
 import React, { useState, useEffect } from "react";

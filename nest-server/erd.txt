@@ -45,7 +45,7 @@ user_id integer FK >- user.id
 title varchar(255)
 description text
 price integer
-type enum('demand','offer')
+type enum('demand','supply')
 
 
 job_tag

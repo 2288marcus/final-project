@@ -25,9 +25,9 @@ export class UserController {
   constructor(private userService: UserService) {}
 
   @Get('profile')
-  getSelfProfile(@Headers('Authorization') authorization) {
-    let user_id = routes.default
-    return this.userService.getSelfProfile(+user_id)
+  async getSelfProfile(@Headers('Authorization') authorization) {
+    let user_id = await this.userService.authorize(authorization)
+    return this.userService.getSelfProfile(user_id)
   }
 
   @Get('profile/:id')

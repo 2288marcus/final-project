@@ -1,4 +1,6 @@
 import { Parser } from "cast.ts";
+import forge from "node-forge";
+import { toBase64 } from "../utils/crypto";
 
 export let api_origin = "http://localhost:3000";
 
@@ -31,8 +33,29 @@ export async function get<T>(url: string, parser: Parser<T>) {
   );
 }
 
+export function savePrivateKeyBase64(value: string) {
+  localStorage.setItem("privateKeyBase64", value);
+}
+
 function getAuthorization() {
-  return "TODO";
+  let privateKeyBase64 = localStorage.getItem("privateKeyBase64");
+  if (!privateKeyBase64) {
+    return "";
+  }
+
+  let privateKey = forge.util.binary.base64.decode(privateKeyBase64);
+  let publicKey = forge.pki.ed25519.publicKeyFromPrivateKey({ privateKey });
+  let now = Date.now();
+
+  let message = JSON.stringify({ now });
+
+  let md = forge.sha512.create();
+  md.update(message);
+  let signature = forge.pki.ed25519.sign({ privateKey, md });
+
+  let authorization = [now, toBase64(publicKey), toBase64(signature)].join(".");
+
+  return authorization;
 }
 
 async function handleFetch<T>(
