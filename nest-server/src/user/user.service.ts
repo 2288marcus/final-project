@@ -57,9 +57,10 @@ export class UserService {
         username: input.username,
         email: input.email,
         hkId: input.hkId,
-        card: input.card,
+        // card: input.card,
         hk_phone: input.hk_phone,
         fullName: input.fullName,
+        public_key: input.public_key,
       })
       .into('user')
       .returning('id')

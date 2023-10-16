@@ -9,13 +9,24 @@ import {
   IonProgressBar,
   IonTitle,
   IonToolbar,
-  useIonRouter,
   IonMenuButton,
   IonPage,
 } from "@ionic/react";
 import React, { useEffect, useRef, useState } from "react";
 import forge from "node-forge";
-import { is_email, is_hk_mobile_phone } from "@beenotung/tslib/validate";
+import {
+  is_email,
+  is_hk_mobile_phone,
+  to_full_hk_mobile_phone,
+} from "@beenotung/tslib/validate";
+
+interface Track {
+  x: number;
+  y: number;
+  r: number;
+  g: number;
+  b: number;
+}
 
 const RegisterPage: React.FC = () => {
   const title = "Register";
@@ -24,16 +35,17 @@ const RegisterPage: React.FC = () => {
     username: "",
     fullName: "",
     hkId: "",
-    phone: "",
+    hk_phone: "",
     email: "",
+    // public_key: "",
   });
   const phonePrefix = "+(852) ";
-  const phone = state.phone.replace(phonePrefix, "");
+  const phone = state.hk_phone.replace(phonePrefix, "");
   const isValidates = {
     username: state.username.length > 0,
     fullName: state.fullName.length > 0,
     hkId: is_hk_id(state.hkId),
-    phone: is_hk_mobile_phone(phone),
+    hk_phone: is_hk_mobile_phone(phone),
     email: is_email(state.email),
   };
   function is_hk_id(value: string): boolean {
@@ -47,7 +59,7 @@ const RegisterPage: React.FC = () => {
 
     let sum =
       36 * 9 +
-      parseInt(string[0], 16) * 8 +
+      (string.charCodeAt(0) - 65 + 10) * 8 +
       parseInt(string[1], 16) * 7 +
       parseInt(string[2], 16) * 6 +
       parseInt(string[3], 16) * 5 +
@@ -80,7 +92,7 @@ const RegisterPage: React.FC = () => {
       if (letter) return `${letter}`;
       return "";
     },
-    phone(value: string) {
+    hk_phone(value: string) {
       value =
         value
           .replace(phonePrefix.trim(), "")
@@ -105,10 +117,24 @@ const RegisterPage: React.FC = () => {
     isValidates.fullName &&
     isValidates.hkId &&
     isValidates.email &&
-    isValidates.phone;
+    isValidates.hk_phone;
 
   const submit = () => {
-    console.log("data:", state);
+    let data = {
+      ...state,
+      hk_phone: to_full_hk_mobile_phone(phone).replace("+852", ""),
+      hkId: state.hkId.replace(/ /g, ""),
+      public_key: keyPair?.publicKey.toString("base64"),
+    };
+    console.log(
+      "data:",
+      data,
+      keyPair?.publicKey
+        .toString("base64")
+        .split(",")
+        .map((decimal) => parseInt(decimal))
+        .map((decimal) => decimal.toString(16))
+    );
 
     // 发送POST请求到后端
     fetch("http://localhost:3000/user/signUp", {
@@ -116,7 +142,7 @@ const RegisterPage: React.FC = () => {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(state),
+      body: JSON.stringify(data),
     })
       .then((response) => response.json())
       .then((responseData) => {
@@ -176,7 +202,7 @@ const RegisterPage: React.FC = () => {
 
   const [seed, setSeed] = useState("");
   const [progress, setProgress] = useState(0);
-  const [keypair, setKeyPair] = useState<forge.pki.KeyPair | undefined>();
+  const [keyPair, setKeyPair] = useState<forge.pki.KeyPair | undefined>();
   const [tracks, setTracks] = useState<Track[]>([]);
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -205,10 +231,10 @@ const RegisterPage: React.FC = () => {
 
   useEffect(() => {
     if (progress >= 1) {
-      const keypair = forge.pki.ed25519.generateKeyPair({
+      const keyPair = forge.pki.ed25519.generateKeyPair({
         seed: forge.util.decode64(seed),
       });
-      setKeyPair(keypair);
+      setKeyPair(keyPair);
     } else {
       setKeyPair(undefined);
     }
@@ -282,11 +308,11 @@ const RegisterPage: React.FC = () => {
             mask: masks.hkId,
           })}
           {renderField({
-            field: "phone",
+            field: "hk_phone",
             type: "tel",
             label: "HK phone number",
             placeholder: "+(852) xxxx-xxxx",
-            mask: masks.phone,
+            mask: masks.hk_phone,
           })}
           {renderField({
             field: "email",
@@ -295,21 +321,9 @@ const RegisterPage: React.FC = () => {
             placeholder: "example@mail.com",
           })}
         </IonList>
-        <p>
-          <IonButton
-            routerLink="/drawKey"
-            onClick={submit}
-            disabled={!canSubmit}
-          >
-            SignUp
-          </IonButton>
-          Already have an account?
-          <IonButton routerLink="/login">Login</IonButton>
-        </p>
         <>
           <div>Draw the key</div>
           <IonButton onClick={handleReset}>Reset</IonButton>
-
           <canvas
             ref={canvasRef}
             style={{
@@ -332,11 +346,11 @@ const RegisterPage: React.FC = () => {
             <div className="ion-margin" style={{ fontFamily: "monospace" }}>
               Seed: {seed || "(none)"}
             </div>
-            {keypair ? (
+            {keyPair ? (
               <>
                 <div className="ion-margin" style={{ fontFamily: "monospace" }}>
                   Public Key:{" "}
-                  {Array.from(keypair.publicKey as any).map((x) => {
+                  {Array.from(keyPair.publicKey as any).map((x) => {
                     let s = (x as number).toString(16);
                     if (s.length === 1) {
                       return "0" + s;
@@ -346,7 +360,7 @@ const RegisterPage: React.FC = () => {
                 </div>
                 <div className="ion-margin" style={{ fontFamily: "monospace" }}>
                   Private Key:{" "}
-                  {Array.from(keypair.privateKey as any).map((x) => {
+                  {Array.from(keyPair.privateKey as any).map((x) => {
                     let s = (x as number).toString(16);
                     if (s.length === 1) {
                       return "0" + s;
@@ -357,10 +371,16 @@ const RegisterPage: React.FC = () => {
               </>
             ) : null}
           </div>
-
-          <IonButton routerLink="/DownloadKey" disabled={progress < 1}>
-            Confirm
+          <IonButton
+            //  routerLink="/DownloadKey"
+            disabled={progress < 1 || !canSubmit}
+            // routerLink="/drawKey"
+            onClick={submit}
+          >
+            signUp
           </IonButton>
+          Already have an account?
+          <IonButton routerLink="/login">Login</IonButton>
         </>
       </IonContent>
     </IonPage>
