@@ -51,7 +51,7 @@ interface AppPage {
 const appPages: AppPage[] = [
   {
     title: "Login / Register",
-    url: routes.home,
+    url: routes.login,
     iosIcon: mailOutline,
     mdIcon: mailSharp,
   },
