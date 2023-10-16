@@ -18,7 +18,7 @@ import { FileInterceptor } from '@nestjs/platform-express'
 import { diskStorage } from 'multer'
 import { extname } from 'path'
 import { verifyObjectSignature } from 'src/utils/encode'
-import { routes } from '../../usersample'
+import { routes } from '../../userSample'
 
 @Controller('user')
 export class UserController {
@@ -123,7 +123,7 @@ export class UserController {
     let input = object({
       body: object({
         now: number(),
-        public_key: string(),
+        public_key: string({ trim: true }),
         signature: string(),
       }),
     }).parse({ body })
