@@ -18,7 +18,7 @@ import { FileInterceptor } from '@nestjs/platform-express'
 import { diskStorage } from 'multer'
 import { extname } from 'path'
 import { verifyObjectSignature } from 'src/utils/encode'
-import { routes } from '../../usersample'
+import { routes } from '../../userSample'
 
 @Controller('user')
 export class UserController {

@@ -22,7 +22,7 @@ username varchar(32) unique
 fullName varchar(32) 
 hkId varchar(8) unique
 email varchar(255) unique
-public_key char(44) unique
+public_key varchar(44) unique
 hk_phone varchar(8) unique
 human_verification boolean null
 cv_upload varchar(255) null
