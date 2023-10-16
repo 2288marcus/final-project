@@ -21,8 +21,7 @@ export async function seed(knex: Knex): Promise<void> {
     fullName: 'John Doe',
     hkId: 'A1234567',
     email: 'john.doe@example.com',
-    public_key:
-      'fdf3226743429e4dedaf107bad8887c191142fc713c04da2ab60ad2d6eeab7bf',
+    public_key: '7HLdB3CLhp/vm92hbx+qTUKAhAnlvlByXexWxz+Fi20=',
     hk_phone: '12345678',
     human_verification: true,
     cv_upload: 'path/to/cv.pdf',
@@ -32,8 +31,7 @@ export async function seed(knex: Knex): Promise<void> {
     fullName: 'Jane Smith',
     hkId: 'B9876543',
     email: 'jane.smith@example.com',
-    public_key:
-      'dfbb547e78471a9dd36bb703fbe1b62b3265be823f66a468806b98f7b6947528',
+    public_key: 'OMZlPE1GPuCjJIAYyk6n0mVtPZ6GcL/ot4uUKcuUajQ=',
     hk_phone: '87654321',
     human_verification: false,
     cv_upload: 'path/to/cv.pdf',
