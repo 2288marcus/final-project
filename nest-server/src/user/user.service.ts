@@ -1,6 +1,11 @@
-import { Injectable, NotFoundException } from '@nestjs/common'
+import {
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common'
 import { Knex, knex } from 'knex'
 import { InjectModel } from 'nest-knexjs'
+import { verifyObjectSignature } from 'src/utils/encode'
 
 @Injectable()
 export class UserService {
@@ -50,7 +55,14 @@ export class UserService {
     return {}
   }
 
-  async signUp(input: any) {
+  async signUp(input: {
+    username: string
+    email: string
+    hkId: string
+    hk_phone: string
+    fullName: string
+    public_key: string
+  }) {
     return await this.knex
       .insert({
         username: input.username,
@@ -63,5 +75,28 @@ export class UserService {
       })
       .into('user')
       .returning('id')
+  }
+
+  async login(input: { now: number; public_key: string; signature: string }) {
+    if (Date.now() - input.now > 10 * 1000)
+      throw new UnauthorizedException('Signature expired')
+
+    let isValid = verifyObjectSignature({
+      object: { now: input.now },
+      publicKeyBase64: input.public_key,
+      signatureBase64: input.signature,
+    })
+
+    if (!isValid) throw new UnauthorizedException('Invalid signature')
+
+    let user = await this.knex('user')
+      .select('id')
+      .where('public_key', input.public_key)
+      .first()
+
+    if (!user)
+      throw new UnauthorizedException('This public key is not registered')
+
+    return { id: user.id }
   }
 }

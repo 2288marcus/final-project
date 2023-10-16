@@ -11,6 +11,7 @@ import {
   IonTitle,
   IonToolbar,
   useIonRouter,
+  IonText,
 } from "@ionic/react";
 import { Link } from "react-router-dom";
 
@@ -27,8 +28,20 @@ const DownloadKey: React.FC = () => {
         </IonToolbar>
       </IonHeader>
       <IonContent>
-        <p>Download key</p>
-        <IonButton routerLink="/UploadKey">Already download</IonButton>
+        <IonList>
+          <IonItem>
+            <IonInput
+              labelPlacement="floating"
+              type="password"
+              clearInput={true}
+            >
+              <div slot="label">
+                Private Key <IonText color="danger">(Required)</IonText>
+              </div>
+            </IonInput>
+          </IonItem>
+        </IonList>
+        <IonButton routerLink="/UploadKey">confirm</IonButton>
       </IonContent>
     </IonPage>
   );

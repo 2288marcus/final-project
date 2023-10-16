@@ -12,11 +12,12 @@ import {
   UseInterceptors,
 } from '@nestjs/common'
 import { UserService } from './user.service'
-import { email, id, int, object, string } from 'cast.ts'
+import { email, id, int, number, object, string } from 'cast.ts'
 import * as forge from 'node-forge'
 import { FileInterceptor } from '@nestjs/platform-express'
 import { diskStorage } from 'multer'
 import { extname } from 'path'
+import { verifyObjectSignature } from 'src/utils/encode'
 
 @Controller('user')
 export class UserController {
@@ -114,5 +115,18 @@ export class UserController {
     }).parse({ body })
     let result = await this.userService.signUp(input.body)
     return result
+  }
+
+  @Post('login')
+  async login(@Body() body) {
+    let input = object({
+      body: object({
+        now: number(),
+        public_key: string(),
+        signature: string(),
+      }),
+    }).parse({ body })
+    console.log('login, input:', input)
+    return await this.userService.login(input.body)
   }
 }

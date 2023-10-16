@@ -40,6 +40,7 @@ import {
 import "./Menu.css";
 import useToken from "../hooks/useToken";
 import { routes } from "../routes";
+import useAuth from "../hooks/useAuth";
 
 interface AppPage {
   url: string;
@@ -48,68 +49,70 @@ interface AppPage {
   title: string;
 }
 
-const appPages: AppPage[] = [
-  {
-    title: "Login / Register",
-    url: routes.home,
-    iosIcon: mailOutline,
-    mdIcon: mailSharp,
-  },
-  {
-    title: "Home",
-    url: routes.home,
-    iosIcon: earth,
-    mdIcon: earth,
-  },
-  // {
-  //   title: "BookmarkList",
-  //   url: "/BookmarkList",
-  //   iosIcon: heartOutline,
-  //   mdIcon: heartSharp,
-  // },
-  {
-    title: "Chatroom",
-    url: routes.Chatroom,
-    iosIcon: mail,
-    mdIcon: mail,
-  },
-  {
-    title: "ChatroomList",
-    url: routes.ChatroomList,
-    iosIcon: mail,
-    mdIcon: mail,
-  },
-  {
-    title: "Profile",
-    url: routes.ProfilePage,
-    iosIcon: personCircle,
-    mdIcon: personCircle,
-  },
-  {
-    title: "Submit Job",
-    url: routes.submit_job,
-    iosIcon: reader,
-    mdIcon: reader,
-  },
-  {
-    title: "Setting",
-    url: routes.SettingPage,
-    iosIcon: settingsOutline,
-    mdIcon: settingsSharp,
-  },
-  {
-    title: "BlockChain",
-    url: routes.Blockchain,
-    iosIcon: link,
-    mdIcon: link,
-  },
-];
-
 const labels = ["1", "2", "3", "4", "5", "6"];
 
 const Menu: React.FC = () => {
   const location = useLocation();
-  const token = useToken();
+  const auth = useAuth();
+
+  const appPages: AppPage[] = [
+    auth.state
+      ? {
+          title: "Profile",
+          url: routes.ProfilePage,
+          iosIcon: personCircle,
+          mdIcon: personCircle,
+        }
+      : {
+          title: "Login / Register",
+          url: routes.home,
+          iosIcon: mailOutline,
+          mdIcon: mailSharp,
+        },
+    {
+      title: "Home",
+      url: routes.home,
+      iosIcon: earth,
+      mdIcon: earth,
+    },
+    // {
+    //   title: "BookmarkList",
+    //   url: "/BookmarkList",
+    //   iosIcon: heartOutline,
+    //   mdIcon: heartSharp,
+    // },
+    {
+      title: "Chatroom",
+      url: routes.Chatroom,
+      iosIcon: mail,
+      mdIcon: mail,
+    },
+    {
+      title: "ChatroomList",
+      url: routes.ChatroomList,
+      iosIcon: mail,
+      mdIcon: mail,
+    },
+
+    {
+      title: "Submit Job",
+      url: routes.submit_job,
+      iosIcon: reader,
+      mdIcon: reader,
+    },
+    {
+      title: "Setting",
+      url: routes.SettingPage,
+      iosIcon: settingsOutline,
+      mdIcon: settingsSharp,
+    },
+    {
+      title: "BlockChain",
+      url: routes.Blockchain,
+      iosIcon: link,
+      mdIcon: link,
+    },
+  ];
 
   return (
     <IonMenu contentId="main" type="overlay">
