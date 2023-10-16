@@ -128,7 +128,7 @@ const RegisterPage: React.FC = () => {
       ...state,
       hk_phone: to_full_hk_mobile_phone(phone).replace("+852", ""),
       hkId: state.hkId.replace(/ /g, ""),
-      public_key,
+      public_key: toBase64(keyPair!.publicKey),
     };
     console.log("data:", data);
 
@@ -367,7 +367,7 @@ const RegisterPage: React.FC = () => {
             ) : null}
           </div>
           <IonButton
-            routerLink="/DownloadKey"
+            routerLink="/login"
             disabled={progress < 1 || !canSubmit}
             // routerLink="/drawKey"
             onClick={submit}

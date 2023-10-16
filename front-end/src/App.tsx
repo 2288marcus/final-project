@@ -88,12 +88,12 @@ const App: React.FC = () => {
                 <Route path={routes.submit_job} exact={true}>
                   <RequirementPage />
                 </Route>
-                <Route path={routes.DrawKey} exact={true}>
+                {/* <Route path={routes.DrawKey} exact={true}>
                   <DrawKey />
                 </Route>
                 <Route path={routes.DownloadKey} exact={true}>
                   <DownloadKey />
-                </Route>
+                </Route> */}
                 <Route path={routes.welcome} exact={true}>
                   <Welcome />
                 </Route>
