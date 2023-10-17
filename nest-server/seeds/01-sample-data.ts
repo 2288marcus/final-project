@@ -65,7 +65,7 @@ export async function seed(knex: Knex): Promise<void> {
     title: 'Graphic Designer',
     description: 'We need a creative graphic designer...',
     price: 3000,
-    type: 'offer',
+    type: 'supply',
   })
   await seedRelation('job_tag', {
     job_id: design_job_id,

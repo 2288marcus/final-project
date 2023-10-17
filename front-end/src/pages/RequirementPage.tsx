@@ -1,6 +1,7 @@
 import {
   IonButton,
   IonButtons,
+  IonCard,
   IonContent,
   IonHeader,
   IonInput,
@@ -12,7 +13,10 @@ import {
   IonPage,
   IonSegment,
   IonSegmentButton,
+  IonSelect,
+  IonSelectOption,
   IonText,
+  IonTextarea,
   IonTitle,
   IonToolbar,
   useIonRouter,
@@ -60,34 +64,67 @@ const RequirementPage: React.FC = () => {
             <IonTitle size="large">{title}</IonTitle>
           </IonToolbar>
         </IonHeader>
-        <IonItem>
-          <IonSegment value="Default" className="demandoffer">
-            <IonSegmentButton value="Demand">
-              <IonLabel>Demand</IonLabel>
-            </IonSegmentButton>
-            <IonSegmentButton value="Default">
-              <IonLabel>Choose one</IonLabel>
-            </IonSegmentButton>
 
-            <IonSegmentButton value="Offer">
-              <IonLabel>Offer</IonLabel>
-            </IonSegmentButton>
-          </IonSegment>
-        </IonItem>
-        <IonList>
+        {/* <IonCard>
+          <>
+            1<IonItem />2 3<IonItem />4
+            <div className="d-flex-md HalfInputFieldContainer">
+              1<IonItem />2 3<IonItem />4
+            </div>
+            1<IonItem />2
+            <div className="d-flex-md HalfInputFieldContainer">
+              1<IonItem />2 3<IonItem />4
+            </div>
+            <div className="d-flex-md HalfInputFieldContainer">
+              1<IonItem />2 3<IonItem />4
+            </div>
+            <div>
+              1<IonItem />2
+            </div>
+          </>
+        </IonCard> */}
+
+        <IonCard>
           <IonItem>
-            <IonInput type="text">Title</IonInput>
+            <IonLabel position="floating">
+              <IonText>Title:</IonText>
+            </IonLabel>
+            <IonInput type="text" />
           </IonItem>
+
           <IonItem>
-            <IonInput type="text">Description</IonInput>
+            <IonSelect label="Service" placeholder="Type:">
+              <IonSelectOption value="demand">Demand</IonSelectOption>
+              <IonSelectOption value="supply">Supply</IonSelectOption>
+            </IonSelect>
+            <IonItem />
+            <IonInput
+              label="Service Date:"
+              type="date"
+              value={state.date}
+              min={toDateString(new Date())}
+              onIonChange={(e) => {
+                console.log(e.detail.value);
+              }}
+            />
           </IonItem>
-          <IonItem className="half">
+
+          <IonItem>
+            <IonTextarea
+              autoGrow
+              label="Description"
+              labelPlacement="floating"
+            />
+          </IonItem>
+
+          <IonItem>
             <IonLabel
               position="floating"
               color={priceErrorMessage ? "danger" : ""}
             >
               <IonText color="dark">Price (HKD)</IonText>
             </IonLabel>
+
             <IonInput
               type="number"
               min="1"
@@ -95,14 +132,6 @@ const RequirementPage: React.FC = () => {
               value={state.price}
               onIonChange={(e) => {
                 setState({ ...state, price: e.detail.value! });
-
-                // let price = Math.floor(+e.detail.value!);
-                // if (price >= 1) {
-                //   setState({ ...state, price });
-                // } else {
-                //   price = state.price;
-                // }
-                // e.target.value = price;
               }}
             ></IonInput>
           </IonItem>
@@ -111,25 +140,8 @@ const RequirementPage: React.FC = () => {
               <IonText color="danger">{priceErrorMessage}</IonText>
             </IonNote>
           ) : null}
-
-          <IonItem className="half">
-            <IonInput
-              type="date"
-              value={state.date}
-              min={toDateString(new Date())}
-              onIonChange={(e) => {
-                console.log(e.detail.value);
-              }}
-            >
-              Service Date
-            </IonInput>
-          </IonItem>
-          <br />
-          <br />
-          <br />
-          <br />
-        </IonList>
-        <IonButton>Post</IonButton>
+        </IonCard>
+        <IonButton expand="full">Post</IonButton>
       </IonContent>
     </IonPage>
   );

@@ -44,7 +44,7 @@ let jobListParser = object({
       description: string(),
       price: float(),
       created_at: date(),
-      type: values(["demand" as const, "offer" as const]),
+      type: values(["demand" as const, "supply" as const]),
       tags: array(string()),
     })
   ),
@@ -53,7 +53,7 @@ let jobListParser = object({
 const HomePage: React.FC = () => {
   const title = "Home";
 
-  const [segment, setSegment] = useState("job");
+  const [segment, setSegment] = useState<"demand" | "supply">("demand");
 
   let jobList = useGet("/jobs", jobListParser);
   console.log("jobList:", jobList);
@@ -123,124 +123,43 @@ const HomePage: React.FC = () => {
         </IonContent> */}
         <IonSegment
           value={segment}
-          onIonChange={(e) => setSegment(e.detail.value as string)}
+          onIonChange={(e) => setSegment(e.detail.value as any)}
         >
-          <IonSegmentButton value="job">Jobs</IonSegmentButton>
-          <IonSegmentButton value="user">Services</IonSegmentButton>
+          <IonSegmentButton value="demand">demand</IonSegmentButton>
+          <IonSegmentButton value="supply">supply</IonSegmentButton>
         </IonSegment>
-        {segment == "job"
-          ? jobList.render((json) =>
-              jobList.data?.jobList?.map((job) => (
-                <IonCard key={job.job_id}>
-                  <IonCardContent>
-                    <div className="d-flex align-center" style={{ gap: "8px" }}>
-                      <div className="d-flex col align-center ion-justify-content-center">
-                        <IonAvatar>
-                          <img
-                            src={
-                              "https://picsum.photos/80/80?random=" + job.job_id
-                            }
-                            alt="avatar"
-                          />
-                        </IonAvatar>
-                        <span className="author-name">{job.username}</span>
-                      </div>
-                      <div>
-                        <h1>- {job.title} -</h1>
-                        <p>{job.description}</p>
-                      </div>
-                    </div>
-                  </IonCardContent>
-                  <div>
-                    {job.tags.map((tag) => (
-                      <IonChip key={tag}>{tag}</IonChip>
-                    ))}
-                  </div>
-                  <div hidden={job.job_id != 1}>
-                    {job.tags.map((tag) => (
-                      <IonChip key={tag}>{tag}</IonChip>
-                    ))}
-                  </div>
-                  <div className="tag-list" hidden={job.job_id != 2}>
-                    {job.tags.map((tag) => (
-                      <IonChip key={tag}>{tag}</IonChip>
-                    ))}
-                  </div>
-                  <div hidden={job.job_id != 3}>
-                    {job.tags.map((tag) => (
-                      <IonChip key={tag}>{tag}</IonChip>
-                    ))}
-                  </div>
-                </IonCard>
-              ))
-            )
-          : null}
-        {/* {segment == "user" ? <>222</> : null} */}
-        {segment == "user" ? (
-          <>
-            {[
-              {
-                id: 1,
-                name: "i",
-                tags: ["sport", "travel"],
-                title: "Teach me React",
-              },
-              {
-                id: 2,
-                name: "k",
-                tags: ["cleaning"],
-                title: "Kill me ",
-              },
-              {
-                id: 3,
-                name: "g",
-                tags: ["sport", "travel", "IT"],
-                title: "Not me",
-              },
-            ].map((item) => (
-              <IonCard key={item.id}>
+        {jobList.render((json) =>
+          json.jobList
+            ?.filter((job) => job.type == segment)
+            .map((job) => (
+              <IonCard key={job.job_id}>
                 <IonCardContent>
                   <div className="d-flex align-center" style={{ gap: "8px" }}>
                     <div className="d-flex col align-center ion-justify-content-center">
                       <IonAvatar>
                         <img
-                          src={"https://picsum.photos/80/80?random=" + item.id}
+                          src={
+                            "https://picsum.photos/80/80?random=" + job.job_id
+                          }
                           alt="avatar"
                         />
                       </IonAvatar>
-                      <span className="author-name">{item.name}</span>
+                      <span className="author-name">{job.username}</span>
                     </div>
                     <div>
-                      <h1>- {item.title} -</h1>
-                      <p>
-                        Lorem ipsum dolor, sit amet consectetur adipisicing
-                        elit. Fugit ipsa eligendi, optio provident aut dolore
-                        ullam quae iusto, deleniti consequuntur debitis culpa in
-                        aspernatur sunt error doloremque facilis accusamus
-                        maxime?
-                      </p>
+                      <h1>- {job.title} -</h1>
+                      <p>{job.description}</p>
                     </div>
                   </div>
                 </IonCardContent>
-                <div hidden={item.id != 1}>
-                  {item.tags.map((tag) => (
-                    <IonChip key={tag}>{tag}</IonChip>
-                  ))}
-                </div>
-                <div className="tag-list" hidden={item.id != 2}>
-                  {item.tags.map((tag) => (
-                    <IonChip key={tag}>{tag}</IonChip>
-                  ))}
-                </div>
-                <div hidden={item.id != 3}>
-                  {item.tags.map((tag) => (
+                <div>
+                  {job.tags.map((tag) => (
                     <IonChip key={tag}>{tag}</IonChip>
                   ))}
                 </div>
               </IonCard>
-            ))}
-          </>
-        ) : null}
+            ))
+        )}
       </IonContent>
     </IonPage>
   );
