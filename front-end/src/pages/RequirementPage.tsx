@@ -1,6 +1,7 @@
 import {
   IonButton,
   IonButtons,
+  IonCard,
   IonContent,
   IonHeader,
   IonInput,
@@ -15,6 +16,7 @@ import {
   IonSelect,
   IonSelectOption,
   IonText,
+  IonTextarea,
   IonTitle,
   IonToolbar,
   useIonRouter,
@@ -63,16 +65,39 @@ const RequirementPage: React.FC = () => {
           </IonToolbar>
         </IonHeader>
 
-        <IonList>
+        {/* <IonCard>
+          <>
+            1<IonItem />2 3<IonItem />4
+            <div className="d-flex-md HalfInputFieldContainer">
+              1<IonItem />2 3<IonItem />4
+            </div>
+            1<IonItem />2
+            <div className="d-flex-md HalfInputFieldContainer">
+              1<IonItem />2 3<IonItem />4
+            </div>
+            <div className="d-flex-md HalfInputFieldContainer">
+              1<IonItem />2 3<IonItem />4
+            </div>
+            <div>
+              1<IonItem />2
+            </div>
+          </>
+        </IonCard> */}
+
+        <IonCard>
           <IonItem>
-            <IonInput type="text">Title</IonInput>
+            <IonLabel position="floating">
+              <IonText>Title:</IonText>
+            </IonLabel>
+            <IonInput type="text" />
           </IonItem>
 
-          <IonItem className="half">
-            <IonSelect label="Requirment" placeholder="type:">
+          <IonItem>
+            <IonSelect label="Service" placeholder="Type:">
               <IonSelectOption value="demand">Demand</IonSelectOption>
               <IonSelectOption value="supply">Supply</IonSelectOption>
             </IonSelect>
+            <IonItem />
             <IonInput
               label="Service Date:"
               type="date"
@@ -82,22 +107,16 @@ const RequirementPage: React.FC = () => {
                 console.log(e.detail.value);
               }}
             />
-            {/* <IonInput
-              type="date"
-              value={state.date}
-              min={toDateString(new Date())}
-              onIonChange={(e) => {
-                console.log(e.detail.value);
-              }}
-            >
-              Service Date
-            </IonInput> */}
           </IonItem>
-          <IonItem className="Description">
-            <IonInput type="text" className="Description2">
-              Description
-            </IonInput>
+
+          <IonItem>
+            <IonTextarea
+              autoGrow
+              label="Description"
+              labelPlacement="floating"
+            />
           </IonItem>
+
           <IonItem>
             <IonLabel
               position="floating"
@@ -106,14 +125,6 @@ const RequirementPage: React.FC = () => {
               <IonText color="dark">Price (HKD)</IonText>
             </IonLabel>
 
-            {/* <IonItem>
-        <IonSelect label="Fixed label" labelPlacement="fixed" placeholder="Favorite fruit">
-          <IonSelectOption value="apple">Apple</IonSelectOption>
-          <IonSelectOption value="banana">Banana</IonSelectOption>
-          <IonSelectOption value="orange">Orange</IonSelectOption>
-        </IonSelect>
-      </IonItem> */}
-
             <IonInput
               type="number"
               min="1"
@@ -121,14 +132,6 @@ const RequirementPage: React.FC = () => {
               value={state.price}
               onIonChange={(e) => {
                 setState({ ...state, price: e.detail.value! });
-
-                // let price = Math.floor(+e.detail.value!);
-                // if (price >= 1) {
-                //   setState({ ...state, price });
-                // } else {
-                //   price = state.price;
-                // }
-                // e.target.value = price;
               }}
             ></IonInput>
           </IonItem>
@@ -137,28 +140,8 @@ const RequirementPage: React.FC = () => {
               <IonText color="danger">{priceErrorMessage}</IonText>
             </IonNote>
           ) : null}
-
-          {/* <IonItem className="half">
-            <IonInput
-              type="date"
-              value={state.date}
-              min={toDateString(new Date())}
-              onIonChange={(e) => {
-                console.log(e.detail.value);
-              }}
-            >
-              Service Date
-            </IonInput>
-          </IonItem> */}
-          {/* <IonItem>
-            <IonSelect label="Default label" placeholder="Favorite Fruit">
-              <IonSelectOption value="apple">Apple</IonSelectOption>
-              <IonSelectOption value="banana">Banana</IonSelectOption>
-              <IonSelectOption value="orange">Orange</IonSelectOption>
-            </IonSelect>
-          </IonItem> */}
-        </IonList>
-        <IonButton>Post</IonButton>
+        </IonCard>
+        <IonButton expand="full">Post</IonButton>
       </IonContent>
     </IonPage>
   );
