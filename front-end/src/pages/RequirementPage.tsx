@@ -12,6 +12,8 @@ import {
   IonPage,
   IonSegment,
   IonSegmentButton,
+  IonSelect,
+  IonSelectOption,
   IonText,
   IonTitle,
   IonToolbar,
@@ -60,28 +62,43 @@ const RequirementPage: React.FC = () => {
             <IonTitle size="large">{title}</IonTitle>
           </IonToolbar>
         </IonHeader>
-        <IonItem>
-          <IonSegment value="Default" className="demandoffer">
-            <IonSegmentButton value="Demand">
-              <IonLabel>demand</IonLabel>
-            </IonSegmentButton>
-            <IonSegmentButton value="Default">
-              <IonLabel>Choose one</IonLabel>
-            </IonSegmentButton>
 
-            <IonSegmentButton value="Offer">
-              <IonLabel>supply</IonLabel>
-            </IonSegmentButton>
-          </IonSegment>
-        </IonItem>
         <IonList>
           <IonItem>
             <IonInput type="text">Title</IonInput>
           </IonItem>
-          <IonItem>
-            <IonInput type="text">Description</IonInput>
-          </IonItem>
+
           <IonItem className="half">
+            <IonSelect label="Requirment" placeholder="type:">
+              <IonSelectOption value="demand">Demand</IonSelectOption>
+              <IonSelectOption value="supply">Supply</IonSelectOption>
+            </IonSelect>
+            <IonInput
+              label="Service Date:"
+              type="date"
+              value={state.date}
+              min={toDateString(new Date())}
+              onIonChange={(e) => {
+                console.log(e.detail.value);
+              }}
+            />
+            {/* <IonInput
+              type="date"
+              value={state.date}
+              min={toDateString(new Date())}
+              onIonChange={(e) => {
+                console.log(e.detail.value);
+              }}
+            >
+              Service Date
+            </IonInput> */}
+          </IonItem>
+          <IonItem className="Description">
+            <IonInput type="text" className="Description2">
+              Description
+            </IonInput>
+          </IonItem>
+          <IonItem>
             <IonLabel
               position="floating"
               color={priceErrorMessage ? "danger" : ""}
@@ -121,7 +138,7 @@ const RequirementPage: React.FC = () => {
             </IonNote>
           ) : null}
 
-          <IonItem className="half">
+          {/* <IonItem className="half">
             <IonInput
               type="date"
               value={state.date}
@@ -132,11 +149,14 @@ const RequirementPage: React.FC = () => {
             >
               Service Date
             </IonInput>
-          </IonItem>
-          <br />
-          <br />
-          <br />
-          <br />
+          </IonItem> */}
+          {/* <IonItem>
+            <IonSelect label="Default label" placeholder="Favorite Fruit">
+              <IonSelectOption value="apple">Apple</IonSelectOption>
+              <IonSelectOption value="banana">Banana</IonSelectOption>
+              <IonSelectOption value="orange">Orange</IonSelectOption>
+            </IonSelect>
+          </IonItem> */}
         </IonList>
         <IonButton>Post</IonButton>
       </IonContent>

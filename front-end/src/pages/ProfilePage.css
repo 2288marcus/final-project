@@ -19,3 +19,8 @@
   min-width: fit-content;
   /* min-width: 16ch; */
 }
+
+.ProfileCheckPage .description {
+  width: auto;
+  overflow: auto;
+}

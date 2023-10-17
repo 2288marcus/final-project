@@ -15,14 +15,16 @@ import {
   IonIcon,
   setupIonicReact,
   IonTextarea,
+  IonPopover,
 } from "@ionic/react";
 import React, { useState, useEffect } from "react";
 import "./ProfilePage.css";
-import { close, cloudUpload, create, save } from "ionicons/icons";
+import { cloudUpload } from "ionicons/icons";
 import { selectFile } from "@beenotung/tslib/file";
 import { api_origin, get } from "../api/config";
 import { ParseResult, boolean, nullable, object, string } from "cast.ts";
 import useGet from "../hooks/useGet";
+import { InputContext, InputField } from "../components/InputField";
 
 let getProfileParser = object({
   profile: object({
@@ -40,19 +42,16 @@ let getProfileParser = object({
   }),
 });
 
-type Profile = ParseResult<typeof getProfileParser>["profile"];
+type ProfileCheckPage = ParseResult<typeof getProfileParser>["profile"];
 
 const ProfileCheckPage: React.FC = () => {
   const title = "Information";
 
-  const [editingField, setEditingField] = useState<keyof Profile>();
-
   const getProfileResult = useGet("/user/profile", getProfileParser);
 
-  function setProfile(profile: Profile) {
-    getProfileResult.setData({ profile });
-  }
-  const resetProfile = getProfileResult.reload;
+  // function setProfile(profile: ProfileCheckPage) {
+  //   getProfileResult.setData({ profile });
+  // }
 
   // setProfile({
   //   username: "alicewong123",
@@ -70,7 +69,6 @@ const ProfileCheckPage: React.FC = () => {
   ///////////////////////////
 
   const [draftFile, setDraftFile] = useState<File>();
-  const [uploadState, setUploadState] = useState("idle");
 
   async function selectCVFile() {
     let [file] = await selectFile({
@@ -78,18 +76,6 @@ const ProfileCheckPage: React.FC = () => {
     });
     if (!file) return;
     setDraftFile(file);
-  }
-
-  async function uploadCVFile() {
-    setUploadState("upload");
-    try {
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-      setDraftFile(undefined);
-    } catch (error) {
-      // show error
-    } finally {
-      setUploadState("idle");
-    }
   }
 
   return (
@@ -117,84 +103,47 @@ const ProfileCheckPage: React.FC = () => {
         <IonCard>
           {getProfileResult.render((json) => {
             const profile = json.profile;
-            const profileContext: ProfileContext = {
-              profile,
-              setProfile,
-              resetProfile,
-              editingField,
-              setEditingField,
+            const profileContext: InputContext<ProfileCheckPage> = {
+              state: profile,
             };
 
             return (
               <>
-                <ProfileField
-                  profileContext={profileContext}
+                <InputField
+                  inputContext={profileContext}
                   label="Username:"
                   field="username"
                 />
-                <ProfileField
-                  profileContext={profileContext}
-                  label="Public Key:"
-                  field="public_key"
-                />
+
                 <div className="d-flex-md HalfInputFieldContainer">
-                  <ProfileField
-                    profileContext={profileContext}
+                  <InputField
+                    inputContext={profileContext}
                     label="Full Name:"
                     field="fullName"
                   />
-                  <ProfileField
-                    profileContext={profileContext}
+                  <InputField
+                    inputContext={profileContext}
                     label="Phone(+852):"
                     field="HK_phone"
                   />
                 </div>
-                <ProfileField
-                  profileContext={profileContext}
+                <InputField
+                  inputContext={profileContext}
                   label="Email:"
                   field="email"
                 />
-                <div className="d-flex-md HalfInputFieldContainer">
-                  <ProfileField
-                    profileContext={profileContext}
-                    label="HKID:"
-                    field="HKID"
-                  />
-                  <ProfileField
-                    profileContext={profileContext}
-                    label="Human Verification:"
-                    field="human_verification"
+                <div className="description">
+                  <InputField
+                    inputContext={profileContext}
+                    type="textarea"
+                    label="Description:"
+                    field="description"
                   />
                 </div>
-                <div className="d-flex-md HalfInputFieldContainer">
-                  <ProfileField
-                    profileContext={profileContext}
-                    label="Created Date:"
-                    field="created_at"
-                  />
-                  <ProfileField
-                    profileContext={profileContext}
-                    label="Update Date:"
-                    field="updated_at"
-                  />
-                </div>
-
-                <ProfileField
-                  profileContext={profileContext}
-                  label="Description:"
-                  field="description"
-                />
-                {/* 
-                <IonItem>
-                  <IonLabel>Description</IonLabel>
-                  <IonTextarea placeholder="Self-information" />
-                </IonItem> */}
 
                 <IonItem>
                   <IonLabel position="fixed">CV:</IonLabel>
-                  <div>
-                    {draftFile?.name || profileContext.profile.cv_upload}
-                  </div>
+                  <div>{draftFile?.name || profile.cv_upload}</div>
                   <IonButtons>
                     <IonButton
                       size="small"
@@ -205,35 +154,6 @@ const ProfileCheckPage: React.FC = () => {
                     </IonButton>
                   </IonButtons>
                 </IonItem>
-                <div className="d-flex">
-                  <IonButton
-                    color="dark"
-                    className="flex-grow ion-no-margin"
-                    expand="full"
-                    onClick={() => setDraftFile(undefined)}
-                    hidden={!draftFile || uploadState == "upload"}
-                  >
-                    <IonIcon src={close} slot="icon-only"></IonIcon>
-                  </IonButton>
-                  <IonButton
-                    color="success"
-                    className="flex-grow ion-no-margin"
-                    expand="full"
-                    onClick={uploadCVFile}
-                    hidden={!draftFile || uploadState == "upload"}
-                  >
-                    <IonIcon src={save} slot="icon-only"></IonIcon>
-                  </IonButton>
-                  <IonButton
-                    color="success"
-                    className="flex-grow ion-no-margin"
-                    expand="full"
-                    disabled
-                    hidden={uploadState != "upload"}
-                  >
-                    Uploading ...
-                  </IonButton>
-                </div>
               </>
             );
           })}
@@ -242,123 +162,5 @@ const ProfileCheckPage: React.FC = () => {
     </IonPage>
   );
 };
-
-type ProfileContext = {
-  profile: Profile;
-  setProfile(value: Profile): void;
-  resetProfile(): void;
-  editingField?: keyof Profile;
-  setEditingField(value?: keyof Profile): void;
-};
-
-function ProfileField(props: {
-  profileContext: ProfileContext;
-  label: string;
-  field: keyof Profile;
-  editable?: boolean;
-}) {
-  type Mode = "view" | "edit" | "cancel" | "save";
-
-  const [mode, setMode] = useState<Mode>("view");
-
-  async function saveProfile() {
-    // TODO post to server
-    setTimeout(() => {
-      setMode("view");
-    }, 5000);
-  }
-
-  const { field, editable } = props;
-  const { setEditingField, resetProfile, profile, setProfile, editingField } =
-    props.profileContext;
-
-  const shouldResetEditingField = mode != "edit" && editingField == field;
-
-  useEffect(() => {
-    if (shouldResetEditingField) {
-      setEditingField();
-    }
-    switch (mode) {
-      case "edit":
-        // setEditingField(field);
-        return;
-      case "cancel":
-        // resetProfile();
-        // setMode("view");
-        return;
-      case "save":
-        // saveProfile();
-        return;
-    }
-  }, [
-    shouldResetEditingField,
-    mode,
-    setEditingField,
-    saveProfile,
-    resetProfile,
-    field,
-  ]);
-
-  return (
-    <div className="flex-grow HalfInputField">
-      <IonItem>
-        <IonLabel position={mode == "view" ? "fixed" : "floating"}>
-          {props.label}
-        </IonLabel>
-        <IonInput
-          value={String(profile[field])}
-          onIonChange={(e) =>
-            setProfile({
-              ...profile,
-              [props.field]: e.detail.value || "",
-            })
-          }
-          readonly={mode != "edit"}
-        />
-        <IonButtons slot="end">
-          <IonButton
-            slot="end"
-            size="small"
-            color="primary"
-            onClick={() => setMode("edit")}
-            hidden={!editable || mode != "view"}
-            disabled={editingField && editingField != field}
-          >
-            <IonIcon src={create} slot="icon-only"></IonIcon>
-          </IonButton>
-        </IonButtons>
-      </IonItem>
-      <div className="d-flex">
-        <IonButton
-          color="dark"
-          className="flex-grow ion-no-margin"
-          expand="full"
-          onClick={() => setMode("cancel")}
-          hidden={mode != "edit"}
-        >
-          <IonIcon src={close} slot="icon-only"></IonIcon>
-        </IonButton>
-        <IonButton
-          color="success"
-          className="flex-grow ion-no-margin"
-          expand="full"
-          onClick={() => setMode("save")}
-          hidden={mode != "edit"}
-        >
-          <IonIcon src={save} slot="icon-only"></IonIcon>
-        </IonButton>
-        <IonButton
-          color="success"
-          className="flex-grow ion-no-margin"
-          expand="full"
-          disabled
-          hidden={mode != "save"}
-        >
-          Saving ...
-        </IonButton>
-      </div>
-    </div>
-  );
-}
 
 export default ProfileCheckPage;

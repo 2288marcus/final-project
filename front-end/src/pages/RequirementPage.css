@@ -2,3 +2,7 @@
   /* max-width: 350px; */
   background-color: rgba(190, 190, 240, 0.477);
 }
+
+.RequirementPage .Description2 {
+  max-width: 350px;
+}
