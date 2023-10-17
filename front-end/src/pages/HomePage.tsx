@@ -27,30 +27,51 @@ import {
   IonCardContent,
 } from "@ionic/react";
 import "./HomePage.css";
+import useGet from "../hooks/useGet";
+import { array, date, float, id, object, string, values } from "cast.ts";
 
 function Fake() {
   return <div className="real"></div>;
 }
+
+let jobListParser = object({
+  jobList: array(
+    object({
+      job_id: id(),
+      username: string(),
+      user_id: id(),
+      title: string(),
+      description: string(),
+      price: float(),
+      created_at: date(),
+      type: values(["demand" as const, "offer" as const]),
+      tags: array(string()),
+    })
+  ),
+});
 
 const HomePage: React.FC = () => {
   const title = "Home";
 
   const [segment, setSegment] = useState("job");
 
-  const [items, setItems] = useState<string[]>([]);
+  let jobList = useGet("/jobs", jobListParser);
+  console.log("jobList:", jobList);
 
-  const generateItems = () => {
-    const newItems = [];
-    for (let i = 0; i < 50; i++) {
-      newItems.push(`Job ${1 + items.length + i}`);
-    }
-    setItems([...items, ...newItems]);
-  };
+  // const [items, setItems] = useState<string[]>([]);
 
-  useEffect(() => {
-    generateItems();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  // const generateItems = () => {
+  //   const newItems = [];
+  //   for (let i = 0; i < 50; i++) {
+  //     newItems.push(`Job ${1 + items.length + i}`);
+  //   }
+  //   setItems([...items, ...newItems]);
+  // };
+
+  // useEffect(() => {
+  //   generateItems();
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, []);
 
   return (
     <IonPage className="HomePage">
@@ -105,73 +126,55 @@ const HomePage: React.FC = () => {
           onIonChange={(e) => setSegment(e.detail.value as string)}
         >
           <IonSegmentButton value="job">Jobs</IonSegmentButton>
-          <IonSegmentButton value="user">Users</IonSegmentButton>
+          <IonSegmentButton value="user">Services</IonSegmentButton>
         </IonSegment>
-        {segment == "job" ? (
-          <>
-            {[
-              {
-                id: 1,
-                name: "alice",
-                tags: ["sport", "travel"],
-                title: "Teach me React",
-              },
-              {
-                id: 2,
-                name: "batty",
-                tags: ["cleaning"],
-                title: "Help me ",
-              },
-              {
-                id: 3,
-                name: "cat",
-                tags: ["sport", "travel", "IT"],
-                title: "Excuse me",
-              },
-            ].map((item) => (
-              <IonCard key={item.id}>
-                <IonCardContent>
-                  <div className="d-flex align-center" style={{ gap: "8px" }}>
-                    <div className="d-flex col align-center ion-justify-content-center">
-                      <IonAvatar>
-                        <img
-                          src={"https://picsum.photos/80/80?random=" + item.id}
-                          alt="avatar"
-                        />
-                      </IonAvatar>
-                      <span className="author-name">{item.name}</span>
+        {segment == "job"
+          ? jobList.render((json) =>
+              jobList.data?.jobList?.map((job) => (
+                <IonCard key={job.job_id}>
+                  <IonCardContent>
+                    <div className="d-flex align-center" style={{ gap: "8px" }}>
+                      <div className="d-flex col align-center ion-justify-content-center">
+                        <IonAvatar>
+                          <img
+                            src={
+                              "https://picsum.photos/80/80?random=" + job.job_id
+                            }
+                            alt="avatar"
+                          />
+                        </IonAvatar>
+                        <span className="author-name">{job.username}</span>
+                      </div>
+                      <div>
+                        <h1>- {job.title} -</h1>
+                        <p>{job.description}</p>
+                      </div>
                     </div>
-                    <div>
-                      <h1>- {item.title} -</h1>
-                      <p>
-                        Lorem ipsum dolor, sit amet consectetur adipisicing
-                        elit. Fugit ipsa eligendi, optio provident aut dolore
-                        ullam quae iusto, deleniti consequuntur debitis culpa in
-                        aspernatur sunt error doloremque facilis accusamus
-                        maxime?
-                      </p>
-                    </div>
+                  </IonCardContent>
+                  <div>
+                    {job.tags.map((tag) => (
+                      <IonChip key={tag}>{tag}</IonChip>
+                    ))}
                   </div>
-                </IonCardContent>
-                <div hidden={item.id != 1}>
-                  {item.tags.map((tag) => (
-                    <IonChip key={tag}>{tag}</IonChip>
-                  ))}
-                </div>
-                <div className="tag-list" hidden={item.id != 2}>
-                  {item.tags.map((tag) => (
-                    <IonChip key={tag}>{tag}</IonChip>
-                  ))}
-                </div>
-                <div hidden={item.id != 3}>
-                  {item.tags.map((tag) => (
-                    <IonChip key={tag}>{tag}</IonChip>
-                  ))}
-                </div>
-              </IonCard>
-            ))}
-          </>
-        ) : null}
+                  <div hidden={job.job_id != 1}>
+                    {job.tags.map((tag) => (
+                      <IonChip key={tag}>{tag}</IonChip>
+                    ))}
+                  </div>
+                  <div className="tag-list" hidden={job.job_id != 2}>
+                    {job.tags.map((tag) => (
+                      <IonChip key={tag}>{tag}</IonChip>
+                    ))}
+                  </div>
+                  <div hidden={job.job_id != 3}>
+                    {job.tags.map((tag) => (
+                      <IonChip key={tag}>{tag}</IonChip>
+                    ))}
+                  </div>
+                </IonCard>
+              ))
+            )
+          : null}
         {/* {segment == "user" ? <>222</> : null} */}
         {segment == "user" ? (
           <>

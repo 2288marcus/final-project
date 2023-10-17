@@ -12,6 +12,7 @@ import {
   IonFooter,
   IonTextarea,
   IonBackButton,
+  IonCard,
 } from "@ionic/react";
 import {
   add,
@@ -33,53 +34,59 @@ import {
   nullable,
   object,
   string,
-  number,
+  id,
   array,
+  date,
 } from "cast.ts";
 import "./Chatroom.css";
-// import { number } from "@beenotung/tslib";
+import { number } from "@beenotung/tslib";
 import useGet from "../hooks/useGet";
 
 // const socket = io(api_origin);
 let getContentParser = object({
   content: array(
     object({
-      id: number(),
+      id: id(),
       username: string(),
-      message: string(),
-      time: string(),
+      content: string(),
+      created_at: string(),
+      user_id: id(),
     })
   ),
 });
-
 interface Message {
   id: number;
-  message: string;
+  content: string;
   username: string;
-  time: string;
+  created_at: string;
 }
 
-function formatTime(time: string) {
+function formatTime(time: number) {
   return new Date(time).toLocaleString("zh-CN");
 }
 
 const Chatroom: React.FC = () => {
   const title = "Chatroom";
-  const username = "Username";
+  const username = "john_doe";
   const [messages, setMessages] = useState<Message[]>([
     {
       id: 1,
-      message: "Hi from Alice",
+      content: "Hi from Alice",
       username: "Alice",
-      time: String(new Date(1696578205825)),
+      created_at: "1696578205825",
     },
     {
       id: 2,
-      message: "Hi from Me",
-      username,
-      time: String(new Date(1696578205825 + 90 * 1000)),
+      username: "104",
+      content: "112",
+      created_at: "2023-10-16T15:04:40.844Z",
     },
   ]);
+
+  const getContentResult = useGet(
+    "/chat/content2?contract_id=31",
+    getContentParser
+  );
 
   // function setContent() {
 
@@ -96,21 +103,19 @@ const Chatroom: React.FC = () => {
       minute: "numeric",
       hour12: false, // 将时间设置为24小时制
     };
-    const messageData: Message = {
-      id: Date.now(),
-      message: newMessage,
-      username: "Username", // Replace with the actual username
-      time: String(new Date(Date.now())),
-    };
-    setMessages([...messages, messageData]);
+    // const messageData: Message = {
+    //   id: Date.now(),
+    //   message: newMessage,
+    //   user: "Username", // Replace with the actual username
+    //   time: Date.now(),
+    // };
+    // setMessages([...messages, messageData]);
 
     // 滚动到底部
     if (contentRef.current) {
       contentRef.current.scrollToBottom();
     }
   };
-
-  const { data } = useGet("/chat/content2", getContentParser);
 
   useEffect(() => {
     // socket.on("received-message", (message: Message) => {
@@ -119,20 +124,6 @@ const Chatroom: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    if (data) {
-      // const newData = data.content.map((message)=>{
-      //   return { id: message.id, message: message.content, username: message.username, time:message.created_at }
-      // })
-
-      console.log(data);
-      setMessages(data.content as Message[]);
-    }
-    // const newData: Message[] = data ? data.content: [];
-    // setMessages(newData);
-  }, [data]);
-
-  useEffect(() => {
-    console.log({ messages });
     // 监听 messages 状态的变化
     if (contentRef.current) {
       contentRef.current.scrollToBottom();
@@ -144,14 +135,15 @@ const Chatroom: React.FC = () => {
     const message = messages[messages.length - 1];
     // console.log(message);
     let data = {
+      id: 2,
       contract_id: 31,
-      content: message.message,
+      content: message.content,
       user_id: 104,
       // updated_at: Date.now(),
     };
     console.log(data);
 
-    post("/chat/content", data, object({ id: number() }))
+    post("/chat/content", data, object({}))
       .then((res) => {
         console.log("POST result:", res);
         // 根据需要执行其他操作
@@ -176,30 +168,35 @@ const Chatroom: React.FC = () => {
         </IonToolbar>
       </IonHeader>
       <IonContent ref={contentRef}>
-        {messages.map((message) => (
-          <div
-            key={message.id}
-            className="chat-message-container"
-            style={{
-              justifyContent:
-                message.username === username ? "flex-end" : "flex-start",
-            }}
-          >
+        {getContentResult.render((json) => {
+          console.log({ json });
+
+          json.content?.map((message) => (
             <div
-              className="chat-message-box"
+              key={message.id}
+              className="chat-message-container"
               style={{
-                backgroundColor:
-                  message.username === username ? "#0089dfd5" : "#444444",
+                justifyContent:
+                  message.username === username ? "flex-end" : "flex-start",
               }}
             >
-              <small>{message.username}</small>
-              <div>{message.message}</div>
-              <small>
-                {formatTime(message.time)} <IonIcon icon={checkmark}></IonIcon>
-              </small>
+              <div
+                className="chat-message-box"
+                style={{
+                  backgroundColor:
+                    message.username === username ? "#0089dfd5" : "#444444",
+                }}
+              >
+                <small>{message.username}</small>
+                <div>{message.content}</div>
+                <small>
+                  {message.created_at}
+                  <IonIcon icon={checkmark}></IonIcon>
+                </small>
+              </div>
             </div>
-          </div>
-        ))}
+          ));
+        })}
       </IonContent>
       <IonFooter>
         <form

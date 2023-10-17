@@ -6,6 +6,9 @@ import { KnexModule } from 'nest-knexjs'
 import * as dotenv from 'dotenv'
 import { MulterModule } from '@nestjs/platform-express'
 import { env } from './env'
+import { JobModule } from './job/job.module'
+import { ChatService } from './chat/chat.service'
+import { ChatModule } from './chat/chat.module'
 dotenv.config()
 @Module({
   imports: [
@@ -20,8 +23,10 @@ dotenv.config()
         },
       },
     }),
+    JobModule,
+    ChatModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, ChatService],
 })
 export class AppModule {}

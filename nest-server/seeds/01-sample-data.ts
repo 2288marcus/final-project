@@ -15,6 +15,12 @@ export async function seed(knex: Knex): Promise<void> {
       return id
     }
   }
+  async function seedRelation<T>(table: string, data: T) {
+    let row = await knex(table).select('id').where(data).first()
+    if (!row) {
+      await knex(table).insert(data)
+    }
+  }
 
   let john_doe_id = await seedRow('user', 'username', {
     username: 'john_doe',
@@ -37,6 +43,11 @@ export async function seed(knex: Knex): Promise<void> {
     cv_upload: 'path/to/cv.pdf',
   })
 
+  let developer_tag_id = await seedRow('tag', 'name', { name: 'developer' })
+  let designer_tag_id = await seedRow('tag', 'name', { name: 'designer' })
+  let creative_tag_id = await seedRow('tag', 'name', { name: 'creative' })
+  let graphic_tag_id = await seedRow('tag', 'name', { name: 'graphic' })
+
   let web_job_id = await seedRow('job', 'title', {
     user_id: john_doe_id, // Foreign key referencing user.id
     title: 'Web Developer',
@@ -44,12 +55,29 @@ export async function seed(knex: Knex): Promise<void> {
     price: 5000,
     type: 'demand',
   })
+  await seedRelation('job_tag', {
+    job_id: web_job_id,
+    tag_id: developer_tag_id,
+  })
+
   let design_job_id = await seedRow('job', 'title', {
     user_id: jane_smith_id, // Foreign key referencing user.id
     title: 'Graphic Designer',
     description: 'We need a creative graphic designer...',
     price: 3000,
     type: 'offer',
+  })
+  await seedRelation('job_tag', {
+    job_id: design_job_id,
+    tag_id: designer_tag_id,
+  })
+  await seedRelation('job_tag', {
+    job_id: design_job_id,
+    tag_id: creative_tag_id,
+  })
+  await seedRelation('job_tag', {
+    job_id: design_job_id,
+    tag_id: graphic_tag_id,
   })
 
   await seedRow('contract', 'job_id', {

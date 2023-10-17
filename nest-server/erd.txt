@@ -102,7 +102,7 @@ chat_message
 id integer PK
 contract_id integer FK >0- contract.id
 user_id integer FK >0- user.id
-content integer
+content string
 
 
 # zoom: 0.737

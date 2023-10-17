@@ -117,13 +117,6 @@ export class UserController {
     let result = await this.userService.signUp(input.body)
     return result
   }
-  ///////////////////////////////////////
-  @Get('jobList')
-  getJobList(@Headers('Authorization') authorization) {
-    let user_id = 106
-    return this.userService.getJobList(user_id)
-  }
-  ///////////////////////////////////////
 
   @Post('login')
   async login(@Body() body) {
