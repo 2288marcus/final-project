@@ -63,14 +63,14 @@ const RequirementPage: React.FC = () => {
         <IonItem>
           <IonSegment value="Default" className="demandoffer">
             <IonSegmentButton value="Demand">
-              <IonLabel>Demand</IonLabel>
+              <IonLabel>demand</IonLabel>
             </IonSegmentButton>
             <IonSegmentButton value="Default">
               <IonLabel>Choose one</IonLabel>
             </IonSegmentButton>
 
             <IonSegmentButton value="Offer">
-              <IonLabel>Offer</IonLabel>
+              <IonLabel>supply</IonLabel>
             </IonSegmentButton>
           </IonSegment>
         </IonItem>
@@ -88,6 +88,15 @@ const RequirementPage: React.FC = () => {
             >
               <IonText color="dark">Price (HKD)</IonText>
             </IonLabel>
+
+            {/* <IonItem>
+        <IonSelect label="Fixed label" labelPlacement="fixed" placeholder="Favorite fruit">
+          <IonSelectOption value="apple">Apple</IonSelectOption>
+          <IonSelectOption value="banana">Banana</IonSelectOption>
+          <IonSelectOption value="orange">Orange</IonSelectOption>
+        </IonSelect>
+      </IonItem> */}
+
             <IonInput
               type="number"
               min="1"
