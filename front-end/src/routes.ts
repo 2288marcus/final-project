@@ -4,7 +4,7 @@ export let routes = {
   home: "/home",
   submit_job: "/submit-job",
   login: "/login",
-  Chatroom: "/Chatroom",
+  Chatroom: "/Chatroom/:id",
   ChatroomList: "/ChatroomList",
   ProfilePage: "/ProfilePage",
   SettingPage: "/SettingPage",

@@ -47,7 +47,7 @@ let getContentParser = object({
     object({
       id: number(),
       username: string(),
-      message: string(),
+      content: string(),
       time: string(),
     })
   ),
@@ -55,7 +55,7 @@ let getContentParser = object({
 
 interface Message {
   id: number;
-  message: string;
+  content: string;
   username: string;
   time: string;
 }
@@ -68,20 +68,7 @@ const Chatroom: React.FC = () => {
   const auth = useAuth();
   const title = "Chatroom";
   const username = auth.state?.username || "unknown";
-  const [messages, setMessages] = useState<Message[]>([
-    // {
-    //   id: 1,
-    //   message: "Hi from Alice",
-    //   username: "Alice",
-    //   time: String(new Date(1696578205825)),
-    // },
-    // {
-    //   id: 2,
-    //   message: "Hi from Me",
-    //   username,
-    //   time: String(new Date(1696578205825 + 90 * 1000)),
-    // },
-  ]);
+  const [messages, setMessages] = useState<Message[]>([]);
 
   const contentRef = useRef<HTMLIonContentElement>(null);
 
@@ -98,7 +85,7 @@ const Chatroom: React.FC = () => {
     };
     const messageData: Message = {
       id: Date.now(),
-      message: newMessage,
+      content: newMessage,
       username: username, // Replace with the actual username
       time: String(new Date(Date.now())),
     };
@@ -110,7 +97,7 @@ const Chatroom: React.FC = () => {
     }
   };
 
-  const { data } = useGet("/chat/content2?contract_id=", getContentParser);
+  const { data } = useGet("/chat/content2?chatroom_id=2", getContentParser);
 
   useEffect(() => {
     // socket.on("received-message", (message: Message) => {
@@ -120,19 +107,13 @@ const Chatroom: React.FC = () => {
 
   useEffect(() => {
     if (data) {
-      // const newData = data.content.map((message)=>{
-      //   return { id: message.id, message: message.content, username: message.username, time:message.created_at }
-      // })
-
-      console.log(data);
+      console.log("data", data);
       setMessages(data.content as Message[]);
     }
-    // const newData: Message[] = data ? data.content: [];
-    // setMessages(newData);
   }, [data]);
 
   useEffect(() => {
-    console.log({ messages });
+    // console.log("messages", { messages });
     // 监听 messages 状态的变化
     if (contentRef.current) {
       contentRef.current.scrollToBottom();
@@ -144,12 +125,11 @@ const Chatroom: React.FC = () => {
     const message = messages[messages.length - 1];
     // console.log(message);
     let data = {
-      contract_id: 31,
-      content: message.message,
-      user_id: 104,
-      // updated_at: Date.now(),
+      chatroom_id: 2,
+      content: message.content,
+      user_id: 1,
     };
-    console.log(data);
+    console.log("send message", data);
 
     post("/chat/content", data, object({ id: number() }))
       .then((res) => {
@@ -193,7 +173,7 @@ const Chatroom: React.FC = () => {
               }}
             >
               <small>{message.username}</small>
-              <div>{message.message}</div>
+              <div>{message.content}</div>
               <small>
                 {formatTime(message.time)} <IonIcon icon={checkmark}></IonIcon>
               </small>

@@ -11,39 +11,57 @@ export class ChatService {
   authorize(authorization: any) {
     throw new Error('Method not implemented.')
   }
-  async content(input: {
-    contract_id: number
+  async sendMessage(input: {
+    chatroom_id: number
     // updated_at: number
     content: string
     user_id: number
   }) {
     return await this.knex
       .insert({
-        contract_id: input.contract_id,
+        chatroom_id: input.chatroom_id,
         // updated_at: input.updated_at,
         content: input.content,
         user_id: input.user_id,
       })
-      .into('chat_message')
+      .into('message')
       .returning('id')
   }
 
-  async getMessage(contract_id: number) {
+  async getMessage(chatroom_id: number) {
     let content = await this.knex
       .select(
-        'chat_message.id',
-        // 'user_id',
-        'username',
-        'content as message',
-        'chat_message.created_at as time',
+        'message.id',
+        'user.username',
+        'message.content',
+        'chatroom_id',
+        'message.created_at as time',
       )
-      .from('chat_message')
-      .join('user', 'user.id', 'chat_message.user_id')
-      .where({ contract_id })
-
-    console.log({ content })
-    // if (!profile) throw new NotFoundException('profile not found by id: ' + id)
-    // profile.cv_upload = null
+      .from('message')
+      .join('user', 'user.id', 'message.user_id')
+      .where({ chatroom_id })
+      .orderBy('message.created_at', 'asc')
     return { content }
+  }
+
+  async getChatroom(user_id: number) {
+    let chatroomList = await this.knex
+      .select(
+        'chatroom.id',
+        'user.username',
+        'chatroom.created_at',
+        'supplier_id',
+        'demander_id',
+      )
+      .from('chatroom')
+      .join('user', 'user.id', 'chatroom.user_id')
+      .where('supplier_id', user_id)
+      .orWhere('demander_id', user_id)
+      .orderBy('chatroom.created_at', 'asc')
+    // for (let chatroom of chatrooms) {
+    //   let rows = await this.knex('tag')
+
+    // }
+    return { chatroomList }
   }
 }

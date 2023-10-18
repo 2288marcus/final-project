@@ -7,11 +7,14 @@ export async function up(knex: Knex): Promise<void> {
     await knex.schema.createTable('user', table => {
       table.increments('id')
       table.string('username', 32).notNullable().unique()
+      table.string('fullName', 32).notNullable()
+      table.string('hkId', 8).notNullable().unique()
       table.string('email', 255).notNullable().unique()
-      table.string('password_hash', 255).notNullable()
-      table.text('description').notNullable()
-      table.boolean('human_verification').notNullable()
-      table.string('cv_upload', 255).notNullable()
+      table.string('public_key', 44).notNullable().unique()
+      table.string('hk_phone', 8).notNullable().unique()
+      table.boolean('human_verification').nullable()
+      table.string('cv_upload', 255).nullable()
+      table.text('description').nullable()
       table.timestamps(false, true)
     })
   }
@@ -23,7 +26,7 @@ export async function up(knex: Knex): Promise<void> {
       table.string('title', 255).notNullable()
       table.text('description').notNullable()
       table.integer('price').notNullable()
-      table.enum('type', ['demand', 'offer']).notNullable()
+      table.enum('type', ['demand', 'supply']).notNullable()
       table.timestamps(false, true)
     })
   }
@@ -59,19 +62,9 @@ export async function up(knex: Knex): Promise<void> {
   if (!(await knex.schema.hasTable('bookmark'))) {
     await knex.schema.createTable('bookmark', table => {
       table.increments('id')
-      table.integer('buyer_user_id').unsigned().notNullable().references('user.id')
-      table.integer('seller_user_id').unsigned().notNullable().references('user.id')
+      table.integer('demander_id').unsigned().notNullable().references('user.id')
+      table.integer('supplier_id').unsigned().notNullable().references('user.id')
       table.integer('job_id').unsigned().notNullable().references('job.id')
-      table.timestamps(false, true)
-    })
-  }
-
-  if (!(await knex.schema.hasTable('transaction'))) {
-    await knex.schema.createTable('transaction', table => {
-      table.increments('id')
-      table.integer('amount').notNullable()
-      table.integer('user_id').unsigned().notNullable().references('user.id')
-      table.enum('direction', ['from_system', 'to_system']).notNullable()
       table.timestamps(false, true)
     })
   }
@@ -79,31 +72,43 @@ export async function up(knex: Knex): Promise<void> {
   if (!(await knex.schema.hasTable('contract'))) {
     await knex.schema.createTable('contract', table => {
       table.increments('id')
-      table.integer('buyer_user_id').unsigned().notNullable().references('user.id')
-      table.integer('seller_user_id').unsigned().notNullable().references('user.id')
-      table.integer('job_status').notNullable()
-      table.text('details').notNullable()
-      table.timestamp('start_time').notNullable()
+      table.integer('real_price').notNullable()
+      table.text('real_description').notNullable()
       table.timestamp('estimated_finish_time').notNullable()
-      table.timestamp('claim_finish_time').nullable()
+      table.timestamp('real_finish_time').nullable()
       table.timestamp('confirm_finish_time').nullable()
-      table.timestamp('reject_finish_time').nullable()
       table.timestamp('cancel_time').nullable()
-      table.integer('cancel_by_user_id').unsigned().nullable().references('user.id')
-      table.timestamp('estimated_payment_release_time').notNullable()
-      table.integer('system_receive_payment_id').unsigned().nullable().references('transaction.id')
-      table.integer('system_send_payment_id').unsigned().nullable().references('transaction.id')
+      table.enum('status', ['confirm_contract', 'start_service', 'finish_service', 'confirm_finish']).notNullable()
       table.integer('job_id').unsigned().notNullable().references('job.id')
       table.timestamps(false, true)
     })
   }
 
-  if (!(await knex.schema.hasTable('chat_message'))) {
-    await knex.schema.createTable('chat_message', table => {
+  if (!(await knex.schema.hasTable('chatroom'))) {
+    await knex.schema.createTable('chatroom', table => {
+      table.increments('id')
+      table.integer('job_id').unsigned().notNullable().references('job.id')
+      table.integer('supplier_id').unsigned().notNullable().references('user.id')
+      table.integer('demander_id').unsigned().notNullable().references('user.id')
+      table.integer('contract_id').unsigned().notNullable().references('contract.id')
+      table.timestamps(false, true)
+    })
+  }
+
+  if (!(await knex.schema.hasTable('message'))) {
+    await knex.schema.createTable('message', table => {
+      table.increments('id')
+      table.integer('chatroom_id').unsigned().notNullable().references('chatroom.id')
+      table.text('content').notNullable()
+      table.timestamps(false, true)
+    })
+  }
+
+  if (!(await knex.schema.hasTable('transaction'))) {
+    await knex.schema.createTable('transaction', table => {
       table.increments('id')
       table.integer('contract_id').unsigned().notNullable().references('contract.id')
-      table.integer('user_id').unsigned().notNullable().references('user.id')
-      table.integer('content').notNullable()
+      table.enum('direction', ['buyer_to_system', 'system_to_seller', 'system_to_buyer']).notNullable()
       table.timestamps(false, true)
     })
   }
@@ -111,9 +116,10 @@ export async function up(knex: Knex): Promise<void> {
 
 
 export async function down(knex: Knex): Promise<void> {
-  await knex.schema.dropTableIfExists('chat_message')
-  await knex.schema.dropTableIfExists('contract')
   await knex.schema.dropTableIfExists('transaction')
+  await knex.schema.dropTableIfExists('message')
+  await knex.schema.dropTableIfExists('chatroom')
+  await knex.schema.dropTableIfExists('contract')
   await knex.schema.dropTableIfExists('bookmark')
   await knex.schema.dropTableIfExists('job_tag')
   await knex.schema.dropTableIfExists('tag')
