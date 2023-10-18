@@ -73,7 +73,7 @@ const Menu: React.FC = () => {
       mdIcon: mail,
     },
     {
-      title: "ChatroomList",
+      title: "Chatroom List",
       url: routes.ChatroomList,
       iosIcon: mail,
       mdIcon: mail,
