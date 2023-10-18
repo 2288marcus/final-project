@@ -52,7 +52,7 @@ const LoginPage: React.FC = () => {
         signature: toBase64(signature),
       });
       console.log("login result:", json);
-      auth.setState({ id: json.id, privateKeyBase64 });
+      auth.setState({ id: json.id, privateKeyBase64, username: json.username });
       setPrivateKeyBase64("");
       router.push(routes.ProfilePage);
     } catch (error) {

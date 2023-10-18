@@ -96,14 +96,14 @@ export class UserService {
     if (!isValid) throw new UnauthorizedException('Invalid signature')
 
     let user = await this.knex('user')
-      .select('id')
+      .select('id', 'username')
       .where('public_key', input.public_key)
       .first()
 
     if (!user)
       throw new UnauthorizedException('This public key is not registered')
 
-    return { id: user.id as number }
+    return { id: user.id as number, username: user.username as string }
   }
 
   async authorize(authorization?: string) {

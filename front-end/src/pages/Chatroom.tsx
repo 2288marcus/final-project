@@ -39,6 +39,7 @@ import {
 import "./Chatroom.css";
 // import { number } from "@beenotung/tslib";
 import useGet from "../hooks/useGet";
+import useAuth from "../hooks/useAuth";
 
 // const socket = io(api_origin);
 let getContentParser = object({
@@ -64,24 +65,23 @@ function formatTime(time: string) {
 }
 
 const Chatroom: React.FC = () => {
+  const auth = useAuth();
   const title = "Chatroom";
-  const username = "Username";
+  const username = auth.state?.username || "unknown";
   const [messages, setMessages] = useState<Message[]>([
-    {
-      id: 1,
-      message: "Hi from Alice",
-      username: "Alice",
-      time: String(new Date(1696578205825)),
-    },
-    {
-      id: 2,
-      message: "Hi from Me",
-      username,
-      time: String(new Date(1696578205825 + 90 * 1000)),
-    },
+    // {
+    //   id: 1,
+    //   message: "Hi from Alice",
+    //   username: "Alice",
+    //   time: String(new Date(1696578205825)),
+    // },
+    // {
+    //   id: 2,
+    //   message: "Hi from Me",
+    //   username,
+    //   time: String(new Date(1696578205825 + 90 * 1000)),
+    // },
   ]);
-
-  // function setContent() {
 
   const contentRef = useRef<HTMLIonContentElement>(null);
 
@@ -99,7 +99,7 @@ const Chatroom: React.FC = () => {
     const messageData: Message = {
       id: Date.now(),
       message: newMessage,
-      username: "Username", // Replace with the actual username
+      username: username, // Replace with the actual username
       time: String(new Date(Date.now())),
     };
     setMessages([...messages, messageData]);
@@ -110,7 +110,7 @@ const Chatroom: React.FC = () => {
     }
   };
 
-  const { data } = useGet("/chat/content2", getContentParser);
+  const { data } = useGet("/chat/content2?contract_id=", getContentParser);
 
   useEffect(() => {
     // socket.on("received-message", (message: Message) => {
@@ -182,14 +182,14 @@ const Chatroom: React.FC = () => {
             className="chat-message-container"
             style={{
               justifyContent:
-                message.username === username ? "flex-end" : "flex-start",
+                message.username == username ? "flex-end" : "flex-start",
             }}
           >
             <div
               className="chat-message-box"
               style={{
                 backgroundColor:
-                  message.username === username ? "#0089dfd5" : "#444444",
+                  message.username == username ? "#0089dfd5" : "#444444",
               }}
             >
               <small>{message.username}</small>
