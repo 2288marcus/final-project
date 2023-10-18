@@ -61,7 +61,7 @@ export async function seed(knex: Knex): Promise<void> {
   })
 
   let design_job_id = await seedRow('job', 'title', {
-    user_id: jane_smith_id, // Foreign key referencing user.id
+    user_id: john_doe_id, // Foreign key referencing user.id
     title: 'Graphic Designer',
     description: 'We need a creative graphic designer...',
     price: 3000,
@@ -80,34 +80,39 @@ export async function seed(knex: Knex): Promise<void> {
     tag_id: graphic_tag_id,
   })
 
-  await seedRow('contract', 'job_id', {
-    buyer_user_id: john_doe_id,
-    seller_user_id: jane_smith_id,
-    start_time: new Date(),
+  let web_contract_id = await seedRow('contract', 'job_id', {
+    job_id: web_job_id, // Foreign key referencing job.id
+    real_price: 5001,
+    real_description: 'Web development services',
     estimated_finish_time: new Date(),
-    claim_finish_time: null,
-    confirm_finish_time: null,
-    reject_finish_time: null,
+    real_finish_time: new Date(),
+    confirm_finish_time: new Date(),
     cancel_time: null,
-    cancel_by_user_id: null,
-    estimated_payment_release_time: new Date(), // Provide a valid value here
-    system_receive_payment_id: null,
-    system_send_payment_id: null,
-    job_id: web_job_id,
+    status: 'confirm_contract',
   })
-  await seedRow('contract', 'job_id', {
-    buyer_user_id: jane_smith_id,
-    seller_user_id: john_doe_id,
-    start_time: new Date(),
+
+  let design_contract_id = await seedRow('contract', 'job_id', {
+    job_id: design_job_id, // Foreign key referencing job.id
+    real_price: 3001,
+    real_description: 'Graphic design services',
     estimated_finish_time: new Date(),
-    claim_finish_time: null,
-    confirm_finish_time: null,
-    reject_finish_time: null,
+    real_finish_time: new Date(),
+    confirm_finish_time: new Date(),
     cancel_time: null,
-    cancel_by_user_id: null,
-    estimated_payment_release_time: new Date(), // Provide a valid value here
-    system_receive_payment_id: null,
-    system_send_payment_id: null,
-    job_id: design_job_id,
+    status: 'finish_service',
+  })
+
+  let web_chatroom_id = await seedRow('chatroom', 'job_id', {
+    job_id: web_job_id, // Foreign key referencing job.id
+    supplier_id: jane_smith_id, // Foreign key referencing user.id
+    demander_id: john_doe_id, // Foreign key referencing user.id
+    contract_id: web_contract_id, // Foreign key referencing contract.id
+  })
+
+  let design_chatroom_id = await seedRow('chatroom', 'job_id', {
+    job_id: design_job_id, // Foreign key referencing job.id
+    supplier_id: john_doe_id, // Foreign key referencing user.id
+    demander_id: jane_smith_id, // Foreign key referencing user.id
+    contract_id: design_contract_id, // Foreign key referencing contract.id
   })
 }

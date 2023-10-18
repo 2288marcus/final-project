@@ -11,7 +11,7 @@ export class ChatService {
   authorize(authorization: any) {
     throw new Error('Method not implemented.')
   }
-  async content(input: {
+  async sendMessage(input: {
     contract_id: number
     // updated_at: number
     content: string
@@ -24,26 +24,40 @@ export class ChatService {
         content: input.content,
         user_id: input.user_id,
       })
-      .into('chat_message')
+      .into('message')
       .returning('id')
   }
 
-  async getMessage(contract_id: number) {
+  async getMessage(chatroom_id: number) {
     let content = await this.knex
       .select(
-        'chat_message.id',
-        // 'user_id',
-        'username',
-        'content as message',
-        'chat_message.created_at as time',
+        'message.id',
+        'user.username',
+        'message.content',
+        this.knex.raw('message.created_at as time'),
       )
-      .from('chat_message')
-      .join('user', 'user.id', 'chat_message.user_id')
-      .where({ contract_id })
+      .from('message')
+      .join('user', 'user.id', 'message.user_id')
+      .where({ chatroom_id })
 
-    console.log({ content })
-    // if (!profile) throw new NotFoundException('profile not found by id: ' + id)
-    // profile.cv_upload = null
     return { content }
   }
+  // async getMessage(chatroom_id: number) {
+  //   let content = await this.knex
+  //     .select(
+  //       'message.id',
+  //       // 'user_id',
+  //       'username',
+  //       'content',
+  //       'message.created_at as time',
+  //     )
+  //     .from('message')
+  //     .join('user', 'user.id', 'user.username')
+  //     .where({ chatroom_id })
+
+  //   console.log({ content })
+  //   // if (!profile) throw new NotFoundException('profile not found by id: ' + id)
+  //   // profile.cv_upload = null
+  //   return { content }
+  // }
 }

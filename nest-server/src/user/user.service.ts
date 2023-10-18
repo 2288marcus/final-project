@@ -116,7 +116,7 @@ export class UserService {
     } catch (error) {
       throw new UnauthorizedException('Invalid authorization header')
     }
-    console.log('auth json:', json)
+    // console.log('auth json:', json)
     let input = object({
       now: number(),
       public_key: string(),

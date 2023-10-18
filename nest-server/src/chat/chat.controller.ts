@@ -11,7 +11,7 @@ export class ChatController {
   ) {}
 
   @Post('content')
-  async content(@Body() body, @Headers('Authorization') authorization) {
+  async sendContent(@Body() body, @Headers('Authorization') authorization) {
     let user_id = await this.userService.authorize(authorization)
     let input = object({
       body: object({
@@ -21,7 +21,7 @@ export class ChatController {
         user_id: int(),
       }),
     }).parse({ body })
-    const result = await this.chatService.content(input.body)
+    const result = await this.chatService.sendMessage(input.body)
     return result[0]
   }
 
@@ -31,8 +31,14 @@ export class ChatController {
     @Query('contract_id') contract_id,
   ) {
     let user_id = await this.userService.authorize(authorization)
+    // 获取消息
+    const messages = await this.chatService.getMessage(contract_id)
 
-    return this.chatService.getMessage(31)
-    return this.chatService.getMessage(contract_id)
+    // return {
+    //   contract_id: contract_id,
+    //   messages: messages,
+    // }
+    return this.chatService.getMessage(1)
+    // return this.chatService.getMessage(contract_id)
   }
 }
