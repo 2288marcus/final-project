@@ -45,14 +45,12 @@ const ChatroomList: React.FC = () => {
           <IonTitle>{title}</IonTitle>
         </IonToolbar>
       </IonHeader>
-
       <IonContent fullscreen className="ion-padding">
         <IonHeader collapse="condense">
           <IonToolbar>
             <IonTitle size="large">{title}</IonTitle>
           </IonToolbar>
         </IonHeader>
-
         <IonContent>
           {chatroomList.render((json) =>
             json.chatroomList.map((chatroom) => (
@@ -75,7 +73,7 @@ const ChatroomList: React.FC = () => {
                       <p>created_at: {chatroom.created_at}</p>
                       <p>supplier: {chatroom.supplier_username}</p>
                       <p>demander: {chatroom.demander_username}</p>
-                      <IonButton routerLink="/Chatroom/:id">
+                      <IonButton routerLink={`/Chatroom/${chatroom.id}`}>
                         chat now !!
                       </IonButton>
                     </div>

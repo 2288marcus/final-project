@@ -11,8 +11,6 @@ import {
   IonPage,
   IonTitle,
   IonToolbar,
-  IonInfiniteScroll,
-  IonInfiniteScrollContent,
   IonAvatar,
   IonLabel,
   IonSearchbar,
@@ -21,11 +19,11 @@ import {
   IonSegment,
   IonSegmentButton,
   IonCard,
-  IonCardHeader,
   IonChip,
-  IonBadge,
+  IonIcon,
   IonCardContent,
 } from "@ionic/react";
+import { star } from "ionicons/icons";
 import "./HomePage.css";
 import useGet from "../hooks/useGet";
 import { array, date, float, id, object, string, values } from "cast.ts";
@@ -128,38 +126,45 @@ const HomePage: React.FC = () => {
           <IonSegmentButton value="demand">demand</IonSegmentButton>
           <IonSegmentButton value="supply">supply</IonSegmentButton>
         </IonSegment>
-        {jobList.render((json) =>
-          json.jobList
-            ?.filter((job) => job.type == segment)
-            .map((job) => (
-              <IonCard key={job.job_id}>
-                <IonCardContent>
-                  <div className="d-flex align-center" style={{ gap: "8px" }}>
-                    <div className="d-flex col align-center ion-justify-content-center">
-                      <IonAvatar>
-                        <img
-                          src={
-                            "https://picsum.photos/80/80?random=" + job.job_id
-                          }
-                          alt="avatar"
-                        />
-                      </IonAvatar>
-                      <span className="author-name">{job.username}</span>
+        <div>
+          {jobList.render((json) =>
+            json.jobList
+              ?.filter((job) => job.type == segment)
+              .map((job) => (
+                <IonCard key={job.job_id}>
+                  <IonCardContent>
+                    <div className="d-flex align-center" style={{ gap: "8px" }}>
+                      <div className="d-flex col align-center ion-justify-content-center">
+                        <IonAvatar>
+                          <img
+                            src={
+                              "https://picsum.photos/80/80?random=" + job.job_id
+                            }
+                            alt="avatar"
+                          />
+                        </IonAvatar>
+                        <span className="author-name">{job.username}</span>
+                      </div>
+                      <div>
+                        <h1>- {job.title} -</h1>
+                        <p>{job.description}</p>
+                      </div>
+                      <IonButtons slot="end">
+                        <IonButton>
+                          <IonIcon slot="icon-only" icon={star}></IonIcon>
+                        </IonButton>
+                      </IonButtons>
                     </div>
-                    <div>
-                      <h1>- {job.title} -</h1>
-                      <p>{job.description}</p>
-                    </div>
+                  </IonCardContent>
+                  <div>
+                    {job.tags.map((tag) => (
+                      <IonChip key={tag}>{tag}</IonChip>
+                    ))}
                   </div>
-                </IonCardContent>
-                <div>
-                  {job.tags.map((tag) => (
-                    <IonChip key={tag}>{tag}</IonChip>
-                  ))}
-                </div>
-              </IonCard>
-            ))
-        )}
+                </IonCard>
+              ))
+          )}
+        </div>
       </IonContent>
     </IonPage>
   );

@@ -1,7 +1,15 @@
-import { Body, Controller, Post, Get, Headers, Query } from '@nestjs/common'
+import {
+  Body,
+  Controller,
+  Post,
+  Get,
+  Headers,
+  Query,
+  Param,
+} from '@nestjs/common'
 import { ChatService } from './chat.service'
 import { UserService } from '../user/user.service'
-import { int, object, string } from 'cast.ts'
+import { id, int, object, string } from 'cast.ts'
 
 @Controller('chat')
 export class ChatController {
@@ -10,25 +18,34 @@ export class ChatController {
     private readonly userService: UserService,
   ) {}
 
-  @Post('content')
-  async sendContent(@Body() body, @Headers('Authorization') authorization) {
+  @Post(':chatroom_id/messages')
+  async sendContent(
+    @Body() body,
+    @Param() params,
+    @Headers('Authorization') authorization,
+  ) {
     let user_id = await this.userService.authorize(authorization)
     let input = object({
       body: object({
-        chatroom_id: int(),
         // updated_at: int(),
         content: string(),
-        user_id: int(),
       }),
-    }).parse({ body })
-    const result = await this.chatService.sendMessage(input.body)
+      params: object({
+        chatroom_id: id(),
+      }),
+    }).parse({ body, params })
+    const result = await this.chatService.sendMessage({
+      chatroom_id: input.params.chatroom_id,
+      content: input.body.content,
+      user_id,
+    })
     return result[0]
   }
 
-  @Get('content2')
+  @Get(':chatroom_id/messages')
   async getContent(
     @Headers('Authorization') authorization,
-    @Query('chatroom_id') chatroom_id,
+    @Param('chatroom_id') chatroom_id,
   ) {
     let user_id = await this.userService.authorize(authorization)
     // 获取消息
