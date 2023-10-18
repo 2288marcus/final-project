@@ -15,7 +15,7 @@ export class ChatController {
     let user_id = await this.userService.authorize(authorization)
     let input = object({
       body: object({
-        contract_id: int(),
+        chatroom_id: int(),
         // updated_at: int(),
         content: string(),
         user_id: int(),
@@ -28,11 +28,11 @@ export class ChatController {
   @Get('content2')
   async getContent(
     @Headers('Authorization') authorization,
-    @Query('contract_id') contract_id,
+    @Query('chatroom_id') chatroom_id,
   ) {
     let user_id = await this.userService.authorize(authorization)
     // 获取消息
-    const messages = await this.chatService.getMessage(contract_id)
+    return await this.chatService.getMessage(chatroom_id)
 
     // return {
     //   contract_id: contract_id,
@@ -40,5 +40,12 @@ export class ChatController {
     // }
     return this.chatService.getMessage(1)
     // return this.chatService.getMessage(contract_id)
+  }
+
+  @Get('chatroom')
+  async getChatroom(@Headers('Authorization') authorization) {
+    let user_id = await this.userService.authorize(authorization)
+    // 获取消息
+    return await this.chatService.getChatroom(user_id)
   }
 }

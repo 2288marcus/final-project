@@ -12,14 +12,14 @@ export class ChatService {
     throw new Error('Method not implemented.')
   }
   async sendMessage(input: {
-    contract_id: number
+    chatroom_id: number
     // updated_at: number
     content: string
     user_id: number
   }) {
     return await this.knex
       .insert({
-        contract_id: input.contract_id,
+        chatroom_id: input.chatroom_id,
         // updated_at: input.updated_at,
         content: input.content,
         user_id: input.user_id,
@@ -34,30 +34,34 @@ export class ChatService {
         'message.id',
         'user.username',
         'message.content',
-        this.knex.raw('message.created_at as time'),
+        'chatroom_id',
+        'message.created_at as time',
       )
       .from('message')
       .join('user', 'user.id', 'message.user_id')
       .where({ chatroom_id })
-
+      .orderBy('message.created_at', 'asc')
     return { content }
   }
-  // async getMessage(chatroom_id: number) {
-  //   let content = await this.knex
-  //     .select(
-  //       'message.id',
-  //       // 'user_id',
-  //       'username',
-  //       'content',
-  //       'message.created_at as time',
-  //     )
-  //     .from('message')
-  //     .join('user', 'user.id', 'user.username')
-  //     .where({ chatroom_id })
 
-  //   console.log({ content })
-  //   // if (!profile) throw new NotFoundException('profile not found by id: ' + id)
-  //   // profile.cv_upload = null
-  //   return { content }
-  // }
+  async getChatroom(user_id: number) {
+    let chatroomList = await this.knex
+      .select(
+        'chatroom.id',
+        'user.username',
+        'chatroom.created_at',
+        'supplier_id',
+        'demander_id',
+      )
+      .from('chatroom')
+      .join('user', 'user.id', 'chatroom.user_id')
+      .where('supplier_id', user_id)
+      .orWhere('demander_id', user_id)
+      .orderBy('chatroom.created_at', 'asc')
+    // for (let chatroom of chatrooms) {
+    //   let rows = await this.knex('tag')
+
+    // }
+    return { chatroomList }
+  }
 }
