@@ -7,12 +7,9 @@ import {
   IonInput,
   IonItem,
   IonLabel,
-  IonList,
   IonMenuButton,
   IonNote,
   IonPage,
-  IonSegment,
-  IonSegmentButton,
   IonSelect,
   IonSelectOption,
   IonText,
@@ -25,6 +22,8 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import "./RequirementPage.css";
 import { format_2_digit, format_datetime } from "@beenotung/tslib/format";
+import { postjob } from "../api/config";
+import { object } from "cast.ts";
 
 function toDateString(date: Date) {
   let y = date.getFullYear();
@@ -38,8 +37,31 @@ const RequirementPage: React.FC = () => {
 
   const [state, setState] = useState({
     price: "",
-    date: toDateString(new Date()),
+    //date: toDateString(new Date()),
+    description: "",
+    type: "",
+    title: "",
   });
+
+  //////////////////////////////////////////////
+
+  const submit = () => {
+    let data = {
+      ...state,
+    };
+    console.log("data:", data);
+
+    // 发送POST请求到后端
+    postjob("/jobs/jobpost", data, object({}))
+      .then((res) => {
+        console.log("Result:", res);
+      })
+      .catch((err) => {
+        console.log("Fail:", err);
+      });
+  };
+
+  //////////////////////////////////////////////
 
   let price = +state.price;
   let priceErrorMessage =
@@ -64,41 +86,32 @@ const RequirementPage: React.FC = () => {
             <IonTitle size="large">{title}</IonTitle>
           </IonToolbar>
         </IonHeader>
-
-        {/* <IonCard>
-          <>
-            1<IonItem />2 3<IonItem />4
-            <div className="d-flex-md HalfInputFieldContainer">
-              1<IonItem />2 3<IonItem />4
-            </div>
-            1<IonItem />2
-            <div className="d-flex-md HalfInputFieldContainer">
-              1<IonItem />2 3<IonItem />4
-            </div>
-            <div className="d-flex-md HalfInputFieldContainer">
-              1<IonItem />2 3<IonItem />4
-            </div>
-            <div>
-              1<IonItem />2
-            </div>
-          </>
-        </IonCard> */}
-
         <IonCard>
           <IonItem>
             <IonLabel position="floating">
               <IonText>Title:</IonText>
             </IonLabel>
-            <IonInput type="text" />
+            <IonInput
+              type="text"
+              onIonChange={(e) => {
+                setState({ ...state, title: e.detail.value! });
+              }}
+            />
           </IonItem>
 
           <IonItem>
-            <IonSelect label="Service" placeholder="Type:">
+            <IonSelect
+              label="Service"
+              placeholder="Type:"
+              onIonChange={(e) => {
+                setState({ ...state, type: e.detail.value! });
+              }}
+            >
               <IonSelectOption value="demand">Demand</IonSelectOption>
               <IonSelectOption value="supply">Supply</IonSelectOption>
             </IonSelect>
             <IonItem />
-            <IonInput
+            {/* <IonInput
               label="Service Date:"
               type="date"
               value={state.date}
@@ -106,7 +119,7 @@ const RequirementPage: React.FC = () => {
               onIonChange={(e) => {
                 console.log(e.detail.value);
               }}
-            />
+            /> */}
           </IonItem>
 
           <IonItem>
@@ -114,6 +127,9 @@ const RequirementPage: React.FC = () => {
               autoGrow
               label="Description"
               labelPlacement="floating"
+              onIonChange={(e) => {
+                setState({ ...state, description: e.detail.value! });
+              }}
             />
           </IonItem>
 
@@ -141,7 +157,9 @@ const RequirementPage: React.FC = () => {
             </IonNote>
           ) : null}
         </IonCard>
-        <IonButton expand="full">Post</IonButton>
+        <IonButton expand="full" onClick={submit}>
+          Post
+        </IonButton>
       </IonContent>
     </IonPage>
   );

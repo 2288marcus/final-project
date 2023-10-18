@@ -1,7 +1,12 @@
 import { Injectable } from '@nestjs/common'
 import { Knex } from 'knex'
 import { InjectModel } from 'nest-knexjs'
+import { type } from 'os'
 
+export enum jobtype {
+  demand = 'demand',
+  supply = 'supply',
+}
 @Injectable()
 export class JobService {
   constructor(@InjectModel() private readonly knex: Knex) {}
@@ -28,5 +33,27 @@ export class JobService {
       job.tags = rows.map(row => row.name)
     }
     return { jobList }
+  }
+
+  async jobpost(
+    input: {
+      title: string
+      description: string
+      price: number
+      type: string
+      // type: enum(jobtype)
+    },
+    user_id: number,
+  ) {
+    return await this.knex
+      .insert({
+        user_id,
+        title: input.title,
+        description: input.description,
+        price: input.price,
+        type: input.type,
+      })
+      .into('job')
+      .returning('id')
   }
 }

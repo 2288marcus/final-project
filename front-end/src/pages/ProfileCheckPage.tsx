@@ -45,28 +45,9 @@ let getProfileParser = object({
 type ProfileCheckPage = ParseResult<typeof getProfileParser>["profile"];
 
 const ProfileCheckPage: React.FC = () => {
-  const title = "Information";
+  const title = "Target Information";
 
   const getProfileResult = useGet("/user/profile", getProfileParser);
-
-  // function setProfile(profile: ProfileCheckPage) {
-  //   getProfileResult.setData({ profile });
-  // }
-
-  // setProfile({
-  //   username: "alicewong123",
-  //   email: "x",
-  //   human_verification: true,
-  //   cv_upload: "x.pdf",
-  //   created_at: "x",
-  //   updated_at: "x",
-  //   fullName: "Alice Wong",
-  //   HKID: "x",
-  //   public_key: "x",
-  //   HK_phone: "x",
-  // });
-
-  ///////////////////////////
 
   const [draftFile, setDraftFile] = useState<File>();
 
@@ -96,10 +77,9 @@ const ProfileCheckPage: React.FC = () => {
           </IonToolbar>
         </IonHeader>
 
-        <IonItemDivider>
-          {/* <div className="session-title">Personal Information</div> */}
+        {/* <IonItemDivider>
           <div className="session-title">Personal Information</div>
-        </IonItemDivider>
+        </IonItemDivider> */}
         <IonCard>
           {getProfileResult.render((json) => {
             const profile = json.profile;
@@ -109,17 +89,11 @@ const ProfileCheckPage: React.FC = () => {
 
             return (
               <>
-                <InputField
-                  inputContext={profileContext}
-                  label="Username:"
-                  field="username"
-                />
-
                 <div className="d-flex-md HalfInputFieldContainer">
                   <InputField
                     inputContext={profileContext}
-                    label="Full Name:"
-                    field="fullName"
+                    label="Username:"
+                    field="username"
                   />
                   <InputField
                     inputContext={profileContext}
@@ -140,7 +114,6 @@ const ProfileCheckPage: React.FC = () => {
                     field="description"
                   />
                 </div>
-
                 <IonItem>
                   <IonLabel position="fixed">CV:</IonLabel>
                   <div>{draftFile?.name || profile.cv_upload}</div>
@@ -154,6 +127,18 @@ const ProfileCheckPage: React.FC = () => {
                     </IonButton>
                   </IonButtons>
                 </IonItem>
+                <div className="d-flex-md HalfInputFieldContainer">
+                  <InputField
+                    inputContext={profileContext}
+                    label="Full Name:"
+                    field="fullName"
+                  />
+                  <InputField
+                    inputContext={profileContext}
+                    label="Volume :"
+                    field="HK_phone"
+                  />
+                </div>
               </>
             );
           })}

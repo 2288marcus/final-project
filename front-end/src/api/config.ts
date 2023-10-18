@@ -20,6 +20,22 @@ export async function post<T>(url: string, body: object, parser: Parser<T>) {
   );
 }
 
+export async function postjob<T>(url: string, body: object, parser: Parser<T>) {
+  return handleFetch(
+    url,
+    {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        Authorization: getAuthorization(),
+      },
+      body: JSON.stringify(body),
+    },
+    parser
+  );
+}
+
 export async function get<T>(url: string, parser: Parser<T>) {
   return handleFetch(
     url,
