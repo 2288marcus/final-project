@@ -15,6 +15,8 @@ import {
   IonAlert,
   useIonToast,
   IonLabel,
+  IonCardSubtitle,
+  IonCardTitle,
 } from "@ionic/react";
 import {
   add,
@@ -86,8 +88,12 @@ const Chatroom: React.FC = () => {
     ),
   });
   let chatroomList = useGet("/chat/chatroom", getChatroomParser);
-  const title = `Chatroom`;
-  // const title = `${chatroomList.data?.chatroomList[0].title}`;
+  // console.log("chatroomList:", chatroomList.data?.chatroomList[0].id);
+  // const title = `Chatroom`;
+  // if (params} === chatroomList[0].id) {
+  // }
+  // const chatroom_id = params["id"]
+  // const title = `${chatroomList.data?.chatroomList[chatroom_id].id}`;
   const username = auth.state?.username || "unknown";
 
   const contentRef = useRef<HTMLElement>(null);
@@ -158,7 +164,19 @@ const Chatroom: React.FC = () => {
     contentRef.current?.scrollIntoView({ behavior: "smooth" });
   };
   const params = useParams<{ id: string }>();
+  // console.log("params:", params["id"]);
+  const chatroom_id = +params["id"] - 1;
+  // console.log(chatroom_id);
+  const chatroom_title = `${
+    chatroomList.data?.chatroomList[+chatroom_id].title
+  }`;
+  const chatroom_created_at = `${chatroomList.data?.chatroomList[
+    +chatroom_id
+  ].created_at
+    .replace("T", " ")
+    .replace("Z", "")}`;
   const roomData = useGet(`/chat/${params.id}/messages`, getContentParser);
+  // console.log("roomData:", roomData);
 
   const [error, setError] = useState("");
 
@@ -182,7 +200,8 @@ const Chatroom: React.FC = () => {
             <IonBackButton defaultHref="/ChatroomList"></IonBackButton>
           </IonButtons>
 
-          <IonTitle>{title}</IonTitle>
+          <IonCardTitle>{chatroom_title}</IonCardTitle>
+          <IonCardSubtitle>{chatroom_created_at}</IonCardSubtitle>
         </IonToolbar>
       </IonHeader>
       <IonContent>
