@@ -16,6 +16,7 @@ export type InputContext<T> = {
   reset?: () => void;
   editingField?: keyof T;
   setEditingField?(value?: keyof T): void;
+  alwaysEditable?: boolean;
 };
 
 export function InputField<T>(props: {
@@ -84,7 +85,7 @@ export function InputField<T>(props: {
               [props.field]: e.detail.value || "",
             })
           }
-          readonly={mode != "edit"}
+          readonly={mode != "edit" && !props.inputContext.alwaysEditable}
         />
         <IonButtons slot="end">
           <IonButton
