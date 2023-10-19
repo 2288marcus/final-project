@@ -66,14 +66,14 @@ const Menu: React.FC = () => {
     //   iosIcon: heartOutline,
     //   mdIcon: heartSharp,
     // },
+    // {
+    //   title: "Chatroom",
+    //   url: routes.Chatroom,
+    //   iosIcon: mail,
+    //   mdIcon: mail,
+    // },
     {
-      title: "Chatroom",
-      url: routes.Chatroom,
-      iosIcon: mail,
-      mdIcon: mail,
-    },
-    {
-      title: "ChatroomList",
+      title: "Chatroom List",
       url: routes.ChatroomList,
       iosIcon: mail,
       mdIcon: mail,
@@ -142,7 +142,7 @@ const Menu: React.FC = () => {
           })}
         </IonList>
 
-        <IonList id="labels-list">
+        {/* <IonList id="labels-list">
           <IonListHeader>Labels</IonListHeader>
           {labels.map((label, index) => (
             <IonItem lines="none" key={index}>
@@ -150,7 +150,7 @@ const Menu: React.FC = () => {
               <IonLabel>{label}</IonLabel>
             </IonItem>
           ))}
-        </IonList>
+        </IonList> */}
       </IonContent>
     </IonMenu>
   );

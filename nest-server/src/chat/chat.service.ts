@@ -1,8 +1,6 @@
 import { Injectable } from '@nestjs/common'
-import { number, object, string } from 'cast.ts'
 import { Knex, knex } from 'knex'
 import { InjectModel } from 'nest-knexjs'
-import { verifyObjectSignature } from 'src/utils/encode'
 
 @Injectable()
 export class ChatService {
@@ -13,14 +11,12 @@ export class ChatService {
   }
   async sendMessage(input: {
     chatroom_id: number
-    // updated_at: number
     content: string
     user_id: number
   }) {
     return await this.knex
       .insert({
         chatroom_id: input.chatroom_id,
-        // updated_at: input.updated_at,
         content: input.content,
         user_id: input.user_id,
       })
@@ -48,20 +44,22 @@ export class ChatService {
     let chatroomList = await this.knex
       .select(
         'chatroom.id',
-        'user.username',
+        'supplier.username as supplier_username',
+        'demander.username as demander_username',
         'chatroom.created_at',
         'supplier_id',
         'demander_id',
+        'job.title',
+        'job.type',
       )
       .from('chatroom')
-      .join('user', 'user.id', 'chatroom.user_id')
+      .join('user as supplier', 'supplier.id', 'chatroom.supplier_id')
+      .join('user as demander', 'demander.id', 'chatroom.demander_id')
+      .join('job', 'job.id', 'chatroom.job_id')
       .where('supplier_id', user_id)
       .orWhere('demander_id', user_id)
       .orderBy('chatroom.created_at', 'asc')
-    // for (let chatroom of chatrooms) {
-    //   let rows = await this.knex('tag')
 
-    // }
     return { chatroomList }
   }
 }

@@ -1,7 +1,15 @@
 import { Parser } from "cast.ts";
 import { useEffect, useState } from "react";
 import { get } from "../api/config";
-import { IonButton, IonButtons, IonIcon, IonText } from "@ionic/react";
+import {
+  IonButton,
+  IonButtons,
+  IonIcon,
+  IonLoading,
+  IonProgressBar,
+  IonSpinner,
+  IonText,
+} from "@ionic/react";
 import { reloadCircle } from "ionicons/icons";
 
 export default function useGet<T>(url: string, parser: Parser<T>) {
@@ -25,7 +33,13 @@ export default function useGet<T>(url: string, parser: Parser<T>) {
 
   function render(customRender: (data: T) => any) {
     if (!data) {
-      return <p className="ion-text-center">Loading ...</p>;
+      return (
+        <div>
+          <p className="ion-text-center">
+            <IonSpinner name="dots"></IonSpinner>
+          </p>
+        </div>
+      );
     }
     if (data.error) {
       return (

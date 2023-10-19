@@ -12,6 +12,9 @@ import {
   IonFooter,
   IonTextarea,
   IonBackButton,
+  IonAlert,
+  useIonToast,
+  IonLabel,
 } from "@ionic/react";
 import {
   add,
@@ -23,8 +26,9 @@ import {
   videocam,
   checkmark,
   checkmarkDone,
+  addCircle,
 } from "ionicons/icons";
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useLayoutEffect } from "react";
 // import io from "socket.io-client";
 import { get, post } from "../api/config";
 import {
@@ -40,6 +44,8 @@ import "./Chatroom.css";
 // import { number } from "@beenotung/tslib";
 import useGet from "../hooks/useGet";
 import useAuth from "../hooks/useAuth";
+import { useParams } from "react-router";
+import { id } from "@beenotung/tslib";
 
 // const socket = io(api_origin);
 let getContentParser = object({
@@ -66,38 +72,95 @@ function formatTime(time: string) {
 
 const Chatroom: React.FC = () => {
   const auth = useAuth();
-  const title = "Chatroom";
+  let getChatroomParser = object({
+    chatroomList: array(
+      object({
+        id: number(),
+        supplier_username: string(),
+        demander_username: string(),
+        created_at: string(),
+        supplier_id: number(),
+        demander_id: number(),
+        title: string(),
+      })
+    ),
+  });
+  let chatroomList = useGet("/chat/chatroom", getChatroomParser);
+  const title = `Chatroom`;
+  // const title = `${chatroomList.data?.chatroomList[0].title}`;
   const username = auth.state?.username || "unknown";
-  const [messages, setMessages] = useState<Message[]>([]);
 
-  const contentRef = useRef<HTMLIonContentElement>(null);
+  const contentRef = useRef<HTMLElement>(null);
 
-  const sendMessage = (newMessage: string) => {
+  const [present, dismiss] = useIonToast();
+
+  //當submit時，觸發sendMessage給database
+  const sendMessage = (form: HTMLFormElement) => {
+    let newMessage = form.newMessage.value.trim();
+
     if (newMessage == "") {
-      alert("empty?");
       return;
     }
+
     const currentDate = new Date();
     const options = {
       hour: "numeric",
       minute: "numeric",
       hour12: false, // 将时间设置为24小时制
     };
-    const messageData: Message = {
-      id: Date.now(),
+
+    // console.log(message);
+    let data = {
+      chatroom_id: params.id,
       content: newMessage,
-      username: username, // Replace with the actual username
-      time: String(new Date(Date.now())),
     };
-    setMessages([...messages, messageData]);
+    console.log("send message", data);
+
+    post(`/chat/${params.id}/messages`, data, object({ id: number() }))
+      .then((json) => {
+        console.log("POST result:", json);
+        let id = json.id;
+        // 根据需要执行其他操作
+        form.newMessage.value = "";
+        form.newMessage.parentElement.dataset.replicatedValue = "";
+        roomData.setData((json) => {
+          if (!json?.content) return json;
+          return {
+            content: [
+              ...json.content,
+              {
+                id,
+                content: newMessage,
+                username: username, // Replace with the actual username
+                time: String(new Date(Date.now())),
+              },
+            ],
+          };
+        });
+        setError("");
+      })
+      .catch((err) => {
+        let message = String(err)
+          .replace("Error: ", "")
+          .replace("Invalid object, ", "");
+        console.log("POST failed:", message);
+        // 根据需要处理错误
+        // present({
+        //   message,
+        //   duration: 5000,
+        //   color: "danger",
+        //   position: "top",
+        // });
+        setError(message);
+      });
 
     // 滚动到底部
-    if (contentRef.current) {
-      contentRef.current.scrollToBottom();
-    }
+    contentRef.current?.scrollIntoView({ behavior: "smooth" });
   };
+  const params = useParams<{ id: string }>();
+  const roomData = useGet(`/chat/${params.id}/messages`, getContentParser);
 
-  const { data } = useGet("/chat/content2?chatroom_id=2", getContentParser);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     // socket.on("received-message", (message: Message) => {
@@ -105,42 +168,11 @@ const Chatroom: React.FC = () => {
     // });
   }, []);
 
-  useEffect(() => {
-    if (data) {
-      console.log("data", data);
-      setMessages(data.content as Message[]);
-    }
-  }, [data]);
-
-  useEffect(() => {
+  useLayoutEffect(() => {
     // console.log("messages", { messages });
     // 监听 messages 状态的变化
-    if (contentRef.current) {
-      contentRef.current.scrollToBottom();
-    }
-  }, [messages]); // 当 messages 状态发生变化时触发
-
-  //當submit時，觸發sendMessage給database
-  const submit = () => {
-    const message = messages[messages.length - 1];
-    // console.log(message);
-    let data = {
-      chatroom_id: 2,
-      content: message.content,
-      user_id: 1,
-    };
-    console.log("send message", data);
-
-    post("/chat/content", data, object({ id: number() }))
-      .then((res) => {
-        console.log("POST result:", res);
-        // 根据需要执行其他操作
-      })
-      .catch((err) => {
-        console.log("POST failed:", err);
-        // 根据需要处理错误
-      });
-  };
+    contentRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [roomData.data?.content]); // 当 messages 状态发生变化时触发
 
   return (
     <IonPage>
@@ -149,51 +181,91 @@ const Chatroom: React.FC = () => {
           <IonButtons slot="start">
             <IonBackButton defaultHref="/ChatroomList"></IonBackButton>
           </IonButtons>
-          <IonButtons slot="start">
-            <IonMenuButton />
-          </IonButtons>
+
           <IonTitle>{title}</IonTitle>
         </IonToolbar>
       </IonHeader>
-      <IonContent ref={contentRef}>
-        {messages.map((message) => (
-          <div
-            key={message.id}
-            className="chat-message-container"
-            style={{
-              justifyContent:
-                message.username == username ? "flex-end" : "flex-start",
-            }}
-          >
-            <div
-              className="chat-message-box"
-              style={{
-                backgroundColor:
-                  message.username == username ? "#0089dfd5" : "#444444",
-              }}
-            >
-              <small>{message.username}</small>
-              <div>{message.content}</div>
-              <small>
-                {formatTime(message.time)} <IonIcon icon={checkmark}></IonIcon>
-              </small>
-            </div>
-          </div>
-        ))}
+      <IonContent>
+        <div>
+          {roomData.render((json) =>
+            json.content.map((message) => (
+              <div
+                key={message.id}
+                className="chat-message-container"
+                style={{
+                  justifyContent:
+                    message.username == username ? "flex-end" : "flex-start",
+                }}
+              >
+                <div
+                  className="chat-message-box"
+                  style={{
+                    backgroundColor:
+                      message.username == username ? "#0089dfd5" : "#444444",
+                  }}
+                >
+                  <small>{message.username}</small>
+                  <div>{message.content}</div>
+                  <small>
+                    {formatTime(message.time)}{" "}
+                    <IonIcon icon={checkmark}></IonIcon>
+                  </small>
+                </div>
+              </div>
+            ))
+          )}
+          <div ref={contentRef}></div>
+        </div>
       </IonContent>
       <IonFooter>
+        {error ? (
+          <IonItem color="danger">
+            <IonLabel>{error}</IonLabel>
+            <IonButtons slot="end">
+              <IonButton onClick={() => setError("")}>Dismiss</IonButton>
+            </IonButtons>
+          </IonItem>
+        ) : null}
         <form
           onSubmit={(e) => {
             e.preventDefault();
             let form = e.target as HTMLFormElement;
-            let newMessage = form.newMessage.value.trim();
-            sendMessage(newMessage);
-            form.newMessage.value = "";
-            form.newMessage.parentElement.dataset.replicatedValue = "";
+            sendMessage(form);
           }}
         >
           <IonItem>
             <IonButtons>
+              <IonButton id="present-chatroom-info">
+                <IonIcon style={{ color: "white" }} icon={addCircle}></IonIcon>
+              </IonButton>
+              <IonAlert
+                trigger="present-chatroom-info"
+                header="Contact Info"
+                buttons={["OK"]}
+                inputs={[
+                  { type: "textarea", placeholder: "job description" },
+                  // {
+                  //   placeholder: "Nickname (max 8 characters)",
+                  //   attributes: {
+                  //     maxlength: 8,
+                  //   },
+                  // },
+                  {
+                    type: "number",
+                    placeholder: "price",
+                    attributes: {
+                      min: 1,
+                      // max: 100,
+                    },
+                  },
+                  {
+                    type: "date",
+                  },
+                  {
+                    type: "time",
+                  },
+                ]}
+              ></IonAlert>
               <IonButton>
                 <IonIcon style={{ color: "white" }} icon={document}></IonIcon>
               </IonButton>
@@ -215,7 +287,6 @@ const Chatroom: React.FC = () => {
             />
             <IonButtons>
               <IonButton
-                onClick={submit}
                 type="submit"
                 style={{
                   background: "#1DA1F2",
