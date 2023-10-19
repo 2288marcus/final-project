@@ -7,3 +7,8 @@
   min-height: 250px;
   overflow: auto;
 }
+
+.RequirementPage .HalfInputFieldContainer {
+  gap: 1rem;
+  justify-content: space-between;
+}

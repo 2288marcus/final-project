@@ -9,6 +9,7 @@ import { env } from './env'
 import { JobModule } from './job/job.module'
 import { ChatService } from './chat/chat.service'
 import { ChatModule } from './chat/chat.module'
+import { TagModule } from './tag/tag.module';
 dotenv.config()
 @Module({
   imports: [
@@ -25,6 +26,7 @@ dotenv.config()
     }),
     JobModule,
     ChatModule,
+    TagModule,
   ],
   controllers: [AppController],
   providers: [AppService, ChatService],

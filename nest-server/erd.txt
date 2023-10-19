@@ -53,6 +53,7 @@ job_tag
 id integer PK
 job_id integer FK >0- job.id
 tag_id integer FK >0- tag.id
+     
 
 
 tag
@@ -116,10 +117,9 @@ job_id integer FK - job.id
 # user (285, 171)
 # job_comment (24, 388)
 # job (613, 492)
-# job_tag (329, 552)
+# job_tag (328, 522)
 # tag (141, 571)
 # transaction (511, 25)
-# chat_message (439, 48)
 # message (1097, 289)
 # chatroom (888, 324)
 # contract (747, 39)

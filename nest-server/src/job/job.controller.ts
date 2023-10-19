@@ -8,13 +8,9 @@ import {
   Param,
 } from '@nestjs/common'
 import { JobService } from './job.service'
-import { number, object, string } from 'cast.ts'
+import { array, int, number, object, string, values } from 'cast.ts'
 import { UserService } from '../user/user.service'
 
-export enum jobType {
-  demand = 'demand',
-  supply = 'supply',
-}
 @Controller('jobs')
 export class JobController {
   constructor(
@@ -27,18 +23,20 @@ export class JobController {
     return this.jobService.getJobList()
   }
 
-  @Post('jobPost')
-  async jobPost(@Body() body, @Headers('Authorization') authorization) {
+  @Post()
+  async createJob(@Body() body, @Headers('Authorization') authorization) {
     let user_id = await this.userService.authorize(authorization)
+    // let user_id = 1
     let input = object({
       body: object({
-        price: number(),
-        title: string(),
-        description: string(),
-        type: string(),
+        price: int({ min: 1 }),
+        title: string({ nonEmpty: true }),
+        description: string({ nonEmpty: true }),
+        type: values(['demand' as const, 'supply' as const]),
+        tags: array(string({ nonEmpty: true })),
       }),
     }).parse({ body })
-    let result = await this.jobService.jobPost(input.body, user_id)
+    let result = await this.jobService.createJob(input.body, user_id)
     return result
   }
 

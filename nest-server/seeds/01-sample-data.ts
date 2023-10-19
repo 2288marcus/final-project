@@ -27,7 +27,8 @@ export async function seed(knex: Knex): Promise<void> {
     fullName: 'John Doe',
     hkId: 'A1234567',
     email: 'john.doe@example.com',
-    public_key: '7HLdB3CLhp/vm92hbx+qTUKAhAnlvlByXexWxz+Fi20=', //IMxAwdQRlJLkqsN3Ywp7DLYzUijVR/BdwdcdlVn4Jebsct0HcIuGn++b3aFvH6pNQoCECeW+UHJd7FbHP4WLbQ==
+    public_key: '7HLdB3CLhp/vm92hbx+qTUKAhAnlvlByXexWxz+Fi20=',
+    //IMxAwdQRlJLkqsN3Ywp7DLYzUijVR/BdwdcdlVn4Jebsct0HcIuGn++b3aFvH6pNQoCECeW+UHJd7FbHP4WLbQ==
     hk_phone: '12345678',
     human_verification: true,
     cv_upload: 'path/to/cv.pdf',
@@ -37,7 +38,8 @@ export async function seed(knex: Knex): Promise<void> {
     fullName: 'Jane Smith',
     hkId: 'B9876543',
     email: 'jane.smith@example.com',
-    public_key: 'OMZlPE1GPuCjJIAYyk6n0mVtPZ6GcL/ot4uUKcuUajQ=', //87wzRiZJAUEmn4edg1dlktEVSDrEhDvZv/+T+To8C9I4xmU8TUY+4KMkgBjKTqfSZW09noZwv+i3i5Qpy5RqNA==
+    public_key: 'OMZlPE1GPuCjJIAYyk6n0mVtPZ6GcL/ot4uUKcuUajQ=',
+    //87wzRiZJAUEmn4edg1dlktEVSDrEhDvZv/+T+To8C9I4xmU8TUY+4KMkgBjKTqfSZW09noZwv+i3i5Qpy5RqNA==
     hk_phone: '87654321',
     human_verification: false,
     cv_upload: 'path/to/cv.pdf',

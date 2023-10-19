@@ -16,6 +16,7 @@ export type InputContext<T> = {
   reset?: () => void;
   editingField?: keyof T;
   setEditingField?(value?: keyof T): void;
+  alwaysEditable?: boolean;
 };
 
 export function InputField<T>(props: {
@@ -24,6 +25,9 @@ export function InputField<T>(props: {
   field: keyof T;
   editable?: boolean;
   type?: "text" | "textarea";
+  placeholder?: string;
+  helperText?: string;
+  errorText?: string;
 }) {
   const Input = props.type == "textarea" ? IonTextarea : IonInput;
 
@@ -71,20 +75,26 @@ export function InputField<T>(props: {
 
   return (
     <div className="flex-grow HalfInputField">
-      <IonItem>
-        <IonLabel position={mode == "view" ? "fixed" : "floating"}>
+      <IonItem lines={props.errorText ? "none" : undefined}>
+        {/* <IonLabel position={mode == "view" ? "fixed" : "floating"}>
           {props.label}
-        </IonLabel>
+        </IonLabel> */}
         <Input
+          className={props.errorText ? "ion-invalid ion-touched" : ""}
+          label={props.label!}
+          labelPlacement={mode == "view" ? "fixed" : "floating"}
           autoGrow
           value={String(state[field])}
+          placeholder={props.placeholder}
+          helperText={props.helperText}
+          errorText={props.errorText}
           onIonChange={(e) =>
             setState?.({
               ...state,
               [props.field]: e.detail.value || "",
             })
           }
-          readonly={mode != "edit"}
+          readonly={mode != "edit" && !props.inputContext.alwaysEditable}
         />
         <IonButtons slot="end">
           <IonButton
