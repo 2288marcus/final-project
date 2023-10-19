@@ -3,7 +3,7 @@ import { Knex } from 'knex'
 import { InjectModel } from 'nest-knexjs'
 import { type } from 'os'
 
-export enum jobtype {
+export enum jobType {
   demand = 'demand',
   supply = 'supply',
 }
@@ -35,35 +35,13 @@ export class JobService {
     return { jobList }
   }
 
-  async jobpost(
+  async jobPost(
     input: {
       title: string
       description: string
       price: number
       type: string
-      // type: enum(jobtype)
-    },
-    user_id: number,
-  ) {
-    return await this.knex
-      .insert({
-        user_id,
-        title: input.title,
-        description: input.description,
-        price: input.price,
-        type: input.type,
-      })
-      .into('job')
-      .returning('id')
-  }
-
-  async bookmark(
-    input: {
-      title: string
-      description: string
-      price: number
-      type: string
-      // type: enum(jobtype)
+      // type: enum(jobType)
     },
     user_id: number,
   ) {
@@ -83,8 +61,11 @@ export class JobService {
     let bookmarkList = await this.knex
       .from('bookmark')
       .innerJoin('job', 'job.id', 'bookmark.job_id')
+      .innerJoin('user', 'user.id', 'bookmark.user_id')
       .select(
+        'bookmark.id',
         'bookmark.job_id',
+        'user.username',
         'job.title',
         'job.description',
         'job.price',
@@ -94,25 +75,14 @@ export class JobService {
     return { bookmarkList }
   }
 
-  async unbookmark(
-    input: {
-      title: string
-      description: string
-      price: number
-      type: string
-      // type: enum(jobtype)
-    },
-    user_id: number,
-  ) {
-    return await this.knex
-      .insert({
+  async deleteBookmark(user_id: number, bookmark_id: number) {
+    await this.knex('bookmark')
+      .where({
         user_id,
-        title: input.title,
-        description: input.description,
-        price: input.price,
-        type: input.type,
+        id: bookmark_id,
       })
-      .into('job')
-      .returning('id')
+      .del()
+
+    return {}
   }
 }

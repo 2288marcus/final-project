@@ -52,7 +52,6 @@ const HomePage: React.FC = () => {
   const title = "Home";
 
   const [segment, setSegment] = useState<"demand" | "supply">("demand");
-  const [Bookmark, setBookmark] = useState(false);
 
   let jobList = useGet("/jobs", jobListParser);
   // console.log("jobList:", jobList);
@@ -71,6 +70,52 @@ const HomePage: React.FC = () => {
   //   generateItems();
   //   // eslint-disable-next-line react-hooks/exhaustive-deps
   // }, []);
+
+  function BookmarkCard(props: {
+    job: (typeof jobListParser)["sampleValue"]["jobList"][0];
+  }) {
+    const { job } = props;
+    const [bookmark, setBookmark] = useState(false);
+
+    return (
+      <IonCard key={job.job_id}>
+        <IonCardContent>
+          <div className="d-flex align-center" style={{ gap: "8px" }}>
+            <div className="d-flex col align-center ion-justify-content-center">
+              <IonAvatar>
+                <img
+                  src={"https://picsum.photos/80/80?random=" + job.job_id}
+                  alt="avatar"
+                />
+              </IonAvatar>
+              <span className="author-name">{job.username}</span>
+            </div>
+            <div>
+              <h1>- {job.title} -</h1>
+              <p>{job.description}</p>
+            </div>
+            <IonButtons slot="end">
+              <IonButton
+                onClick={() => {
+                  setBookmark(!bookmark);
+                }}
+              >
+                <IonIcon
+                  slot="icon-only"
+                  icon={bookmark ? star : starOutline}
+                ></IonIcon>
+              </IonButton>
+            </IonButtons>
+          </div>
+        </IonCardContent>
+        <div>
+          {job.tags.map((tag: string) => (
+            <IonChip key={tag}>{tag}</IonChip>
+          ))}
+        </div>
+      </IonCard>
+    );
+  }
 
   return (
     <IonPage className="HomePage">
@@ -131,46 +176,9 @@ const HomePage: React.FC = () => {
           {jobList.render((json) =>
             json.jobList
               ?.filter((job) => job.type == segment)
-              .map((job) => (
-                <IonCard key={job.job_id}>
-                  <IonCardContent>
-                    <div className="d-flex align-center" style={{ gap: "8px" }}>
-                      <div className="d-flex col align-center ion-justify-content-center">
-                        <IonAvatar>
-                          <img
-                            src={
-                              "https://picsum.photos/80/80?random=" + job.job_id
-                            }
-                            alt="avatar"
-                          />
-                        </IonAvatar>
-                        <span className="author-name">{job.username}</span>
-                      </div>
-                      <div>
-                        <h1>- {job.title} -</h1>
-                        <p>{job.description}</p>
-                      </div>
-                      <IonButtons slot="end">
-                        <IonButton
-                          onClick={() => {
-                            setBookmark(!Bookmark);
-                          }}
-                        >
-                          <IonIcon
-                            slot="icon-only"
-                            icon={Bookmark ? star : starOutline}
-                          ></IonIcon>
-                        </IonButton>
-                      </IonButtons>
-                    </div>
-                  </IonCardContent>
-                  <div>
-                    {job.tags.map((tag) => (
-                      <IonChip key={tag}>{tag}</IonChip>
-                    ))}
-                  </div>
-                </IonCard>
-              ))
+              .map((job, index) => {
+                return <BookmarkCard key={index} job={job} />;
+              })
           )}
         </div>
       </IonContent>

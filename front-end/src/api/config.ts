@@ -89,3 +89,24 @@ async function handleFetch<T>(
   }
   return parser.parse(json);
 }
+
+export async function handleFetch2(
+  url: string,
+  method: "GET" | "POST" | "PUT" | "DELETE"
+) {
+  let res = await fetch(api_origin + url, {
+    method,
+    headers: {
+      Accept: "application/json",
+      Authorization: getAuthorization(),
+    },
+  });
+  let json = await res.json();
+
+  // Example: {message: 'todo', error: 'Not Implemented', statusCode: 501}
+  // Example: {statusCode: 500, message: 'Internal server error'}
+  if (json.message && json.statusCode) {
+    return { error: json.message };
+  }
+  return json;
+}
