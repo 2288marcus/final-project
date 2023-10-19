@@ -13,10 +13,14 @@ import {
   IonCardContent,
 } from "@ionic/react";
 import useGet from "../hooks/useGet";
+import { useParams } from "react-router";
+import useAuth from "../hooks/useAuth";
 import { array, object, string, values, number } from "cast.ts";
+import { id } from "@beenotung/tslib";
+
 const ChatroomList: React.FC = () => {
   const title = "Chatroom List";
-
+  const auth = useAuth();
   let getChatroomParser = object({
     chatroomList: array(
       object({
@@ -33,18 +37,36 @@ const ChatroomList: React.FC = () => {
   });
 
   let chatroomList = useGet("/chat/chatroom", getChatroomParser);
-  console.log("chatroomList:", chatroomList);
 
+  const user_id = auth.state?.id || "unknown";
+  // const chatroom_user_id = chatroomList.data?.chatroomList.map(
+  //   (chatroom) => chatroom.id
+  // );
+  // // const params = useParams<{ id: string }>();
+  // if (chatroom_user_id && chatroom_user_id.length > 0) {
+  //   const isUserInChatroom = chatroom_user_id.includes(+user_id);
+
+  //   if (isUserInChatroom) {
+  //     // user_id 在 chatroom_user_id 中
+  //     console.log("User is in the chatroom.");
+  //   } else {
+  //     // user_id 不在 chatroom_user_id 中
+  //     console.log("User is not in the chatroom.");
+  //   }
+  // } else {
+  //   // chatroom_user_id 未定义或为空数组
+  //   console.log("No chatroom user IDs available.");
+  // }
   return (
     <IonPage>
-      <IonHeader>
+      {/* <IonHeader>
         <IonToolbar>
           <IonButtons slot="start">
             <IonMenuButton />
           </IonButtons>
           <IonTitle>{title}</IonTitle>
         </IonToolbar>
-      </IonHeader>
+      </IonHeader> */}
       <IonContent fullscreen className="ion-padding">
         <IonHeader collapse="condense">
           <IonToolbar>
@@ -70,7 +92,10 @@ const ChatroomList: React.FC = () => {
                     </div>
                     <div>
                       <h1>Job: {chatroom.title}</h1>
-                      <p>created_at: {chatroom.created_at}</p>
+                      <p>
+                        created_at:{" "}
+                        {chatroom.created_at.replace("T", " ").replace("Z", "")}
+                      </p>
                       <p>supplier: {chatroom.supplier_username}</p>
                       <p>demander: {chatroom.demander_username}</p>
                       <IonButton routerLink={`/Chatroom/${chatroom.id}`}>

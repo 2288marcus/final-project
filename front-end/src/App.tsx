@@ -72,9 +72,9 @@ const App: React.FC = () => {
                 <Route path={routes.home} exact={true}>
                   <HomePage />
                 </Route>
-                {/* <Route path="/BookmarkList" exact={true}>
+                <Route path="/BookmarkList" exact={true}>
                   <BookmarkList />
-                </Route> */}
+                </Route>
 
                 <Route path={routes.ProfilePage} exact={true}>
                   <ProfilePage />

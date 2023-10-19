@@ -16,14 +16,14 @@ const SettingPage: React.FC = () => {
   const title = "Setting";
   return (
     <IonPage>
-      <IonHeader>
+      {/* <IonHeader>
         <IonToolbar>
           <IonButtons slot="start">
             <IonMenuButton />
           </IonButtons>
           <IonTitle>{title}</IonTitle>
         </IonToolbar>
-      </IonHeader>
+      </IonHeader> */}
       <IonContent>
         <IonList>
           <IonItem>
