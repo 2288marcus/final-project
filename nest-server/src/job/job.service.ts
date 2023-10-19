@@ -1,15 +1,13 @@
 import { Injectable } from '@nestjs/common'
 import { Knex } from 'knex'
 import { InjectModel } from 'nest-knexjs'
-import { type } from 'os'
-
-export enum jobtype {
-  demand = 'demand',
-  supply = 'supply',
-}
+import { TagService } from 'src/tag/tag.service'
 @Injectable()
 export class JobService {
-  constructor(@InjectModel() private readonly knex: Knex) {}
+  constructor(
+    @InjectModel() private readonly knex: Knex,
+    private readonly tagService: TagService,
+  ) {}
 
   async getJobList() {
     let jobList = await this.knex
@@ -35,25 +33,34 @@ export class JobService {
     return { jobList }
   }
 
-  async jobpost(
+  async createJob(
     input: {
       title: string
       description: string
       price: number
       type: string
-      // type: enum(jobtype)
+      tags: string[]
     },
     user_id: number,
   ) {
-    return await this.knex
-      .insert({
-        user_id,
-        title: input.title,
-        description: input.description,
-        price: input.price,
-        type: input.type,
-      })
-      .into('job')
-      .returning('id')
+    return await this.knex.transaction(async knex => {
+      let [{ id: job_id }] = await knex
+        .insert({
+          user_id,
+          title: input.title,
+          description: input.description,
+          price: input.price,
+          type: input.type,
+        })
+        .into('job')
+        .returning('id')
+
+      for (let name of input.tags) {
+        let tag_id = await this.tagService.getTagId(knex, name)
+        await knex('job_tag').insert({ job_id, tag_id })
+      }
+
+      return { job_id }
+    })
   }
 }

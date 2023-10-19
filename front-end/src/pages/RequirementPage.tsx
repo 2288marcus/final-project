@@ -3,44 +3,31 @@ import {
   IonButtons,
   IonCard,
   IonChip,
-  IonCol,
   IonContent,
-  IonGrid,
   IonHeader,
   IonIcon,
   IonInput,
   IonItem,
   IonLabel,
-  IonList,
   IonListHeader,
   IonMenuButton,
   IonNote,
   IonPage,
-  IonRow,
   IonSelect,
   IonSelectOption,
-  IonTabBar,
-  IonText,
-  IonTextarea,
   IonTitle,
   IonToolbar,
-  useIonRouter,
 } from "@ionic/react";
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
 import "./RequirementPage.css";
 import { format_2_digit, format_datetime } from "@beenotung/tslib/format";
-import { postjob } from "../api/config";
-import { object } from "cast.ts";
+import { get, postjob } from "../api/config";
+import { ParseResult, object, string, number, array, id, int } from "cast.ts";
 import { InputContext, InputField } from "../components/InputField";
 import { add } from "ionicons/icons";
-
-function toDateString(date: Date) {
-  let y = date.getFullYear();
-  let m = format_2_digit(date.getMonth() + 1);
-  let d = format_2_digit(date.getDate());
-  return `${y}-${m}-${d}`;
-}
+import useToast from "../hooks/useToast";
+import useGet from "../hooks/useGet";
+import useAuth from "../hooks/useAuth";
 
 let defaultState = {
   price: "",
@@ -49,28 +36,45 @@ let defaultState = {
   title: "",
 };
 
+let getTagListParser = object({
+  tagList: array(
+    object({
+      id: id(),
+      name: string(),
+      used: int(),
+    })
+  ),
+});
+type Tag = ParseResult<typeof getTagListParser>["tagList"][number];
+
 const RequirementPage: React.FC = () => {
   const title = "Requirement";
 
   const [state, setState] = useState(defaultState);
   type State = typeof state;
 
-  const [selectedTags, setSelectedTags] = useState<string[]>([]);
-  const [newTag, setNewTag] = useState("");
+  const toast = useToast();
 
   const submit = () => {
     let data = {
       ...state,
+      tags: selectedTags,
     };
     console.log("data:", data);
 
     // 发送POST请求到后端
-    postjob("/jobs/jobpost", data, object({}))
+    postjob("/jobs", data, object({}))
       .then((res) => {
         console.log("Result:", res);
       })
       .catch((err) => {
         console.log("Fail:", err);
+        let message = String(err);
+        if (message.includes('Invalid int "body.price"')) {
+          message =
+            "The price must be greater than zero, and round to dollar (no cents)";
+        }
+        toast.showError(message);
       });
   };
 
@@ -78,14 +82,27 @@ const RequirementPage: React.FC = () => {
   let priceErrorMessage =
     price >= 1 && price == Math.floor(price)
       ? ""
-      : "(must be greater than zero, and round to dollar (no cents))";
-  /////////////////////////////////////////////
-  let commonTags = [
-    { id: 1, name: "x", used: 1 },
-    { id: 2, name: "y", used: 10 },
-    { id: 3, name: "z", used: 5 },
-  ];
-  /////////////////////////////////////////////
+      : "must be greater than zero, and round to dollar (no cents)";
+
+  const commonTags = useGet("/tags", getTagListParser);
+
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
+  const [newTag, setNewTag] = useState("");
+  const [searchedTags, setSearchedTags] = useState<Tag[]>([]);
+
+  useEffect(() => {
+    if (!newTag) {
+      setSearchedTags([]);
+      return;
+    }
+    get("/tags/search?" + new URLSearchParams({ q: newTag }), getTagListParser)
+      .then((json) => {
+        setSearchedTags(json.tagList);
+      })
+      .catch((err) => {
+        toast.showError(err);
+      });
+  }, [newTag]);
 
   let inputContext: InputContext<State> = {
     state,
@@ -112,30 +129,43 @@ const RequirementPage: React.FC = () => {
         </IonHeader>
 
         <IonCard>
-          <InputField
-            inputContext={inputContext}
-            label="Title:"
-            field="title"
-          />
+          <IonItem hidden>
+            {/* <IonLabel>aa</IonLabel> */}
+            <IonInput
+              label="aa:"
+              labelPlacement="fixed"
+              value="xxx"
+              helperText="aaa"
+              errorText="bbb"
+              className="ion-invalid ion-touched"
+            ></IonInput>
+          </IonItem>
+          <IonItem>
+            <IonLabel position="fixed">Service:</IonLabel>
+            <IonSelect
+              placeholder="Type"
+              value={state.type}
+              onIonChange={(e) => {
+                setState({ ...state, type: e.detail.value! });
+              }}
+            >
+              <IonSelectOption value="demand">Demand</IonSelectOption>
+              <IonSelectOption value="supply">Supply</IonSelectOption>
+            </IonSelect>
+          </IonItem>
           <div className="d-flex-md HalfInputFieldContainer">
             <div className="flex-grow HalfInputField">
-              <IonItem>
-                <IonLabel position="fixed">Service Type:</IonLabel>
-                <IonSelect
-                  value={state.type}
-                  onIonChange={(e) => {
-                    setState({ ...state, type: e.detail.value! });
-                  }}
-                >
-                  <IonSelectOption value="demand">Demand</IonSelectOption>
-                  <IonSelectOption value="supply">Supply</IonSelectOption>
-                </IonSelect>
-              </IonItem>
+              <InputField
+                inputContext={inputContext}
+                label="Title:"
+                field="title"
+              />
             </div>
             <InputField
               inputContext={inputContext}
               label="Price:"
               field="price"
+              errorText={priceErrorMessage}
             />
           </div>
           <div className="flex-grow HalfInputField">
@@ -144,7 +174,7 @@ const RequirementPage: React.FC = () => {
               <IonInput
                 type="text"
                 value={newTag}
-                onIonChange={(e) => setNewTag(e.detail.value || "")}
+                onIonInput={(e) => setNewTag(e.detail.value || "")}
               ></IonInput>
               <IonButtons slot="end">
                 <IonButton
@@ -178,133 +208,50 @@ const RequirementPage: React.FC = () => {
               </IonChip>
             ))}
           </div>
-          <IonListHeader>Common Tags:</IonListHeader>
-          <div className="ion-padding-horizontal d-flex">
-            {commonTags.map((tag) => (
-              <IonChip
-                key={tag.id}
-                onClick={() => setSelectedTags([...selectedTags, tag.name])}
-                hidden={selectedTags.includes(tag.name)}
-              >
-                {tag.name} ({tag.used} used)
-              </IonChip>
-            ))}
-          </div>
+          {newTag && searchedTags.length > 0 ? (
+            <>
+              <IonListHeader>Suggested Tags:</IonListHeader>
+              <div className="ion-padding-horizontal d-flex">
+                {searchedTags.map((tag) => (
+                  <IonChip
+                    key={tag.id}
+                    onClick={() => setSelectedTags([...selectedTags, tag.name])}
+                    hidden={selectedTags.includes(tag.name)}
+                  >
+                    <div>
+                      <div>{tag.name}</div>
+                      <div>({tag.used} used)</div>
+                    </div>
+                  </IonChip>
+                ))}
+              </div>
+            </>
+          ) : (
+            <>
+              <IonListHeader>Common Tags:</IonListHeader>
+              <div className="ion-padding-horizontal d-flex">
+                {commonTags.data?.tagList?.map((tag) => (
+                  <IonChip
+                    key={tag.id}
+                    onClick={() => setSelectedTags([...selectedTags, tag.name])}
+                    hidden={selectedTags.includes(tag.name)}
+                  >
+                    <div>
+                      <div>{tag.name}</div>
+                      <div>({tag.used} used)</div>
+                    </div>
+                  </IonChip>
+                ))}
+              </div>
+            </>
+          )}
+
           <InputField
             inputContext={inputContext}
             label="Description:"
             field="description"
             type="textarea"
           />
-        </IonCard>
-
-        <IonCard>
-          <IonItem>
-            <IonLabel position="floating">
-              <IonText>Title:</IonText>
-            </IonLabel>
-            <IonInput
-              type="text"
-              onIonChange={(e) => {
-                setState({ ...state, title: e.detail.value! });
-              }}
-            />
-          </IonItem>
-          <>
-            <div className="d-flex-md HalfInputFieldContainer">
-              <IonItem>
-                <IonItem>
-                  <IonSelect
-                    label="Service:"
-                    placeholder="-Type-"
-                    onIonChange={(e) => {
-                      setState({ ...state, type: e.detail.value! });
-                    }}
-                  >
-                    <IonSelectOption value="demand">Demand</IonSelectOption>
-                    <IonSelectOption value="supply">Supply</IonSelectOption>
-                  </IonSelect>
-                </IonItem>
-
-                <IonItem>
-                  <IonLabel
-                    position="floating"
-                    color={priceErrorMessage ? "danger" : ""}
-                  >
-                    <IonText color="dark">Price (HKD)</IonText>
-                  </IonLabel>
-                  <IonInput
-                    type="number"
-                    min="1"
-                    step="1"
-                    value={state.price}
-                    onIonChange={(e) => {
-                      setState({ ...state, price: e.detail.value! });
-                    }}
-                  />
-                  {priceErrorMessage ? (
-                    <IonNote className="ion-padding-horizontal ion-margin-bottom">
-                      <IonText color="danger">{priceErrorMessage}</IonText>
-                    </IonNote>
-                  ) : null}
-                </IonItem>
-              </IonItem>
-            </div>
-          </>
-          <IonItem>
-            <IonItem slot="start">
-              <IonInput
-                label="Insert Related Tag:"
-                type="text"
-                onIonChange={(e) => {
-                  // setState({ ...state, Tag: e.detail.value! });
-                }}
-              />
-            </IonItem>
-            <IonItem>
-              <IonSelect placeholder="Select command tag(s)">
-                <IonInput
-                  type="text"
-                  onIonChange={(e) => {
-                    // setState({ ...state, tag: e.detail.value! });
-                  }}
-                />
-                <IonSelectOption value="education">Education</IonSelectOption>
-                <IonSelectOption value="cleaning">Cleaning</IonSelectOption>
-                <IonSelectOption value="logistics">Logistics</IonSelectOption>
-
-                <IonSelectOption value="sport">Sport</IonSelectOption>
-                <IonSelectOption value="travel">Travel</IonSelectOption>
-                <IonSelectOption value="fnb">Food and Beverage</IonSelectOption>
-
-                <IonSelectOption value="IT">IT</IonSelectOption>
-                <IonSelectOption value="photography">
-                  Photography
-                </IonSelectOption>
-                <IonSelectOption value="journalist">Journalist</IonSelectOption>
-
-                <IonSelectOption value="designer">Designer</IonSelectOption>
-              </IonSelect>
-            </IonItem>
-            <IonGrid>
-              <IonRow>
-                <IonCol>1</IonCol>
-                <IonCol>2</IonCol>
-                <IonCol>3</IonCol>
-              </IonRow>
-            </IonGrid>
-          </IonItem>
-
-          <IonItem>
-            <IonTextarea
-              autoGrow
-              label="Description"
-              labelPlacement="floating"
-              onIonChange={(e) => {
-                setState({ ...state, description: e.detail.value! });
-              }}
-            />
-          </IonItem>
         </IonCard>
         <IonButton expand="full" onClick={submit}>
           Post
