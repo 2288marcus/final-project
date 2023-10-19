@@ -49,12 +49,16 @@ export async function get<T>(url: string, parser: Parser<T>) {
   );
 }
 
-export function savePrivateKeyBase64(value: string) {
-  localStorage.setItem("privateKeyBase64", value);
-}
-
 function getAuthorization() {
-  let privateKeyBase64 = localStorage.getItem("privateKeyBase64");
+  let privateKeyBase64 = "";
+
+  try {
+    let text = localStorage.getItem("auth")!;
+    privateKeyBase64 = JSON.parse(text).privateKeyBase64;
+  } catch (error) {
+    // invalid auth (not login?)
+  }
+
   if (!privateKeyBase64) {
     return "";
   }

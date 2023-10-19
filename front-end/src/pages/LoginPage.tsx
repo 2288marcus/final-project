@@ -18,7 +18,6 @@ import forge from "node-forge";
 import { toBase64, toHex } from "../utils/crypto";
 import useAuth from "../hooks/useAuth";
 import { routes } from "../routes";
-import { savePrivateKeyBase64 } from "../api/config";
 
 const LoginPage: React.FC = () => {
   const title = "Login";
@@ -35,7 +34,6 @@ const LoginPage: React.FC = () => {
 
   async function submit() {
     try {
-      savePrivateKeyBase64(privateKeyBase64);
       let privateKey = forge.util.binary.base64.decode(privateKeyBase64);
       let publicKey = forge.pki.ed25519.publicKeyFromPrivateKey({ privateKey });
       let now = Date.now();
