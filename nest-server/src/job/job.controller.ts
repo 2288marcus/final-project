@@ -17,8 +17,8 @@ export class JobController {
 
   @Post()
   async createJob(@Body() body, @Headers('Authorization') authorization) {
-    // let user_id = await this.userService.authorize(authorization)
-    let user_id = 1
+    let user_id = await this.userService.authorize(authorization)
+    // let user_id = 1
     let input = object({
       body: object({
         price: int({ min: 1 }),
