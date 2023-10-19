@@ -33,7 +33,7 @@ const ChatroomList: React.FC = () => {
   });
 
   let chatroomList = useGet("/chat/chatroom", getChatroomParser);
-  console.log("chatroomList:", chatroomList);
+  // console.log("chatroomList:", chatroomList);
 
   return (
     <IonPage>
@@ -70,7 +70,10 @@ const ChatroomList: React.FC = () => {
                     </div>
                     <div>
                       <h1>Job: {chatroom.title}</h1>
-                      <p>created_at: {chatroom.created_at}</p>
+                      <p>
+                        created_at:{" "}
+                        {chatroom.created_at.replace("T", " ").replace("Z", "")}
+                      </p>
                       <p>supplier: {chatroom.supplier_username}</p>
                       <p>demander: {chatroom.demander_username}</p>
                       <IonButton routerLink={`/Chatroom/${chatroom.id}`}>

@@ -23,7 +23,7 @@ import {
   IonIcon,
   IonCardContent,
 } from "@ionic/react";
-import { star } from "ionicons/icons";
+import { star, starOutline } from "ionicons/icons";
 import "./HomePage.css";
 import useGet from "../hooks/useGet";
 import { array, date, float, id, object, string, values } from "cast.ts";
@@ -52,9 +52,10 @@ const HomePage: React.FC = () => {
   const title = "Home";
 
   const [segment, setSegment] = useState<"demand" | "supply">("demand");
+  const [Bookmark, setBookmark] = useState(false);
 
   let jobList = useGet("/jobs", jobListParser);
-  console.log("jobList:", jobList);
+  // console.log("jobList:", jobList);
 
   // const [items, setItems] = useState<string[]>([]);
 
@@ -150,8 +151,15 @@ const HomePage: React.FC = () => {
                         <p>{job.description}</p>
                       </div>
                       <IonButtons slot="end">
-                        <IonButton>
-                          <IonIcon slot="icon-only" icon={star}></IonIcon>
+                        <IonButton
+                          onClick={() => {
+                            setBookmark(!Bookmark);
+                          }}
+                        >
+                          <IonIcon
+                            slot="icon-only"
+                            icon={Bookmark ? star : starOutline}
+                          ></IonIcon>
                         </IonButton>
                       </IonButtons>
                     </div>

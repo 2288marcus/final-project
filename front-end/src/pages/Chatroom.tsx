@@ -227,7 +227,7 @@ const Chatroom: React.FC = () => {
                   <div>{message.content}</div>
                   <small>
                     {formatTime(message.time)}{" "}
-                    <IonIcon icon={checkmark}></IonIcon>
+                    <IonIcon icon={checkmarkDone}></IonIcon>
                   </small>
                 </div>
               </div>

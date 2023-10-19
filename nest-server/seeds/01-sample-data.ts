@@ -102,17 +102,15 @@ export async function seed(knex: Knex): Promise<void> {
     status: 'finish_service',
   })
 
-  let web_chatroom_id = await seedRow('chatroom', 'job_id', {
-    job_id: web_job_id, // Foreign key referencing job.id
-    supplier_id: jane_smith_id, // Foreign key referencing user.id
-    demander_id: john_doe_id, // Foreign key referencing user.id
-    contract_id: web_contract_id, // Foreign key referencing contract.id
+  // 关联Jane Smith的第一个收藏夹数据
+  await seedRelation('bookmark', {
+    user_id: jane_smith_id,
+    job_id: web_job_id,
   })
 
-  let design_chatroom_id = await seedRow('chatroom', 'job_id', {
-    job_id: design_job_id, // Foreign key referencing job.id
-    supplier_id: john_doe_id, // Foreign key referencing user.id
-    demander_id: jane_smith_id, // Foreign key referencing user.id
-    contract_id: design_contract_id, // Foreign key referencing contract.id
+  // 关联Jane Smith的第二个收藏夹数据
+  await seedRelation('bookmark', {
+    user_id: jane_smith_id,
+    job_id: design_job_id,
   })
 }

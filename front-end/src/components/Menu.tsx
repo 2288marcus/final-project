@@ -22,6 +22,8 @@ import {
   reader,
   earth,
   link,
+  heartOutline,
+  heartSharp,
 } from "ionicons/icons";
 import "./Menu.css";
 import { routes } from "../routes";
@@ -60,12 +62,12 @@ const Menu: React.FC = () => {
       iosIcon: earth,
       mdIcon: earth,
     },
-    // {
-    //   title: "BookmarkList",
-    //   url: "/BookmarkList",
-    //   iosIcon: heartOutline,
-    //   mdIcon: heartSharp,
-    // },
+    {
+      title: "Bookmark List",
+      url: routes.BookmarkList,
+      iosIcon: heartOutline,
+      mdIcon: heartSharp,
+    },
     // {
     //   title: "Chatroom",
     //   url: routes.Chatroom,
