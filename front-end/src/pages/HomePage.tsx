@@ -80,7 +80,7 @@ const HomePage: React.FC = () => {
             <IonMenuButton />
           </IonButtons>
           <IonList class="SH">
-            <IonTitle>{title}</IonTitle>
+            {/* <IonTitle>{title}</IonTitle> */}
             <IonSearchbar animated={true} placeholder="Search"></IonSearchbar>
           </IonList>
           <IonAccordionGroup>

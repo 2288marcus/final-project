@@ -26,35 +26,37 @@ import {
 import { star, starOutline } from "ionicons/icons";
 import "./HomePage.css";
 import useGet from "../hooks/useGet";
-import { array, date, float, id, object, string, values } from "cast.ts";
+import {
+  array,
+  date,
+  float,
+  id,
+  object,
+  string,
+  values,
+  number,
+} from "cast.ts";
 
-function Fake() {
-  return <div className="real"></div>;
-}
-
-let jobListParser = object({
-  jobList: array(
+let bookmarkParser = object({
+  bookmarkList: array(
     object({
-      job_id: id(),
-      username: string(),
-      user_id: id(),
+      user_id: number(),
+      job_id: number(),
       title: string(),
       description: string(),
-      price: float(),
-      created_at: date(),
+      price: number(),
       type: values(["demand" as const, "supply" as const]),
-      tags: array(string()),
     })
   ),
 });
 
 const BookmarkList: React.FC = () => {
-  const title = "Home";
+  const title = "";
 
   const [segment, setSegment] = useState<"demand" | "supply">("demand");
   const [Bookmark, setBookmark] = useState(false);
 
-  let jobList = useGet("/jobs", jobListParser);
+  let bookmarkList = useGet("/jobs/bookmark", bookmarkParser);
   // console.log("jobList:", jobList);
 
   // const [items, setItems] = useState<string[]>([]);
@@ -85,9 +87,9 @@ const BookmarkList: React.FC = () => {
           </IonList>
           <IonAccordionGroup>
             <IonAccordion value="first">
-              <IonItem slot="header" color="light">
+              {/* <IonItem slot="header" color="light">
                 <IonLabel>Common Tag</IonLabel>
-              </IonItem>
+              </IonItem> */}
               <div slot="content">
                 <IonButton>Education</IonButton>
                 <IonButton>Cleaning</IonButton>
@@ -110,16 +112,6 @@ const BookmarkList: React.FC = () => {
             <IonTitle size="large">{title}</IonTitle>
           </IonToolbar>
         </IonHeader>
-        {/* <IonContent class="indexcontent">
-          <IonContent>
-            <IonButton href="./JobList">Job</IonButton>
-            <JobList />
-          </IonContent>
-          <IonContent>
-            <IonButton href="./Userlist">User</IonButton>
-            <UserList />
-          </IonContent>
-        </IonContent> */}
         <IonSegment
           value={segment}
           onIonChange={(e) => setSegment(e.detail.value as any)}
@@ -128,27 +120,28 @@ const BookmarkList: React.FC = () => {
           <IonSegmentButton value="supply">supply</IonSegmentButton>
         </IonSegment>
         <div>
-          {jobList.render((json) =>
-            json.jobList
-              ?.filter((job) => job.type == segment)
-              .map((job) => (
-                <IonCard key={job.job_id}>
+          {bookmarkList.render((json) =>
+            json.bookmarkList
+              ?.filter((bookmark) => bookmark.type == segment)
+              .map((bookmark) => (
+                <IonCard key={bookmark.job_id}>
                   <IonCardContent>
                     <div className="d-flex align-center" style={{ gap: "8px" }}>
                       <div className="d-flex col align-center ion-justify-content-center">
                         <IonAvatar>
                           <img
                             src={
-                              "https://picsum.photos/80/80?random=" + job.job_id
+                              "https://picsum.photos/80/80?random=" +
+                              bookmark.job_id
                             }
                             alt="avatar"
                           />
                         </IonAvatar>
-                        <span className="author-name">{job.username}</span>
+                        {/* <span className="author-name">{bookmark.username}</span> */}
                       </div>
                       <div>
-                        <h1>- {job.title} -</h1>
-                        <p>{job.description}</p>
+                        <h1>- {bookmark.title} -</h1>
+                        <p>{bookmark.description}</p>
                       </div>
                       <IonButtons slot="end">
                         <IonButton
@@ -164,11 +157,7 @@ const BookmarkList: React.FC = () => {
                       </IonButtons>
                     </div>
                   </IonCardContent>
-                  <div>
-                    {job.tags.map((tag) => (
-                      <IonChip key={tag}>{tag}</IonChip>
-                    ))}
-                  </div>
+                  \
                 </IonCard>
               ))
           )}

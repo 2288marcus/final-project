@@ -56,4 +56,63 @@ export class JobService {
       .into('job')
       .returning('id')
   }
+
+  async bookmark(
+    input: {
+      title: string
+      description: string
+      price: number
+      type: string
+      // type: enum(jobtype)
+    },
+    user_id: number,
+  ) {
+    return await this.knex
+      .insert({
+        user_id,
+        title: input.title,
+        description: input.description,
+        price: input.price,
+        type: input.type,
+      })
+      .into('job')
+      .returning('id')
+  }
+
+  async getBookmarkList(user_id: number) {
+    let bookmarkList = await this.knex
+      .from('bookmark')
+      .innerJoin('job', 'job.id', 'bookmark.job_id')
+      .select(
+        'bookmark.job_id',
+        'job.title',
+        'job.description',
+        'job.price',
+        'job.type',
+      )
+      .where('bookmark.user_id', user_id)
+    return { bookmarkList }
+  }
+
+  async unbookmark(
+    input: {
+      title: string
+      description: string
+      price: number
+      type: string
+      // type: enum(jobtype)
+    },
+    user_id: number,
+  ) {
+    return await this.knex
+      .insert({
+        user_id,
+        title: input.title,
+        description: input.description,
+        price: input.price,
+        type: input.type,
+      })
+      .into('job')
+      .returning('id')
+  }
 }

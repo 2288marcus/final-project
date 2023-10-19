@@ -88,13 +88,10 @@ const Chatroom: React.FC = () => {
     ),
   });
   let chatroomList = useGet("/chat/chatroom", getChatroomParser);
-  // console.log("chatroomList:", chatroomList.data?.chatroomList[0].id);
-  // const title = `Chatroom`;
-  // if (params} === chatroomList[0].id) {
-  // }
-  // const chatroom_id = params["id"]
-  // const title = `${chatroomList.data?.chatroomList[chatroom_id].id}`;
+
   const username = auth.state?.username || "unknown";
+  const user_id = auth.state?.id || "unknown";
+  // console.log("登入的user id:", user_id);
 
   const contentRef = useRef<HTMLElement>(null);
 
@@ -170,6 +167,26 @@ const Chatroom: React.FC = () => {
   const chatroom_title = `${
     chatroomList.data?.chatroomList[+chatroom_id].title
   }`;
+
+  // const chatroom_user_id = chatroomList.data?.chatroomList.map(
+  //   (chatroom) => chatroom.id
+  // );
+  // // const params = useParams<{ id: string }>();
+  // if (chatroom_user_id && chatroom_user_id.length > 0) {
+  //   const isUserInChatroom = chatroom_user_id.includes(+user_id);
+
+  //   if (isUserInChatroom) {
+  //     // user_id 在 chatroom_user_id 中
+  //     console.log("User is in the chatroom.");
+  //   } else {
+  //     // user_id 不在 chatroom_user_id 中
+  //     console.log("User is not in the chatroom.");
+  //   }
+  // } else {
+  //   // chatroom_user_id 未定义或为空数组
+  //   console.log("No chatroom user IDs available.");
+  // }
+
   const chatroom_created_at = `${chatroomList.data?.chatroomList[
     +chatroom_id
   ].created_at
