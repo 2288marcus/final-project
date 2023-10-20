@@ -25,8 +25,19 @@ import {
 } from "@ionic/react";
 import { star, starOutline } from "ionicons/icons";
 import "./HomePage.css";
+import { get } from "../api/config";
 import useGet from "../hooks/useGet";
-import { array, date, float, id, object, string, values } from "cast.ts";
+import {
+  array,
+  date,
+  float,
+  id,
+  object,
+  string,
+  values,
+  ParseResult,
+  int,
+} from "cast.ts";
 
 function Fake() {
   return <div className="real"></div>;
@@ -48,28 +59,27 @@ let jobListParser = object({
   ),
 });
 
+let getTagListParser = object({
+  tagList: array(
+    object({
+      id: id(),
+      name: string(),
+      used: int(),
+    })
+  ),
+});
+type Tag = ParseResult<typeof getTagListParser>["tagList"][number];
+
 const HomePage: React.FC = () => {
   const title = "Home";
 
   const [segment, setSegment] = useState<"demand" | "supply">("demand");
 
   let jobList = useGet("/jobs", jobListParser);
-  // console.log("jobList:", jobList);
 
-  // const [items, setItems] = useState<string[]>([]);
+  /////////////////////////////////////////////
 
-  // const generateItems = () => {
-  //   const newItems = [];
-  //   for (let i = 0; i < 50; i++) {
-  //     newItems.push(`Job ${1 + items.length + i}`);
-  //   }
-  //   setItems([...items, ...newItems]);
-  // };
-
-  // useEffect(() => {
-  //   generateItems();
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, []);
+  /////////////////////////////////////////////
 
   function BookmarkCard(props: {
     job: (typeof jobListParser)["sampleValue"]["jobList"][0];
@@ -125,10 +135,9 @@ const HomePage: React.FC = () => {
             <IonMenuButton />
           </IonButtons>
           <IonList class="SH">
-            {/* <IonTitle>{title}</IonTitle> */}
-            <IonSearchbar animated={true} placeholder="Search"></IonSearchbar>
+            {/* <IonSearchbar animated={true} placeholder="Search"></IonSearchbar> */}
           </IonList>
-          <IonAccordionGroup>
+          {/* <IonAccordionGroup>
             <IonAccordion value="first">
               <IonItem slot="header" color="light">
                 <IonLabel>Common Tag</IonLabel>
@@ -146,7 +155,7 @@ const HomePage: React.FC = () => {
                 <IonButton>Designer</IonButton>
               </div>
             </IonAccordion>
-          </IonAccordionGroup>
+          </IonAccordionGroup> */}
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen className="ion-padding">
@@ -155,16 +164,7 @@ const HomePage: React.FC = () => {
             <IonTitle size="large">{title}</IonTitle>
           </IonToolbar>
         </IonHeader>
-        {/* <IonContent class="indexcontent">
-          <IonContent>
-            <IonButton href="./JobList">Job</IonButton>
-            <JobList />
-          </IonContent>
-          <IonContent>
-            <IonButton href="./Userlist">User</IonButton>
-            <UserList />
-          </IonContent>
-        </IonContent> */}
+
         <IonSegment
           value={segment}
           onIonChange={(e) => setSegment(e.detail.value as any)}

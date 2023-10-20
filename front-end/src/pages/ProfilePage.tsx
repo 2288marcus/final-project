@@ -23,6 +23,8 @@ import useGet from "../hooks/useGet";
 import useAuth from "../hooks/useAuth";
 import { routes } from "../routes";
 import { InputContext, InputField } from "../components/InputField";
+import { patch, post } from "../api/config";
+import useToast from "../hooks/useToast";
 
 let getProfileParser = object({
   profile: object({
@@ -77,6 +79,7 @@ const ProfilePage: React.FC = () => {
     auth.setState(null);
     router.push(routes.login, "root");
   }
+  const toast = useToast();
   return (
     <IonPage className="Profile">
       <IonHeader>
@@ -106,13 +109,29 @@ const ProfilePage: React.FC = () => {
               editingField,
               setEditingField,
             };
+
+            async function saveProfile(field: keyof Profile) {
+              let json = await patch(
+                "/user/profile/" + field,
+                { value: profile[field] },
+                object({})
+              );
+              toast.showSuccess("saved " + field);
+              getProfileResult.setData((json) => ({
+                profile: {
+                  ...json!.profile,
+                  updated_at: new Date().toISOString(),
+                },
+              }));
+            }
+
             return (
               <>
                 <InputField
                   inputContext={profileContext}
                   label="Username:"
                   field="username"
-                  editable
+                  save={saveProfile}
                 />
                 <InputField
                   inputContext={profileContext}
@@ -124,20 +143,19 @@ const ProfilePage: React.FC = () => {
                     inputContext={profileContext}
                     label="Full Name:"
                     field="fullName"
-                    editable
                   />
                   <InputField
                     inputContext={profileContext}
                     label="Phone(+852):"
                     field="HK_phone"
-                    editable
+                    save={saveProfile}
                   />
                 </div>
                 <InputField
                   inputContext={profileContext}
                   label="Email:"
                   field="email"
-                  editable
+                  save={saveProfile}
                 />
                 <div className="d-flex-md HalfInputFieldContainer">
                   <InputField
@@ -156,11 +174,13 @@ const ProfilePage: React.FC = () => {
                     inputContext={profileContext}
                     label="Created Date:"
                     field="created_at"
+                    type="timestamp"
                   />
                   <InputField
                     inputContext={profileContext}
                     label="Update Date:"
                     field="updated_at"
+                    type="timestamp"
                   />
                 </div>
                 <div className="description">
@@ -169,7 +189,7 @@ const ProfilePage: React.FC = () => {
                     type="textarea"
                     label="Description:"
                     field="description"
-                    editable
+                    save={saveProfile}
                   />
                 </div>
 

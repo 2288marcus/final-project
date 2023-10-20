@@ -1,3 +1,4 @@
+import React, { useState, useEffect } from "react";
 import {
   IonButton,
   IonButtons,
@@ -5,116 +6,159 @@ import {
   IonHeader,
   IonInput,
   IonItem,
+  IonList,
   IonMenuButton,
   IonPage,
   IonTitle,
   IonToolbar,
-  IonCard,
+  IonAvatar,
   IonLabel,
-  IonItemDivider,
+  IonSearchbar,
+  IonAccordion,
+  IonAccordionGroup,
+  IonSegment,
+  IonSegmentButton,
+  IonCard,
+  IonChip,
   IonIcon,
-  setupIonicReact,
-  IonTextarea,
-  useIonRouter,
+  IonCardContent,
 } from "@ionic/react";
-import React, { useState, useEffect } from "react";
-import "./ProfilePage.css";
-import { close, cloudUpload, create, save } from "ionicons/icons";
-import { selectFile } from "@beenotung/tslib/file";
-import { api_origin, get } from "../api/config";
-import { ParseResult, boolean, nullable, object, string } from "cast.ts";
+import { star, starOutline } from "ionicons/icons";
+import "./HomePage.css";
+import { get } from "../api/config";
 import useGet from "../hooks/useGet";
-import useAuth from "../hooks/useAuth";
-import { routes } from "../routes";
+import {
+  array,
+  date,
+  float,
+  id,
+  object,
+  string,
+  values,
+  ParseResult,
+  int,
+} from "cast.ts";
 
-let getProfileParser = object({
-  profile: object({
-    username: string(),
-    email: string(),
-    human_verification: boolean(),
-    cv_upload: nullable(string()),
-    created_at: string(),
-    updated_at: string(),
-    fullName: string(),
-    HKID: string(),
-    public_key: string(),
-    HK_phone: string(),
-    description: nullable(string()),
-  }),
+function Fake() {
+  return <div className="real"></div>;
+}
+
+let jobListParser = object({
+  jobList: array(
+    object({
+      job_id: id(),
+      username: string(),
+      user_id: id(),
+      title: string(),
+      description: string(),
+      price: float(),
+      created_at: date(),
+      type: values(["demand" as const, "supply" as const]),
+      tags: array(string()),
+    })
+  ),
 });
 
-type Profile = ParseResult<typeof getProfileParser>["profile"];
+let getTagListParser = object({
+  tagList: array(
+    object({
+      id: id(),
+      name: string(),
+      used: int(),
+    })
+  ),
+});
+type Tag = ParseResult<typeof getTagListParser>["tagList"][number];
 
-const test: React.FC = () => {
-  const title = "Information";
+const HomePage: React.FC = () => {
+  const title = "Home";
 
-  const [editingField, setEditingField] = useState<keyof Profile>();
+  const [segment, setSegment] = useState<"demand" | "supply">("demand");
 
-  const getProfileResult = useGet("/user/profile", getProfileParser);
+  let jobList = useGet("/jobs", jobListParser);
 
-  function setProfile(profile: Profile) {
-    getProfileResult.setData({ profile });
-  }
-  const resetProfile = getProfileResult.reload;
+  /////////////////////////////////////////////
 
-  const auth = useAuth();
+  /////////////////////////////////////////////
 
-  // setProfile({
-  //   username: "alicewong123",
-  //   email: "x",
-  //   human_verification: true,
-  //   cv_upload: "x.pdf",
-  //   created_at: "x",
-  //   updated_at: "x",
-  //   fullName: "Alice Wong",
-  //   HKID: "x",
-  //   public_key: "x",
-  //   HK_phone: "x",
-  // });
+  function BookmarkCard(props: {
+    job: (typeof jobListParser)["sampleValue"]["jobList"][0];
+  }) {
+    const { job } = props;
+    const [bookmark, setBookmark] = useState(false);
 
-  ///////////////////////////
-
-  const [draftFile, setDraftFile] = useState<File>();
-  const [uploadState, setUploadState] = useState("idle");
-
-  async function selectCVFile() {
-    let [file] = await selectFile({
-      accept: ".pdf,.doc,.docx",
-    });
-    if (!file) return;
-    setDraftFile(file);
-  }
-
-  async function uploadCVFile() {
-    setUploadState("upload");
-    try {
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-      setDraftFile(undefined);
-    } catch (error) {
-      // show error
-    } finally {
-      setUploadState("idle");
-    }
-  }
-
-  const router = useIonRouter();
-
-  function logout() {
-    auth.setState(null);
-    router.push(routes.login, "root");
+    return (
+      <IonCard key={job.job_id}>
+        <IonCardContent>
+          <div className="d-flex align-center" style={{ gap: "8px" }}>
+            <div className="d-flex col align-center ion-justify-content-center">
+              <IonAvatar>
+                <img
+                  src={"https://picsum.photos/80/80?random=" + job.job_id}
+                  alt="avatar"
+                />
+              </IonAvatar>
+              <span className="author-name">{job.username}</span>
+            </div>
+            <div>
+              <h1>- {job.title} -</h1>
+              <p>{job.description}</p>
+            </div>
+            <IonButtons slot="end">
+              <IonButton
+                onClick={() => {
+                  setBookmark(!bookmark);
+                }}
+              >
+                <IonIcon
+                  slot="icon-only"
+                  icon={bookmark ? star : starOutline}
+                ></IonIcon>
+              </IonButton>
+            </IonButtons>
+          </div>
+        </IonCardContent>
+        <div>
+          {job.tags.map((tag: string) => (
+            <IonChip key={tag}>{tag}</IonChip>
+          ))}
+        </div>
+      </IonCard>
+    );
   }
 
   return (
-    <IonPage className="Profile">
+    <IonPage className="HomePage">
       <IonHeader>
         <IonToolbar>
           <IonButtons slot="start">
             <IonMenuButton />
           </IonButtons>
-          <IonTitle>{title} </IonTitle>
+          <IonList class="SH">
+            {/* <IonTitle>{title}</IonTitle> */}
+            <IonSearchbar animated={true} placeholder="Search"></IonSearchbar>
+          </IonList>
+          <IonAccordionGroup>
+            <IonAccordion value="first">
+              <IonItem slot="header" color="light">
+                <IonLabel>Common Tag</IonLabel>
+              </IonItem>
+              <div slot="content">
+                <IonButton>Education</IonButton>
+                <IonButton>Cleaning</IonButton>
+                <IonButton>Logistics</IonButton>
+                <IonButton>Sport</IonButton>
+                <IonButton>Travel</IonButton>
+                <IonButton>Food and Beverage</IonButton>
+                <IonButton>IT</IonButton>
+                <IonButton>Photography</IonButton>
+                <IonButton>Journalist</IonButton>
+                <IonButton>Designer</IonButton>
+              </div>
+            </IonAccordion>
+          </IonAccordionGroup>
         </IonToolbar>
       </IonHeader>
-
       <IonContent fullscreen className="ion-padding">
         <IonHeader collapse="condense">
           <IonToolbar>
@@ -122,265 +166,25 @@ const test: React.FC = () => {
           </IonToolbar>
         </IonHeader>
 
-        <IonItemDivider>
-          {/* <div className="session-title">Personal Information</div> */}
-          <div className="session-title">Personal Information</div>
-        </IonItemDivider>
-        <IonCard>
-          {getProfileResult.render((json) => {
-            const profile = json.profile;
-            const profileContext: ProfileContext = {
-              profile,
-              setProfile,
-              resetProfile,
-              editingField,
-              setEditingField,
-            };
-
-            return (
-              <>
-                <ProfileField
-                  profileContext={profileContext}
-                  label="Username:"
-                  field="username"
-                  editable
-                />
-                <ProfileField
-                  profileContext={profileContext}
-                  label="Public Key:"
-                  field="public_key"
-                />
-                <div className="d-flex-md HalfInputFieldContainer">
-                  <ProfileField
-                    profileContext={profileContext}
-                    label="Full Name:"
-                    field="fullName"
-                    editable
-                  />
-                  <ProfileField
-                    profileContext={profileContext}
-                    label="Phone(+852):"
-                    field="HK_phone"
-                    editable
-                  />
-                </div>
-                <ProfileField
-                  profileContext={profileContext}
-                  label="Email:"
-                  field="email"
-                  editable
-                />
-                <div className="d-flex-md HalfInputFieldContainer">
-                  <ProfileField
-                    profileContext={profileContext}
-                    label="HKID:"
-                    field="HKID"
-                  />
-                  <ProfileField
-                    profileContext={profileContext}
-                    label="Human Verification:"
-                    field="human_verification"
-                  />
-                </div>
-                <div className="d-flex-md HalfInputFieldContainer">
-                  <ProfileField
-                    profileContext={profileContext}
-                    label="Created Date:"
-                    field="created_at"
-                  />
-                  <ProfileField
-                    profileContext={profileContext}
-                    label="Update Date:"
-                    field="updated_at"
-                  />
-                </div>
-                {/* <div className="d-flex-md HalfInputFieldContainer">
-   <ProfileField
-     profileContext={profileContext}
-     label="CV:"
-     field="cv_upload"
-     editable
-   />
- </div> */}
-                <ProfileField
-                  profileContext={profileContext}
-                  label="Description:"
-                  field="description"
-                  editable
-                />
-
-                <IonItem>
-                  <IonLabel position="fixed">CV:</IonLabel>
-                  <div>
-                    {draftFile?.name || profileContext.profile.cv_upload}
-                  </div>
-                  <IonButtons>
-                    <IonButton
-                      size="small"
-                      color="primary"
-                      onClick={selectCVFile}
-                    >
-                      <IonIcon src={cloudUpload} slot="icon-only"></IonIcon>
-                    </IonButton>
-                  </IonButtons>
-                </IonItem>
-                <div className="d-flex">
-                  <IonButton
-                    color="dark"
-                    className="flex-grow ion-no-margin"
-                    expand="full"
-                    onClick={() => setDraftFile(undefined)}
-                    hidden={!draftFile || uploadState == "upload"}
-                  >
-                    <IonIcon src={close} slot="icon-only"></IonIcon>
-                  </IonButton>
-                  <IonButton
-                    color="success"
-                    className="flex-grow ion-no-margin"
-                    expand="full"
-                    onClick={uploadCVFile}
-                    hidden={!draftFile || uploadState == "upload"}
-                  >
-                    <IonIcon src={save} slot="icon-only"></IonIcon>
-                  </IonButton>
-                  <IonButton
-                    color="success"
-                    className="flex-grow ion-no-margin"
-                    expand="full"
-                    disabled
-                    hidden={uploadState != "upload"}
-                  >
-                    Uploading ...
-                  </IonButton>
-                </div>
-              </>
-            );
-          })}
-        </IonCard>
+        <IonSegment
+          value={segment}
+          onIonChange={(e) => setSegment(e.detail.value as any)}
+        >
+          <IonSegmentButton value="demand">demand</IonSegmentButton>
+          <IonSegmentButton value="supply">supply</IonSegmentButton>
+        </IonSegment>
         <div>
-          <IonButton onClick={logout}>Logout</IonButton>
+          {jobList.render((json) =>
+            json.jobList
+              ?.filter((job) => job.type == segment)
+              .map((job, index) => {
+                return <BookmarkCard key={index} job={job} />;
+              })
+          )}
         </div>
       </IonContent>
     </IonPage>
   );
 };
 
-type ProfileContext = {
-  profile: Profile;
-  setProfile(value: Profile): void;
-  resetProfile(): void;
-  editingField?: keyof Profile;
-  setEditingField(value?: keyof Profile): void;
-};
-
-function ProfileField(props: {
-  profileContext: ProfileContext;
-  label: string;
-  field: keyof Profile;
-  editable?: boolean;
-}) {
-  type Mode = "view" | "edit" | "cancel" | "save";
-
-  const [mode, setMode] = useState<Mode>("view");
-
-  async function saveProfile() {
-    // TODO post to server
-    setTimeout(() => {
-      setMode("view");
-    }, 5000);
-  }
-
-  const { field, editable } = props;
-  const { setEditingField, resetProfile, profile, setProfile, editingField } =
-    props.profileContext;
-
-  const shouldResetEditingField = mode != "edit" && editingField == field;
-
-  useEffect(() => {
-    if (shouldResetEditingField) {
-      setEditingField();
-    }
-    switch (mode) {
-      case "edit":
-        setEditingField(field);
-        return;
-      case "cancel":
-        resetProfile();
-        setMode("view");
-        return;
-      case "save":
-        saveProfile();
-        return;
-    }
-  }, [
-    shouldResetEditingField,
-    mode,
-    setEditingField,
-    saveProfile,
-    resetProfile,
-    field,
-  ]);
-
-  return (
-    <div className="flex-grow HalfInputField">
-      <IonItem>
-        <IonLabel position={mode == "view" ? "fixed" : "floating"}>
-          {props.label}
-        </IonLabel>
-        <IonInput
-          value={String(profile[field])}
-          onIonChange={(e) =>
-            setProfile({
-              ...profile,
-              [props.field]: e.detail.value || "",
-            })
-          }
-          readonly={mode != "edit"}
-        />
-        <IonButtons slot="end">
-          <IonButton
-            slot="end"
-            size="small"
-            color="primary"
-            onClick={() => setMode("edit")}
-            hidden={!editable || mode != "view"}
-            disabled={editingField && editingField != field}
-          >
-            <IonIcon src={create} slot="icon-only"></IonIcon>
-          </IonButton>
-        </IonButtons>
-      </IonItem>
-      <div className="d-flex">
-        <IonButton
-          color="dark"
-          className="flex-grow ion-no-margin"
-          expand="full"
-          onClick={() => setMode("cancel")}
-          hidden={mode != "edit"}
-        >
-          <IonIcon src={close} slot="icon-only"></IonIcon>
-        </IonButton>
-        <IonButton
-          color="success"
-          className="flex-grow ion-no-margin"
-          expand="full"
-          onClick={() => setMode("save")}
-          hidden={mode != "edit"}
-        >
-          <IonIcon src={save} slot="icon-only"></IonIcon>
-        </IonButton>
-        <IonButton
-          color="success"
-          className="flex-grow ion-no-margin"
-          expand="full"
-          disabled
-          hidden={mode != "save"}
-        >
-          Saving ...
-        </IonButton>
-      </div>
-    </div>
-  );
-}
-
-export default test;
+export default HomePage;

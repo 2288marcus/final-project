@@ -20,17 +20,31 @@ export async function post<T>(url: string, body: object, parser: Parser<T>) {
   );
 }
 
-export async function postjob<T>(url: string, body: object, parser: Parser<T>) {
+export async function patch<T>(url: string, body: object, parser: Parser<T>) {
   return handleFetch(
     url,
     {
-      method: "POST",
+      method: "PATCH",
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json",
         Authorization: getAuthorization(),
       },
       body: JSON.stringify(body),
+    },
+    parser
+  );
+}
+
+export async function del<T>(url: string, parser: Parser<T>) {
+  return handleFetch(
+    url,
+    {
+      method: "DELETE",
+      headers: {
+        Accept: "application/json",
+        Authorization: getAuthorization(),
+      },
     },
     parser
   );
@@ -94,23 +108,23 @@ async function handleFetch<T>(
   return parser.parse(json);
 }
 
-export async function handleFetch2(
-  url: string,
-  method: "GET" | "POST" | "PUT" | "DELETE"
-) {
-  let res = await fetch(api_origin + url, {
-    method,
-    headers: {
-      Accept: "application/json",
-      Authorization: getAuthorization(),
-    },
-  });
-  let json = await res.json();
+// export async function handleFetch2(
+//   url: string,
+//   method: "GET" | "POST" | "PUT" | "DELETE"
+// ) {
+//   let res = await fetch(api_origin + url, {
+//     method,
+//     headers: {
+//       Accept: "application/json",
+//       Authorization: getAuthorization(),
+//     },
+//   });
+//   let json = await res.json();
 
-  // Example: {message: 'todo', error: 'Not Implemented', statusCode: 501}
-  // Example: {statusCode: 500, message: 'Internal server error'}
-  if (json.message && json.statusCode) {
-    return { error: json.message };
-  }
-  return json;
-}
+//   // Example: {message: 'todo', error: 'Not Implemented', statusCode: 501}
+//   // Example: {statusCode: 500, message: 'Internal server error'}
+//   if (json.message && json.statusCode) {
+//     return { error: json.message };
+//   }
+//   return json;
+// }
