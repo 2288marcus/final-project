@@ -93,7 +93,7 @@ const ChatroomList: React.FC = () => {
                     <div>
                       <h1>Job: {chatroom.title}</h1>
                       <p>
-                        created_at:{" "}
+                        created_at:
                         {chatroom.created_at.replace("T", " ").replace("Z", "")}
                       </p>
                       <p>supplier: {chatroom.supplier_username}</p>

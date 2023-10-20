@@ -26,11 +26,18 @@ import {
 import { star, starOutline } from "ionicons/icons";
 import "./HomePage.css";
 import useGet from "../hooks/useGet";
-import { array, date, float, id, object, string, values } from "cast.ts";
-
-function Fake() {
-  return <div className="real"></div>;
-}
+import {
+  array,
+  date,
+  float,
+  id,
+  object,
+  string,
+  values,
+  number,
+} from "cast.ts";
+import { handleFetch2 } from "../api/config";
+// import { number } from "@beenotung/tslib";
 
 let jobListParser = object({
   jobList: array(
@@ -48,12 +55,43 @@ let jobListParser = object({
   ),
 });
 
+let bookmarkParser = object({
+  bookmarkList: array(
+    object({
+      id: number(),
+      username: string(),
+      job_id: number(),
+      title: string(),
+      description: string(),
+      price: number(),
+      type: values(["demand" as const, "supply" as const]),
+    })
+  ),
+});
+
 const HomePage: React.FC = () => {
   const title = "Home";
 
   const [segment, setSegment] = useState<"demand" | "supply">("demand");
 
   let jobList = useGet("/jobs", jobListParser);
+
+  let bookmarkList = useGet("/jobs/bookmark", bookmarkParser);
+
+  const addBookmark = async (bookmarkID: number) => {
+    try {
+      const json = await handleFetch2(`/jobs/bookmark/${bookmarkID}`, "POST");
+      if (json.error) {
+        throw new Error(json.error);
+        return;
+      }
+      console.log("successfully add");
+      bookmarkList.reload();
+    } catch (error) {
+      console.log(error);
+      return;
+    }
+  };
   // console.log("jobList:", jobList);
 
   // const [items, setItems] = useState<string[]>([]);
@@ -98,6 +136,7 @@ const HomePage: React.FC = () => {
               <IonButton
                 onClick={() => {
                   setBookmark(!bookmark);
+                  addBookmark(props.job.job_id);
                 }}
               >
                 <IonIcon

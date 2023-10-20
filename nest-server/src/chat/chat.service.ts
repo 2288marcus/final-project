@@ -62,4 +62,19 @@ export class ChatService {
 
     return { chatroomList }
   }
+
+  async postContract(input: {
+    chatroom_id: number
+    content: string
+    user_id: number
+  }) {
+    return await this.knex
+      .insert({
+        chatroom_id: input.chatroom_id,
+        real_description: input.description,
+        user_id: input.user_id,
+      })
+      .into('message')
+      .returning('id')
+  }
 }

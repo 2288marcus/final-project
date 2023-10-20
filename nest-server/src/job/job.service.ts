@@ -114,4 +114,14 @@ export class JobService {
 
     return {}
   }
+
+  async addBookmark(user_id: number, job_id: number) {
+    await this.knex('bookmark')
+      .insert({
+        user_id,
+        job_id: job_id,
+      })
+      .into('bookmark')
+      .returning('id')
+  }
 }

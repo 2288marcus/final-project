@@ -52,8 +52,17 @@ export class JobController {
     @Param('bookmark_id') bookmark_id: string,
   ) {
     let user_id = await this.userService.authorize(authorization)
-    // let user_id = 2
 
     return await this.jobService.deleteBookmark(user_id, parseInt(bookmark_id))
+  }
+
+  @Post('bookmark/:bookmark_id')
+  async addBookmark(
+    @Headers('Authorization') authorization,
+    @Param('bookmark_id') job_id: string,
+  ) {
+    let user_id = await this.userService.authorize(authorization)
+
+    return await this.jobService.addBookmark(user_id, parseInt(job_id))
   }
 }

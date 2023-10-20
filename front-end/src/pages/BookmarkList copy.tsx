@@ -27,8 +27,6 @@ import { bookmark, star, starOutline } from "ionicons/icons";
 import "./HomePage.css";
 import useGet from "../hooks/useGet";
 import { api_origin, handleFetch2 } from "../api/config";
-import { useParams } from "react-router";
-import useAuth from "../hooks/useAuth";
 
 import {
   array,

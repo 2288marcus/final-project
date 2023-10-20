@@ -65,4 +65,31 @@ export class ChatController {
     // 获取消息
     return await this.chatService.getChatroom(user_id)
   }
+
+  @Post(':chatroom_id/contract')
+  async postContract(
+    @Body() body,
+    @Param() params,
+    @Headers('Authorization') authorization,
+  ) {
+    let user_id = await this.userService.authorize(authorization)
+    let input = object({
+      body: object({
+        // updated_at: int(),
+        description: string(),
+        price: int(),
+        date: string(),
+        time: string(),
+      }),
+      params: object({
+        chatroom_id: id(),
+      }),
+    }).parse({ body, params })
+    const result = await this.chatService.postContract({
+      chatroom_id: input.params.chatroom_id,
+      description: input.body.description,
+      user_id,
+    })
+    return result[0]
+  }
 }
