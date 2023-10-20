@@ -31,6 +31,7 @@ import "./theme/variables.css";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import HomePage from "./pages/HomePage";
+import Jobstatus from "./pages/Jobstatus";
 import BookmarkList from "./pages/BookmarkList";
 import ProfilePage from "./pages/ProfilePage";
 import RequirementPage from "./pages/RequirementPage";
@@ -44,7 +45,7 @@ import Blockchain from "./pages/Blockchain";
 import Test from "./pages/test";
 import EditPage from "./pages/Demo/EditPage";
 import { routes } from "./routes";
-import ProfileCheckPage from "./pages/ProfileCheckPage";
+import OthersProfilePage from "./pages/OthersProfilePage";
 
 setupIonicReact();
 
@@ -71,6 +72,9 @@ const App: React.FC = () => {
                 </Route>
                 <Route path={routes.home} exact={true}>
                   <HomePage />
+                </Route>
+                <Route path={routes.Jobstatus} exact={true}>
+                  <Jobstatus />
                 </Route>
                 <Route path="/BookmarkList" exact={true}>
                   <BookmarkList />
@@ -112,8 +116,8 @@ const App: React.FC = () => {
                 <Route path={routes.test} exact={true}>
                   <Test />
                 </Route>
-                <Route path={routes.ProfileCheckPage} exact={true}>
-                  <ProfileCheckPage />
+                <Route path={routes.othersProfilePage(":user_id")} exact={true}>
+                  <OthersProfilePage />
                 </Route>
               </IonRouterOutlet>
             </IonSplitPane>

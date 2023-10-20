@@ -59,19 +59,8 @@ let jobListParser = object({
   ),
 });
 
-let getTagListParser = object({
-  tagList: array(
-    object({
-      id: id(),
-      name: string(),
-      used: int(),
-    })
-  ),
-});
-type Tag = ParseResult<typeof getTagListParser>["tagList"][number];
-
-const HomePage: React.FC = () => {
-  const title = "Home";
+const Jobstatus: React.FC = () => {
+  const title = "Jobstatus";
 
   const [segment, setSegment] = useState<"demand" | "supply">("demand");
 
@@ -135,28 +124,8 @@ const HomePage: React.FC = () => {
             <IonMenuButton />
           </IonButtons>
           <IonList class="SH">
-            {/* <IonTitle>{title}</IonTitle> */}
-            <IonSearchbar animated={true} placeholder="Search"></IonSearchbar>
+            <IonTitle>Jobstatus</IonTitle>
           </IonList>
-          <IonAccordionGroup>
-            <IonAccordion value="first">
-              <IonItem slot="header" color="light">
-                <IonLabel>Common Tag</IonLabel>
-              </IonItem>
-              <div slot="content">
-                <IonButton>Education</IonButton>
-                <IonButton>Cleaning</IonButton>
-                <IonButton>Logistics</IonButton>
-                <IonButton>Sport</IonButton>
-                <IonButton>Travel</IonButton>
-                <IonButton>Food and Beverage</IonButton>
-                <IonButton>IT</IonButton>
-                <IonButton>Photography</IonButton>
-                <IonButton>Journalist</IonButton>
-                <IonButton>Designer</IonButton>
-              </div>
-            </IonAccordion>
-          </IonAccordionGroup>
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen className="ion-padding">
@@ -187,4 +156,4 @@ const HomePage: React.FC = () => {
   );
 };
 
-export default HomePage;
+export default Jobstatus;

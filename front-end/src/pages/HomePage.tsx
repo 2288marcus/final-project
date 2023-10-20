@@ -22,9 +22,12 @@ import {
   IonChip,
   IonIcon,
   IonCardContent,
+  IonNavLink,
+  IonRouterLink,
 } from "@ionic/react";
 import { star, starOutline } from "ionicons/icons";
 import "./HomePage.css";
+import { get, post } from "../api/config";
 import useGet from "../hooks/useGet";
 import {
   array,
@@ -34,10 +37,11 @@ import {
   object,
   string,
   values,
+  ParseResult,
+  int,
   number,
 } from "cast.ts";
-import { handleFetch2 } from "../api/config";
-// import { number } from "@beenotung/tslib";
+import { routes } from "../routes";
 
 let jobListParser = object({
   jobList: array(
@@ -78,83 +82,11 @@ const HomePage: React.FC = () => {
 
   let bookmarkList = useGet("/jobs/bookmark", bookmarkParser);
 
-  const addBookmark = async (bookmarkID: number) => {
-    try {
-      const json = await handleFetch2(`/jobs/bookmark/${bookmarkID}`, "POST");
-      if (json.error) {
-        throw new Error(json.error);
-        return;
-      }
-      console.log("successfully add");
-      bookmarkList.reload();
-    } catch (error) {
-      console.log(error);
-      return;
-    }
-  };
   // console.log("jobList:", jobList);
 
-  // const [items, setItems] = useState<string[]>([]);
+  /////////////////////////////////////////////
 
-  // const generateItems = () => {
-  //   const newItems = [];
-  //   for (let i = 0; i < 50; i++) {
-  //     newItems.push(`Job ${1 + items.length + i}`);
-  //   }
-  //   setItems([...items, ...newItems]);
-  // };
-
-  // useEffect(() => {
-  //   generateItems();
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, []);
-
-  function BookmarkCard(props: {
-    job: (typeof jobListParser)["sampleValue"]["jobList"][0];
-  }) {
-    const { job } = props;
-    const [bookmark, setBookmark] = useState(false);
-
-    return (
-      <IonCard key={job.job_id}>
-        <IonCardContent>
-          <div className="d-flex align-center" style={{ gap: "8px" }}>
-            <div className="d-flex col align-center ion-justify-content-center">
-              <IonAvatar>
-                <img
-                  src={"https://picsum.photos/80/80?random=" + job.job_id}
-                  alt="avatar"
-                />
-              </IonAvatar>
-              <span className="author-name">{job.username}</span>
-            </div>
-            <div>
-              <h1>- {job.title} -</h1>
-              <p>{job.description}</p>
-            </div>
-            <IonButtons slot="end">
-              <IonButton
-                onClick={() => {
-                  setBookmark(!bookmark);
-                  addBookmark(props.job.job_id);
-                }}
-              >
-                <IonIcon
-                  slot="icon-only"
-                  icon={bookmark ? star : starOutline}
-                ></IonIcon>
-              </IonButton>
-            </IonButtons>
-          </div>
-        </IonCardContent>
-        <div>
-          {job.tags.map((tag: string) => (
-            <IonChip key={tag}>{tag}</IonChip>
-          ))}
-        </div>
-      </IonCard>
-    );
-  }
+  /////////////////////////////////////////////
 
   return (
     <IonPage className="HomePage">
@@ -164,10 +96,10 @@ const HomePage: React.FC = () => {
             <IonMenuButton />
           </IonButtons>
           <IonList class="SH">
-            {/* <IonTitle>{title}</IonTitle> */}
-            <IonSearchbar animated={true} placeholder="Search"></IonSearchbar>
+            <IonTitle>Home Page</IonTitle>
+            {/* <IonSearchbar animated={true} placeholder="Search"></IonSearchbar> */}
           </IonList>
-          <IonAccordionGroup>
+          {/* <IonAccordionGroup>
             <IonAccordion value="first">
               <IonItem slot="header" color="light">
                 <IonLabel>Common Tag</IonLabel>
@@ -185,7 +117,7 @@ const HomePage: React.FC = () => {
                 <IonButton>Designer</IonButton>
               </div>
             </IonAccordion>
-          </IonAccordionGroup>
+          </IonAccordionGroup> */}
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen className="ion-padding">
@@ -194,16 +126,7 @@ const HomePage: React.FC = () => {
             <IonTitle size="large">{title}</IonTitle>
           </IonToolbar>
         </IonHeader>
-        {/* <IonContent class="indexcontent">
-          <IonContent>
-            <IonButton href="./JobList">Job</IonButton>
-            <JobList />
-          </IonContent>
-          <IonContent>
-            <IonButton href="./Userlist">User</IonButton>
-            <UserList />
-          </IonContent>
-        </IonContent> */}
+
         <IonSegment
           value={segment}
           onIonChange={(e) => setSegment(e.detail.value as any)}
@@ -224,5 +147,65 @@ const HomePage: React.FC = () => {
     </IonPage>
   );
 };
+
+function BookmarkCard(props: {
+  job: (typeof jobListParser)["sampleValue"]["jobList"][0];
+}) {
+  const { job } = props;
+  const [bookmark, setBookmark] = useState(false);
+
+  const addBookmark = async (bookmarkID: number) => {
+    try {
+      const json = await post(`/jobs/bookmark/${bookmarkID}`, {}, object({}));
+      console.log("successfully add");
+      // bookmarkList.reload(); // TODO
+    } catch (error) {
+      console.log(error);
+      return;
+    }
+  };
+
+  return (
+    <IonCard key={job.job_id}>
+      <IonCardContent>
+        <div className="d-flex align-center" style={{ gap: "8px" }}>
+          <IonRouterLink routerLink={routes.othersProfilePage(job.user_id)}>
+            <div className="d-flex col align-center ion-justify-content-center user-part">
+              <IonAvatar>
+                <img
+                  src={"https://picsum.photos/80/80?random=" + job.job_id}
+                  alt="avatar"
+                />
+              </IonAvatar>
+              <span className="author-name">{job.username}</span>
+            </div>
+          </IonRouterLink>
+          <div>
+            <h1>- {job.title} -</h1>
+            <p>{job.description}</p>
+          </div>
+          <IonButtons slot="end">
+            <IonButton
+              onClick={() => {
+                setBookmark(!bookmark);
+                addBookmark(props.job.job_id);
+              }}
+            >
+              <IonIcon
+                slot="icon-only"
+                icon={bookmark ? star : starOutline}
+              ></IonIcon>
+            </IonButton>
+          </IonButtons>
+        </div>
+      </IonCardContent>
+      <div>
+        {job.tags.map((tag: string) => (
+          <IonChip key={tag}>{tag}</IonChip>
+        ))}
+      </div>
+    </IonCard>
+  );
+}
 
 export default HomePage;

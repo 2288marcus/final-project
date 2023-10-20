@@ -6,7 +6,7 @@ export function login(user: {
   public_key: string;
   signature: string;
 }) {
-  return post("/user/login", user, object({ id: id(), username: string() }));
+  return post("/users/login", user, object({ id: id(), username: string() }));
 }
 
 // TODO match the ERD

@@ -26,7 +26,7 @@ import {
 import { bookmark, star, starOutline } from "ionicons/icons";
 import "./HomePage.css";
 import useGet from "../hooks/useGet";
-import { api_origin, handleFetch2 } from "../api/config";
+import { api_origin, del } from "../api/config";
 import { useParams } from "react-router";
 import useAuth from "../hooks/useAuth";
 
@@ -40,6 +40,7 @@ import {
   values,
   number,
 } from "cast.ts";
+import useToast from "../hooks/useToast";
 
 let bookmarkParser = object({
   bookmarkList: array(
@@ -63,13 +64,16 @@ const BookmarkList: React.FC = () => {
 
   let bookmarkList = useGet("/jobs/bookmark", bookmarkParser);
 
+  const toast = useToast();
+
   const deleteBookmark = async (bookmarkID: number) => {
     try {
-      const json = await handleFetch2(`/jobs/bookmark/${bookmarkID}`, "DELETE");
-      if (json.error) {
-        console.log(json.error);
-        return;
-      }
+      let json = await del(`/jobs/bookmark/${bookmarkID}`, object({}));
+      // const json = await handleFetch2(`/jobs/bookmark/${bookmarkID}`, "DELETE");
+      // if (json.error) {
+      //   console.log(json.error);
+      //   return;
+      // }
       console.log("successfully deleted");
       bookmarkList.reload();
       // const res = await fetch(`${api_origin}/jobs/bookmark/${7}`, {
@@ -91,6 +95,7 @@ const BookmarkList: React.FC = () => {
       // // Do what you want
     } catch (error) {
       console.log(error);
+      toast.showError(error);
       return;
     }
   };

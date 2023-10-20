@@ -12,15 +12,13 @@ import {
   UseInterceptors,
 } from '@nestjs/common'
 import { UserService } from './user.service'
-import { email, id, int, number, object, string } from 'cast.ts'
+import { email, id, int, number, object, string, values } from 'cast.ts'
 import * as forge from 'node-forge'
 import { FileInterceptor } from '@nestjs/platform-express'
 import { diskStorage } from 'multer'
 import { extname } from 'path'
-import { verifyObjectSignature } from 'src/utils/encode'
-import { routes } from '../../userSample'
 
-@Controller('user')
+@Controller('users')
 export class UserController {
   constructor(private userService: UserService) {}
 
@@ -30,7 +28,7 @@ export class UserController {
     return this.userService.getSelfProfile(user_id)
   }
 
-  @Get('profile/:id')
+  @Get(':id/profile')
   getProfile(@Param() params) {
     let input = object({
       params: object({
@@ -40,30 +38,33 @@ export class UserController {
     return this.userService.getPublicProfile(input.params.id)
   }
 
-  @Patch(':profile')
-  async updateProfile(@Body() body) {
+  @Patch('profile/:field')
+  async updateProfile(
+    @Body() body,
+    @Param() params,
+    @Headers('Authorization') authorization,
+  ) {
+    let user_id = await this.userService.authorize(authorization)
+
     let input = object({
-      body: object({
-        payload: object({
-          email: email(),
-          desc: string(),
-          nickname: string(),
-          timestamp: int(),
-        }),
-        publicKey: string(),
-        signature: string(),
+      params: object({
+        field: values([
+          'username' as const,
+          'email' as const,
+          'hk_phone' as const,
+          'description' as const,
+        ]),
       }),
-    }).parse({ body })
-    let isMatching = forge.pki.ed25519.verify({
-      signature: input.body.signature,
-      message: JSON.stringify(input.body.payload),
-      encoding: 'utf8',
-      publicKey: input.body.publicKey,
+      body: object({
+        value: string(),
+      }),
+    }).parse({ body, params })
+
+    return this.userService.updateProfile({
+      user_id,
+      field: input.params.field,
+      value: input.body.value,
     })
-    let user_id = await this.userService.getUserIdByPublicKey(
-      input.body.publicKey,
-    )
-    return this.userService.updateProfile(user_id, input.body.payload)
   }
 
   @Post('upload')

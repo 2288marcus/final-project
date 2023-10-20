@@ -20,14 +20,12 @@ import {
 } from "@ionic/react";
 import { useEffect, useState } from "react";
 import "./RequirementPage.css";
-import { format_2_digit, format_datetime } from "@beenotung/tslib/format";
-import { get, postjob } from "../api/config";
-import { ParseResult, object, string, number, array, id, int } from "cast.ts";
+import { get, post } from "../api/config";
+import { ParseResult, object, string, array, id, int } from "cast.ts";
 import { InputContext, InputField } from "../components/InputField";
 import { add } from "ionicons/icons";
 import useToast from "../hooks/useToast";
 import useGet from "../hooks/useGet";
-import useAuth from "../hooks/useAuth";
 
 let defaultState = {
   price: "",
@@ -63,7 +61,7 @@ const RequirementPage: React.FC = () => {
     console.log("data:", data);
 
     // 发送POST请求到后端
-    postjob("/jobs", data, object({}))
+    post("/jobs", data, object({}))
       .then((res) => {
         console.log("Result:", res);
       })
@@ -130,7 +128,6 @@ const RequirementPage: React.FC = () => {
 
         <IonCard>
           <IonItem hidden>
-            {/* <IonLabel>aa</IonLabel> */}
             <IonInput
               label="aa:"
               labelPlacement="fixed"

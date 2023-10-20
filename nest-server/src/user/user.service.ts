@@ -1,6 +1,7 @@
 import {
   Injectable,
   NotFoundException,
+  NotImplementedException,
   UnauthorizedException,
 } from '@nestjs/common'
 import { number, object, string } from 'cast.ts'
@@ -46,18 +47,33 @@ export class UserService {
   }
 
   async getPublicProfile(id: number) {
-    // TODO
-    return await this.knex
-      .select('id', 'username')
+    let profile = await this.knex
+      .select(
+        'username',
+        'email',
+        'cv_upload',
+        'fullName',
+        'hk_phone as HK_phone',
+        'description',
+      )
       .from('user')
       .where({ id })
       .first()
+    if (!profile) throw new NotFoundException('user not found')
+    return { profile }
   }
 
-  updateProfile(
-    id: number,
-    profile: { email: string; desc: string; nickname: string },
-  ) {
+  async updateProfile(input: {
+    user_id: number
+    field: 'username' | 'email' | 'hk_phone' | 'description'
+    value: string
+  }) {
+    await this.knex('user')
+      .where('id', input.user_id)
+      .update({
+        [input.field]: input.value,
+        updated_at: this.knex.fn.now(),
+      })
     return {}
   }
 

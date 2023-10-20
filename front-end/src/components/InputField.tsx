@@ -9,6 +9,7 @@ import {
 } from "@ionic/react";
 import { close, create, save } from "ionicons/icons";
 import { useEffect, useState } from "react";
+import useToast from "../hooks/useToast";
 
 export type InputContext<T> = {
   state: T;
@@ -23,11 +24,11 @@ export function InputField<T>(props: {
   inputContext: InputContext<T>;
   label: string | undefined | null;
   field: keyof T;
-  editable?: boolean;
-  type?: "text" | "textarea";
+  type?: "text" | "textarea" | "timestamp";
   placeholder?: string;
   helperText?: string;
   errorText?: string;
+  save?: (field: keyof T) => Promise<void>;
 }) {
   const Input = props.type == "textarea" ? IonTextarea : IonInput;
 
@@ -35,14 +36,23 @@ export function InputField<T>(props: {
 
   const [mode, setMode] = useState<Mode>("view");
 
+  const toast = useToast();
+
   async function saveProfile() {
-    // TODO post to server
-    setTimeout(() => {
+    try {
+      console.log("has save?", typeof props.save);
+      await props.save?.(props.field);
       setMode("view");
-    }, 5000);
+      console.log("saved", props.field);
+    } catch (error) {
+      console.log("failed to save", props.field, error);
+      setMode("edit");
+      toast.showError(error);
+    }
   }
 
-  const { field, editable } = props;
+  const { field } = props;
+  const editable = !!props.save;
   const { setEditingField, reset, state, setState, editingField } =
     props.inputContext;
 
@@ -73,18 +83,20 @@ export function InputField<T>(props: {
     field,
   ]);
 
+  let value = String(state[field]);
+  if (props.type == "timestamp") {
+    value = new Date(value).toLocaleString("zh-cn");
+  }
+
   return (
     <div className="flex-grow HalfInputField">
       <IonItem lines={props.errorText ? "none" : undefined}>
-        {/* <IonLabel position={mode == "view" ? "fixed" : "floating"}>
-          {props.label}
-        </IonLabel> */}
         <Input
           className={props.errorText ? "ion-invalid ion-touched" : ""}
           label={props.label!}
           labelPlacement={mode == "view" ? "fixed" : "floating"}
           autoGrow
-          value={String(state[field])}
+          value={value}
           placeholder={props.placeholder}
           helperText={props.helperText}
           errorText={props.errorText}
