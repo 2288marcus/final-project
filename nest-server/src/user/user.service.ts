@@ -47,12 +47,20 @@ export class UserService {
   }
 
   async getPublicProfile(id: number) {
-    // TODO
-    return await this.knex
-      .select('id', 'username')
+    let profile = await this.knex
+      .select(
+        'username',
+        'email',
+        'cv_upload',
+        'fullName',
+        'hk_phone as HK_phone',
+        'description',
+      )
       .from('user')
       .where({ id })
       .first()
+    if (!profile) throw new NotFoundException('user not found')
+    return { profile }
   }
 
   async updateProfile(input: {

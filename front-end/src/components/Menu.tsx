@@ -68,12 +68,7 @@ const Menu: React.FC = () => {
       iosIcon: heartOutline,
       mdIcon: heartSharp,
     },
-    // {
-    //   title: "Chatroom",
-    //   url: routes.Chatroom,
-    //   iosIcon: mail,
-    //   mdIcon: mail,
-    // },
+
     {
       title: "Chatroom List",
       url: routes.ChatroomList,
@@ -100,6 +95,12 @@ const Menu: React.FC = () => {
       mdIcon: settingsSharp,
     },
     {
+      title: "Job status",
+      url: routes.Jobstatus,
+      iosIcon: mail,
+      mdIcon: mail,
+    },
+    {
       title: "BlockChain",
       url: routes.Blockchain,
       iosIcon: link,
@@ -107,7 +108,7 @@ const Menu: React.FC = () => {
     },
     {
       title: "Profile Checking",
-      url: routes.ProfileCheckPage,
+      url: routes.othersProfilePage,
       iosIcon: personCircle,
       mdIcon: personCircle,
     },

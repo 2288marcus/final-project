@@ -18,7 +18,7 @@ import { FileInterceptor } from '@nestjs/platform-express'
 import { diskStorage } from 'multer'
 import { extname } from 'path'
 
-@Controller('user')
+@Controller('users')
 export class UserController {
   constructor(private userService: UserService) {}
 
@@ -28,7 +28,7 @@ export class UserController {
     return this.userService.getSelfProfile(user_id)
   }
 
-  @Get('profile/:id')
+  @Get(':id/profile')
   getProfile(@Param() params) {
     let input = object({
       params: object({

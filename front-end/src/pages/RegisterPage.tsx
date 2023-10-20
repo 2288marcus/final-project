@@ -133,7 +133,7 @@ const RegisterPage: React.FC = () => {
     console.log("data:", data);
 
     // 发送POST请求到后端
-    post("/user/signUp", data, object({}))
+    post("/users/signUp", data, object({}))
       .then((res) => {
         console.log("signUp result:", res);
       })

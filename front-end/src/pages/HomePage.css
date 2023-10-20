@@ -1,3 +1,6 @@
 .HomePage .SH {
   display: flex;
 }
+
+.HomePage .user-part {
+}

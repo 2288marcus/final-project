@@ -49,7 +49,7 @@ const ProfilePage: React.FC = () => {
 
   const [editingField, setEditingField] = useState<keyof Profile>();
 
-  const getProfileResult = useGet("/user/profile", getProfileParser);
+  const getProfileResult = useGet("/users/profile", getProfileParser);
   function setProfile(profile: Profile) {
     getProfileResult.setData({ profile });
   }
@@ -112,7 +112,7 @@ const ProfilePage: React.FC = () => {
 
             async function saveProfile(field: keyof Profile) {
               let json = await patch(
-                "/user/profile/" + field,
+                "/users/profile/" + field,
                 { value: profile[field] },
                 object({})
               );

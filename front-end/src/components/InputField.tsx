@@ -24,7 +24,6 @@ export function InputField<T>(props: {
   inputContext: InputContext<T>;
   label: string | undefined | null;
   field: keyof T;
-  // editable?: boolean;
   type?: "text" | "textarea" | "timestamp";
   placeholder?: string;
   helperText?: string;

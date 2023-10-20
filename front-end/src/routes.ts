@@ -6,7 +6,7 @@ export let routes = {
   login: "/login",
   Chatroom: "/Chatroom/:id",
   ChatroomList: "/ChatroomList",
-  ProfilePage: "/ProfilePage",
+  ProfilePage: "/profile",
   SettingPage: "/SettingPage",
   Blockchain: "/Blockchain",
   test: "/test",
@@ -16,6 +16,7 @@ export let routes = {
   Edit: "/Demo/Edit",
   Create: "/Demo/Create",
   register: "/register",
-  ProfileCheckPage: "/ProfileCheckPage",
+  othersProfilePage: (user_id: string | number) => `/profile/${user_id}`,
   BookmarkList: "/BookmarkList",
+  Jobstatus: "/Jobstatus",
 };

@@ -24,7 +24,7 @@ export default function useGet<T>(url: string, parser: Parser<T>) {
       } catch (error) {
         setData({ error } as State);
       }
-    }, 1000);
+    }, 1000 * 0);
   }
 
   useEffect(() => {

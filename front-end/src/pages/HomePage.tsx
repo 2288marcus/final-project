@@ -22,6 +22,8 @@ import {
   IonChip,
   IonIcon,
   IonCardContent,
+  IonNavLink,
+  IonRouterLink,
 } from "@ionic/react";
 import { star, starOutline } from "ionicons/icons";
 import "./HomePage.css";
@@ -38,6 +40,7 @@ import {
   ParseResult,
   int,
 } from "cast.ts";
+import { routes } from "../routes";
 
 function Fake() {
   return <div className="real"></div>;
@@ -59,17 +62,6 @@ let jobListParser = object({
   ),
 });
 
-let getTagListParser = object({
-  tagList: array(
-    object({
-      id: id(),
-      name: string(),
-      used: int(),
-    })
-  ),
-});
-type Tag = ParseResult<typeof getTagListParser>["tagList"][number];
-
 const HomePage: React.FC = () => {
   const title = "Home";
 
@@ -81,52 +73,6 @@ const HomePage: React.FC = () => {
 
   /////////////////////////////////////////////
 
-  function BookmarkCard(props: {
-    job: (typeof jobListParser)["sampleValue"]["jobList"][0];
-  }) {
-    const { job } = props;
-    const [bookmark, setBookmark] = useState(false);
-
-    return (
-      <IonCard key={job.job_id}>
-        <IonCardContent>
-          <div className="d-flex align-center" style={{ gap: "8px" }}>
-            <div className="d-flex col align-center ion-justify-content-center">
-              <IonAvatar>
-                <img
-                  src={"https://picsum.photos/80/80?random=" + job.job_id}
-                  alt="avatar"
-                />
-              </IonAvatar>
-              <span className="author-name">{job.username}</span>
-            </div>
-            <div>
-              <h1>- {job.title} -</h1>
-              <p>{job.description}</p>
-            </div>
-            <IonButtons slot="end">
-              <IonButton
-                onClick={() => {
-                  setBookmark(!bookmark);
-                }}
-              >
-                <IonIcon
-                  slot="icon-only"
-                  icon={bookmark ? star : starOutline}
-                ></IonIcon>
-              </IonButton>
-            </IonButtons>
-          </div>
-        </IonCardContent>
-        <div>
-          {job.tags.map((tag: string) => (
-            <IonChip key={tag}>{tag}</IonChip>
-          ))}
-        </div>
-      </IonCard>
-    );
-  }
-
   return (
     <IonPage className="HomePage">
       <IonHeader>
@@ -135,6 +81,7 @@ const HomePage: React.FC = () => {
             <IonMenuButton />
           </IonButtons>
           <IonList class="SH">
+            <IonTitle>Home Page</IonTitle>
             {/* <IonSearchbar animated={true} placeholder="Search"></IonSearchbar> */}
           </IonList>
           {/* <IonAccordionGroup>
@@ -185,5 +132,56 @@ const HomePage: React.FC = () => {
     </IonPage>
   );
 };
+
+function BookmarkCard(props: {
+  job: (typeof jobListParser)["sampleValue"]["jobList"][0];
+}) {
+  const { job } = props;
+  const [bookmark, setBookmark] = useState(false);
+
+  return (
+    <IonCard key={job.job_id}>
+      <IonCardContent>
+        <div className="d-flex align-center" style={{ gap: "8px" }}>
+          <IonRouterLink routerLink={routes.othersProfilePage(job.user_id)}>
+            <div
+              className="d-flex col align-center ion-justify-content-center user-part"
+              onClick={() => {}}
+            >
+              <IonAvatar>
+                <img
+                  src={"https://picsum.photos/80/80?random=" + job.job_id}
+                  alt="avatar"
+                />
+              </IonAvatar>
+              <span className="author-name">{job.username}</span>
+            </div>
+          </IonRouterLink>
+          <div>
+            <h1>- {job.title} -</h1>
+            <p>{job.description}</p>
+          </div>
+          <IonButtons slot="end">
+            <IonButton
+              onClick={() => {
+                setBookmark(!bookmark);
+              }}
+            >
+              <IonIcon
+                slot="icon-only"
+                icon={bookmark ? star : starOutline}
+              ></IonIcon>
+            </IonButton>
+          </IonButtons>
+        </div>
+      </IonCardContent>
+      <div>
+        {job.tags.map((tag: string) => (
+          <IonChip key={tag}>{tag}</IonChip>
+        ))}
+      </div>
+    </IonCard>
+  );
+}
 
 export default HomePage;

@@ -25,29 +25,30 @@ import { api_origin, get } from "../api/config";
 import { ParseResult, boolean, nullable, object, string } from "cast.ts";
 import useGet from "../hooks/useGet";
 import { InputContext, InputField } from "../components/InputField";
+import { useParams } from "react-router";
 
 let getProfileParser = object({
   profile: object({
     username: string(),
     email: string(),
-    human_verification: boolean(),
     cv_upload: nullable(string()),
-    created_at: string(),
-    updated_at: string(),
     fullName: string(),
-    HKID: string(),
-    public_key: string(),
     HK_phone: string(),
     description: nullable(string()),
   }),
 });
 
-type ProfileCheckPage = ParseResult<typeof getProfileParser>["profile"];
+type OthersProfilePage = ParseResult<typeof getProfileParser>["profile"];
 
-const ProfileCheckPage: React.FC = () => {
+const OthersProfilePage: React.FC = () => {
   const title = "Target Information";
 
-  const getProfileResult = useGet("/user/profile", getProfileParser);
+  const params = useParams<{ user_id: string }>();
+
+  const getProfileResult = useGet(
+    `/users/${params.user_id}/profile`,
+    getProfileParser
+  );
 
   const [draftFile, setDraftFile] = useState<File>();
 
@@ -83,10 +84,9 @@ const ProfileCheckPage: React.FC = () => {
         <IonCard>
           {getProfileResult.render((json) => {
             const profile = json.profile;
-            const profileContext: InputContext<ProfileCheckPage> = {
+            const profileContext: InputContext<OthersProfilePage> = {
               state: profile,
             };
-
             return (
               <>
                 <div className="d-flex-md HalfInputFieldContainer">
@@ -148,4 +148,4 @@ const ProfileCheckPage: React.FC = () => {
   );
 };
 
-export default ProfileCheckPage;
+export default OthersProfilePage;
