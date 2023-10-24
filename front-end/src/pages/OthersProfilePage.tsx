@@ -3,7 +3,6 @@ import {
   IonButtons,
   IonContent,
   IonHeader,
-  IonInput,
   IonItem,
   IonMenuButton,
   IonPage,
@@ -11,11 +10,7 @@ import {
   IonToolbar,
   IonCard,
   IonLabel,
-  IonItemDivider,
   IonIcon,
-  setupIonicReact,
-  IonTextarea,
-  IonPopover,
 } from "@ionic/react";
 import React, { useState, useEffect } from "react";
 import "./ProfilePage.css";

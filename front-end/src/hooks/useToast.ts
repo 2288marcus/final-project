@@ -18,5 +18,13 @@ export default function useToast() {
       buttons: [{ text: "Dismiss", handler: dismiss }],
     });
   }
-  return { showError, showSuccess };
+  function Warning(message: string) {
+    present({
+      message,
+      color: "Warning",
+      duration: 6000,
+      buttons: [{ text: "Dismiss", handler: dismiss }],
+    });
+  }
+  return { showError, showSuccess, Warning };
 }

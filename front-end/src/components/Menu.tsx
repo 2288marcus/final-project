@@ -110,7 +110,7 @@ const Menu: React.FC = () => {
     },
     {
       title: "Profile Checking",
-      url: routes.othersProfilePage,
+      url: routes.othersProfilePage(":user_id"),
       iosIcon: personCircle,
       mdIcon: personCircle,
     },

@@ -38,10 +38,8 @@ import {
   ParseResult,
   int,
 } from "cast.ts";
-
-function Fake() {
-  return <div className="real"></div>;
-}
+import { useParams } from "react-router";
+import useAuth from "../hooks/useAuth";
 
 let jobListParser = object({
   jobList: array(
@@ -59,16 +57,16 @@ let jobListParser = object({
   ),
 });
 
+type Jobstatus = ParseResult<typeof jobListParser>["jobList"];
+
 const Jobstatus: React.FC = () => {
-  const title = "Jobstatus";
+  const title = "Job Status";
 
   const [segment, setSegment] = useState<"demand" | "supply">("demand");
 
-  let jobList = useGet("/jobs", jobListParser);
-
-  /////////////////////////////////////////////
-
-  /////////////////////////////////////////////
+  const user_id = useAuth().state?.id;
+  let jobList = useGet(`/jobs/search?user_id=${user_id}`, jobListParser);
+  // let jobList = useGet(`/jobs/1/profile`, jobListParser);
 
   function BookmarkCard(props: {
     job: (typeof jobListParser)["sampleValue"]["jobList"][0];
