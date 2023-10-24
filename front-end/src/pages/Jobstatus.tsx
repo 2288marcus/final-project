@@ -59,6 +59,7 @@ const Jobstatus: React.FC = () => {
   let jobList = useGet(`/jobs/search?user_id=${user_id}`, jobListParser);
   /////////////////////////////////////
   function deletejobpost() {}
+
   /////////////////////////////////////
   function BookmarkCard(props: {
     job: (typeof jobListParser)["sampleValue"]["jobList"][0];

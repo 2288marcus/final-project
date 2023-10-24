@@ -237,8 +237,10 @@ const RequirementPage: React.FC = () => {
                     hidden={selectedTags.includes(tag.name)}
                   >
                     <div>
-                      <div>{tag.name}</div>
-                      <div>({tag.used} used)</div>
+                      <div>
+                        {tag.name}
+                        <br />({tag.used} used)
+                      </div>
                     </div>
                   </IonChip>
                 ))}
@@ -313,6 +315,7 @@ const RequirementPage: React.FC = () => {
               created_at: new Date(),
               type: state.type,
               tags: selectedTags,
+              has_bookmark: 0,
             }}
           />
           <IonButton onClick={submit}>Confirm & Submit</IonButton>
