@@ -43,6 +43,8 @@ import {
 } from "cast.ts";
 import { routes } from "../routes";
 import { JobCard, jobCardParser } from "../components/JobCard";
+import { useEvent } from "react-use-event";
+import { AddBookmarkEvent, RemoveBookmarkEvent } from "../events";
 
 function Fake() {
   return <div className="real"></div>;
@@ -73,7 +75,41 @@ const HomePage: React.FC = () => {
 
   let jobList = useGet("/jobs", jobListParser);
 
-  let bookmarkList = useGet("/jobs/bookmark", bookmarkParser);
+  useEvent<RemoveBookmarkEvent>("RemoveBookmark", (event) => {
+    jobList.setData((data) => {
+      console.log("update", { event, data });
+      if (!data?.jobList) return data;
+      return {
+        jobList: data.jobList.map((job) => {
+          if (job.job_id == event.job_id) {
+            return {
+              ...job,
+              has_bookmark: 0,
+            };
+          }
+          return job;
+        }),
+      };
+    });
+  });
+
+  useEvent<AddBookmarkEvent>("AddBookmark", (event) => {
+    jobList.setData((data) => {
+      console.log("update", { event, data });
+      if (!data?.jobList) return data;
+      return {
+        jobList: data.jobList.map((job) => {
+          if (job.job_id == event.job.job_id) {
+            return {
+              ...job,
+              has_bookmark: 1,
+            };
+          }
+          return job;
+        }),
+      };
+    });
+  });
 
   // console.log("jobList:", jobList);
 

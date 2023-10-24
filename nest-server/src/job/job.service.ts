@@ -7,6 +7,7 @@ import {
 import { Knex } from 'knex'
 
 import { InjectModel } from 'nest-knexjs'
+import { groupBy } from 'rxjs'
 import { TagService } from 'src/tag/tag.service'
 @Injectable()
 export class JobService {
@@ -15,7 +16,7 @@ export class JobService {
     private readonly tagService: TagService,
   ) {}
 
-  async getJobList(filter: { user_id: number | null }) {
+  async getJobList(user_id: number | null, filter: { user_id: number | null }) {
     let query = this.knex
       .select(
         'job.id as job_id',
@@ -26,13 +27,21 @@ export class JobService {
         'job.price',
         'job.type',
         'job.created_at',
+        this.knex.raw('count(bookmark.user_id) as has_bookmark'),
       )
       .from('job')
       .innerJoin('user', 'user.id', 'job.user_id')
+      .leftJoin(
+        'bookmark',
+        this.knex.raw('bookmark.job_id = job.id and bookmark.user_id = ?', [
+          user_id,
+        ]),
+      )
+      .groupBy('job.id', 'user.id')
     if (filter.user_id) {
       query = query.where('user.id', filter.user_id)
     }
-    let jobList = await query
+    let jobList = await query.orderBy('job.id', 'desc')
     for (let job of jobList) {
       let rows = await this.knex('tag')
         .select('tag.name')
@@ -102,8 +111,7 @@ export class JobService {
       .innerJoin('job', 'job.id', 'bookmark.job_id')
       .innerJoin('user', 'user.id', 'bookmark.user_id')
       .select(
-        'bookmark.id',
-        'bookmark.job_id',
+        'job.id as job_id',
         'user.username',
         'job.title',
         'job.description',
@@ -111,14 +119,16 @@ export class JobService {
         'job.type',
       )
       .where('bookmark.user_id', user_id)
+      .groupBy('job.id', 'user.id')
+      .orderByRaw(this.knex.raw('max(bookmark.id) desc'))
     return { bookmarkList }
   }
 
-  async deleteBookmark(user_id: number, bookmark_id: number) {
+  async deleteBookmark(user_id: number, job_id: number) {
     await this.knex('bookmark')
       .where({
         user_id,
-        id: bookmark_id,
+        job_id,
       })
       .del()
 
@@ -126,12 +136,14 @@ export class JobService {
   }
 
   async addBookmark(user_id: number, job_id: number) {
+    await this.deleteBookmark(user_id, job_id)
     await this.knex('bookmark')
       .insert({
         user_id,
-        job_id: job_id,
+        job_id,
       })
       .into('bookmark')
       .returning('id')
+    return {}
   }
 }

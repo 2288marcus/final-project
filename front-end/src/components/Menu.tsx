@@ -25,7 +25,6 @@ import {
   link,
   heartOutline,
   heartSharp,
-  sunny,
 } from "ionicons/icons";
 import "./Menu.css";
 import { routes } from "../routes";
@@ -110,7 +109,7 @@ const Menu: React.FC = () => {
     },
     {
       title: "Profile Checking",
-      url: routes.othersProfilePage(":user_id"),
+      url: routes.othersProfilePage,
       iosIcon: personCircle,
       mdIcon: personCircle,
     },
@@ -123,9 +122,7 @@ const Menu: React.FC = () => {
           <IonListHeader>Fair</IonListHeader>
           <IonNote>Deal</IonNote>
           <IonItem>
-            <IonToggle>
-              <IonIcon icon={sunny}></IonIcon>
-            </IonToggle>
+            <IonToggle>Dark Mode</IonToggle>
           </IonItem>
           {appPages.map((appPage, index) => {
             return (

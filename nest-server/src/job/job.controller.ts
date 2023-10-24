@@ -29,20 +29,29 @@ export class JobController {
   ) {}
 
   @Get()
-  getAllJobList(@Query() query) {
-    return this.jobService.getJobList({
+  async getAllJobList(@Query() query, @Headers('Authorization') authorization) {
+    let user_id = await this.userService
+      .authorize(authorization)
+      .catch(() => null)
+    return this.jobService.getJobList(user_id, {
       user_id: null,
     })
   }
 
   @Get('search')
-  getUserJobList(@Query() query) {
+  async getUserJobList(
+    @Query() query,
+    @Headers('Authorization') authorization,
+  ) {
+    let user_id = await this.userService
+      .authorize(authorization)
+      .catch(() => null)
     let input = object({
       query: object({
         user_id: optional(id()),
       }),
     }).parse({ query })
-    return this.jobService.getJobList({
+    return this.jobService.getJobList(user_id, {
       user_id: input.query.user_id,
     })
   }
@@ -70,23 +79,21 @@ export class JobController {
     return await this.jobService.getBookmarkList(user_id)
   }
 
-  @Delete('bookmark/:bookmark_id')
+  @Delete(':job_id/bookmark')
   async deleteBookmark(
     @Headers('Authorization') authorization,
-    @Param('bookmark_id') bookmark_id: string,
+    @Param('job_id') job_id: string,
   ) {
     let user_id = await this.userService.authorize(authorization)
-
-    return await this.jobService.deleteBookmark(user_id, parseInt(bookmark_id))
+    return await this.jobService.deleteBookmark(user_id, parseInt(job_id))
   }
 
-  @Post('bookmark/:bookmark_id')
+  @Post(':job_id/bookmark')
   async addBookmark(
     @Headers('Authorization') authorization,
-    @Param('bookmark_id') job_id: string,
+    @Param('job_id') job_id: string,
   ) {
     let user_id = await this.userService.authorize(authorization)
-
     return await this.jobService.addBookmark(user_id, parseInt(job_id))
   }
 }
