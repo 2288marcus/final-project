@@ -267,6 +267,27 @@ const Chatroom: React.FC = () => {
     contentRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [roomData.data?.content]); // 当 messages 状态发生变化时触发
 
+  const date = "2023-10-19";
+  const time = "19:01";
+
+  function formatDateTime(date: any, time: any) {
+    const [year, month, day] = date.split("-");
+    const [hours, minutes] = time.split(":");
+
+    const formattedDateTime = new Date(
+      parseInt(year),
+      parseInt(month) - 1, // 月份在 JavaScript 中是从 0 开始的，所以要减去 1
+      parseInt(day),
+      parseInt(hours),
+      parseInt(minutes)
+    ).toISOString();
+
+    return formattedDateTime;
+  }
+
+  const formattedDateTime = formatDateTime(date, time);
+  console.log(formattedDateTime);
+
   return (
     <IonPage>
       <IonHeader>

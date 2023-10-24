@@ -34,7 +34,7 @@ export class ChatController {
         chatroom_id: id(),
       }),
     }).parse({ body, params })
-    const result = await this.chatService.sendMessage({
+    const result = await this.chatService.postMessage({
       chatroom_id: input.params.chatroom_id,
       content: input.body.content,
       user_id,
@@ -82,11 +82,11 @@ export class ChatController {
         time: string(),
       }),
       params: object({
-        chatroom_id: id(),
+        contract_id: id(),
       }),
     }).parse({ body, params })
     const result = await this.chatService.postContract({
-      chatroom_id: input.params.chatroom_id,
+      contract_id: input.params.contract_id,
       description: input.body.description,
       user_id,
     })
