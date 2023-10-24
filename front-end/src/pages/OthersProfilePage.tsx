@@ -11,6 +11,8 @@ import {
   IonCard,
   IonLabel,
   IonIcon,
+  IonCardContent,
+  IonBackButton,
 } from "@ionic/react";
 import React, { useState } from "react";
 import "./ProfilePage.css";
@@ -35,14 +37,18 @@ let getProfileParser = object({
 type OthersProfilePage = ParseResult<typeof getProfileParser>["profile"];
 
 const OthersProfilePage: React.FC = () => {
-  const title = "Target Information";
-
   const params = useParams<{ user_id: string }>();
 
   const getProfileResult = useGet(
     `/users/${params.user_id}/profile`,
     getProfileParser
   );
+
+  // 从getProfileResult中获取用户名称
+  const userName = getProfileResult.data?.profile?.username || "";
+
+  // 构建title字符串
+  const title = `${userName}'s Information`;
 
   const [draftFile, setDraftFile] = useState<File>();
 
@@ -58,6 +64,9 @@ const OthersProfilePage: React.FC = () => {
     <IonPage className="Profile">
       <IonHeader>
         <IonToolbar>
+          <IonButtons slot="start">
+            <IonBackButton defaultHref="/home"></IonBackButton>
+          </IonButtons>
           <IonButtons slot="start">
             <IonMenuButton />
           </IonButtons>

@@ -42,14 +42,14 @@ const Blockchain: React.FC = () => {
 
   return (
     <IonPage>
-      {/* <IonHeader>
+      <IonHeader>
         <IonToolbar className="toolbar">
           <IonButtons slot="start">
             <IonMenuButton />
           </IonButtons>
           <IonTitle>{title}</IonTitle>
         </IonToolbar>
-      </IonHeader> */}
+      </IonHeader>
       <IonContent>
         <p></p>
 

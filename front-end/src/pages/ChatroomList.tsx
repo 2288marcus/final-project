@@ -59,14 +59,14 @@ const ChatroomList: React.FC = () => {
   // }
   return (
     <IonPage>
-      {/* <IonHeader>
+      <IonHeader>
         <IonToolbar>
           <IonButtons slot="start">
             <IonMenuButton />
           </IonButtons>
           <IonTitle>{title}</IonTitle>
         </IonToolbar>
-      </IonHeader> */}
+      </IonHeader>
       <IonContent fullscreen className="ion-padding">
         <IonHeader collapse="condense">
           <IonToolbar>
