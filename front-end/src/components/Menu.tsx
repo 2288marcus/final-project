@@ -84,8 +84,8 @@ const Menu: React.FC = () => {
     //   mdIcon: settingsSharp,
     // },
     {
-      title: "Job status",
-      url: routes.JobStatus,
+      title: "My Jobs",
+      url: routes.MyJobList,
       iosIcon: mail,
       mdIcon: mail,
     },

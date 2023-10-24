@@ -39,7 +39,11 @@ import {
   number,
 } from "cast.ts";
 import useToast from "../hooks/useToast";
-import { AddBookmarkEvent, RemoveBookmarkEvent } from "../events";
+import {
+  AddBookmarkEvent,
+  CancelJobEvent,
+  RemoveBookmarkEvent,
+} from "../events";
 
 let bookmarkParser = object({
   jobList: array(jobCardParser),
@@ -64,6 +68,12 @@ const BookmarkList: React.FC = () => {
         jobList: [event.job, ...(data?.jobList || [])],
       };
     });
+  });
+
+  useEvent<CancelJobEvent>("CancelJob", (event) => {
+    bookmarkList.setData((json) => ({
+      jobList: json!.jobList.filter((job) => job.job_id !== event.job_id),
+    }));
   });
 
   const toast = useToast();

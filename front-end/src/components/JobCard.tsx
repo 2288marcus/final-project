@@ -21,6 +21,7 @@ import {
   array,
   ParseResult,
   int,
+  nullable,
 } from "cast.ts";
 import { post } from "../api/config";
 import useToast from "../hooks/useToast";
@@ -39,6 +40,7 @@ export let jobCardParser = object({
   type: values(["demand" as const, "supply" as const]),
   tags: array(string()),
   has_bookmark: int(),
+  cancel_time: nullable(date()),
 });
 
 export type JobCardData = ParseResult<typeof jobCardParser>;

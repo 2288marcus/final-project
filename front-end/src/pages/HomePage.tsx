@@ -16,7 +16,12 @@ import {
 import "./HomePage.css";
 import useGet from "../hooks/useGet";
 import { useEvent } from "react-use-event";
-import { AddBookmarkEvent, RemoveBookmarkEvent } from "../events";
+import {
+  AddBookmarkEvent,
+  CancelJobEvent,
+  NewJobEvent,
+  RemoveBookmarkEvent,
+} from "../events";
 import { get, post } from "../api/config";
 import { array, object, string, ParseResult, id, int } from "cast.ts";
 import { JobCard, JobCardData, jobCardParser } from "../components/JobCard";
@@ -100,6 +105,18 @@ const HomePage: React.FC = () => {
         }),
       };
     });
+  });
+
+  useEvent<CancelJobEvent>("CancelJob", (event) => {
+    jobList.setData((json) => ({
+      jobList: json!.jobList.filter((job) => job.job_id !== event.job_id),
+    }));
+  });
+
+  useEvent<NewJobEvent>("NewJob", (event) => {
+    jobList.setData((json) => ({
+      jobList: [event.job, ...(json?.jobList || [])],
+    }));
   });
 
   const dispatchAddBookmarkEvent = useEvent<AddBookmarkEvent>("AddBookmark");
