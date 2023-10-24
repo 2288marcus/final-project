@@ -1,5 +1,9 @@
-import { Injectable } from '@nestjs/common'
-import { Knex, knex } from 'knex'
+import {
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common'
+import { Knex } from 'knex'
 import { InjectModel } from 'nest-knexjs'
 
 @Injectable()
@@ -24,20 +28,60 @@ export class ChatService {
       .returning('id')
   }
 
-  async getMessage(chatroom_id: number) {
-    let content = await this.knex
+  async getRoomData(input: { user_id: number; chatroom_id: number }) {
+    let room = await this.knex('chatroom')
+      .select('job_id', 'supplier_id', 'demander_id', 'contract_id')
+      .where('id', input.chatroom_id)
+      .first()
+
+    // console.log({ room }, { input })
+
+    if (!room) throw new NotFoundException('romm not found')
+
+    if (input.user_id != room.supplier_id && input.user_id != room.demander_id)
+      throw new ForbiddenException('user not in room')
+
+    let messages = await this.knex
       .select(
         'message.id',
         'user.username',
         'message.content',
-        'chatroom_id',
         'message.created_at as time',
       )
       .from('message')
-      .join('user', 'user.id', 'message.user_id')
-      .where({ chatroom_id })
+      .innerJoin('user', 'user.id', 'message.user_id')
+      .where({ chatroom_id: input.chatroom_id })
       .orderBy('message.created_at', 'asc')
-    return { content }
+
+    let contract = !room.contract_id
+      ? null
+      : await this.knex
+          .select(
+            'contract.id as contract_id',
+            'contract.real_description',
+            'contract.created_at',
+            'user.username',
+          )
+          .from('contract')
+          .join('user', 'user.id', 'contract.job_id')
+          .where('contract.id', room.contract_id)
+          .first()
+
+    return {
+      messages,
+      contract,
+      supplier: await this.selectRoomMember(room.supplier_id),
+      demander: await this.selectRoomMember(room.demander_id),
+    }
+  }
+
+  private async selectRoomMember(user_id: number) {
+    let user = await this.knex('user')
+      .select('id', 'username')
+      .where('id', user_id)
+      .first()
+    if (!user) throw new NotFoundException('room member not found')
+    return user
   }
 
   async getChatroom(user_id: number) {

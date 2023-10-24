@@ -75,7 +75,7 @@ export function JobCard(props: { job: JobCardData; buttons: React.ReactNode }) {
               </div>
             </IonRouterLink>
             <div>
-              <h1>-&nbsp; {job.title} &nbsp;-</h1>
+              <h1>&nbsp; {job.title} &nbsp;</h1>
               <p>${job.price.toLocaleString()}</p>
               <p>{job.description}</p>
             </div>

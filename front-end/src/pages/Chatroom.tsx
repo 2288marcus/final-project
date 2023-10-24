@@ -25,18 +25,19 @@ import {
   videocam,
   checkmarkDone,
   addCircle,
+  reader,
 } from "ionicons/icons";
 import React, { useState, useEffect, useRef, useLayoutEffect } from "react";
 import { post } from "../api/config";
-import { object, string, number, array } from "cast.ts";
+import { object, string, number, array, nullable, id, date } from "cast.ts";
 import "./Chatroom.css";
 import useGet from "../hooks/useGet";
 import useAuth from "../hooks/useAuth";
 import { useParams } from "react-router";
 
 // const socket = io(api_origin);
-let getContentParser = object({
-  content: array(
+let getRoomDataParser = object({
+  messages: array(
     object({
       id: number(),
       username: string(),
@@ -44,6 +45,21 @@ let getContentParser = object({
       time: string(),
     })
   ),
+  contract: nullable(
+    object({
+      contract_id: id(),
+      real_description: string(),
+      created_at: date(),
+    })
+  ),
+  supplier: object({
+    id: id(),
+    username: string(),
+  }),
+  demander: object({
+    id: id(),
+    username: string(),
+  }),
 });
 
 interface Message {
@@ -79,7 +95,7 @@ const Chatroom: React.FC = () => {
   const user_id = auth.state?.id || "unknown";
   // console.log("登入的user id:", user_id);
 
-  const contentRef = useRef<HTMLElement>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
 
   const [present, dismiss] = useIonToast();
 
@@ -113,10 +129,11 @@ const Chatroom: React.FC = () => {
         form.newMessage.value = "";
         form.newMessage.parentElement.dataset.replicatedValue = "";
         roomData.setData((json) => {
-          if (!json?.content) return json;
+          if (!json?.messages) return json;
           return {
-            content: [
-              ...json.content,
+            ...json,
+            messages: [
+              ...json.messages,
               {
                 id,
                 content: newMessage,
@@ -234,7 +251,8 @@ const Chatroom: React.FC = () => {
   ].created_at
     .replace("T", ", ")
     .replace("Z", "")}`;
-  const roomData = useGet(`/chat/${params.id}/messages`, getContentParser);
+
+  const roomData = useGet(`/chat/room/${params.id}`, getRoomDataParser);
   // console.log("roomData:", roomData);
 
   const [error, setError] = useState("");
@@ -249,28 +267,9 @@ const Chatroom: React.FC = () => {
     // console.log("messages", { messages });
     // 监听 messages 状态的变化
     contentRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [roomData.data?.content]); // 当 messages 状态发生变化时触发
+  }, [roomData.data?.messages]); // 当 messages 状态发生变化时触发
 
-  // const date = "2023-10-19";
-  // const time = "19:01";
-
-  // function formatDateTime(date: any, time: any) {
-  //   const [year, month, day] = date.split("-");
-  //   const [hours, minutes] = time.split(":");
-
-  //   const formattedDateTime = new Date(
-  //     parseInt(year),
-  //     parseInt(month) - 1, // 月份在 JavaScript 中是从 0 开始的，所以要减去 1
-  //     parseInt(day),
-  //     parseInt(hours),
-  //     parseInt(minutes)
-  //   ).toISOString();
-
-  //   return formattedDateTime;
-  // }
-
-  // const formattedDateTime = formatDateTime(date, time);
-  // console.log(formattedDateTime);
+  // let contract = useGet(`/chat/${params.id}/contract`, getRoomDataParser);
 
   return (
     <IonPage>
@@ -282,12 +281,18 @@ const Chatroom: React.FC = () => {
 
           <IonCardTitle>{chatroom_title}</IonCardTitle>
           <IonCardSubtitle>Created at: {chatroom_created_at}</IonCardSubtitle>
+          <IonButtons slot="end">
+            <IonButton onClick={() => "1"}>
+              Status: doing
+              <IonIcon icon={reader}></IonIcon>
+            </IonButton>
+          </IonButtons>
         </IonToolbar>
       </IonHeader>
       <IonContent>
         <div>
           {roomData.render((json) =>
-            json.content.map((message) => (
+            json.messages.map((message) => (
               <div
                 key={message.id}
                 className="chat-message-container"

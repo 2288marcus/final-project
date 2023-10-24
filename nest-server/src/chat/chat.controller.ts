@@ -42,21 +42,16 @@ export class ChatController {
     return result[0]
   }
 
-  @Get(':chatroom_id/messages')
-  async getContent(
+  @Get('room/:chatroom_id')
+  async getRoomData(
     @Headers('Authorization') authorization,
     @Param('chatroom_id') chatroom_id,
   ) {
+    console.log({ authorization })
+
     let user_id = await this.userService.authorize(authorization)
     // 获取消息
-    return await this.chatService.getMessage(chatroom_id)
-
-    // return {
-    //   contract_id: contract_id,
-    //   messages: messages,
-    // }
-    return this.chatService.getMessage(1)
-    // return this.chatService.getMessage(contract_id)
+    return await this.chatService.getRoomData({ user_id, chatroom_id })
   }
 
   @Get('chatroom')
