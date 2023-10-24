@@ -27,7 +27,7 @@ import {
 } from "@ionic/react";
 import { star, starOutline } from "ionicons/icons";
 import "./HomePage.css";
-import { get } from "../api/config";
+import { get, post } from "../api/config";
 import useGet from "../hooks/useGet";
 import {
   array,
@@ -39,6 +39,7 @@ import {
   values,
   ParseResult,
   int,
+  number,
 } from "cast.ts";
 import { routes } from "../routes";
 import { JobCard, jobCardParser } from "../components/JobCard";
@@ -51,12 +52,30 @@ let jobListParser = object({
   jobList: array(jobCardParser),
 });
 
+let bookmarkParser = object({
+  bookmarkList: array(
+    object({
+      id: number(),
+      username: string(),
+      job_id: number(),
+      title: string(),
+      description: string(),
+      price: number(),
+      type: values(["demand" as const, "supply" as const]),
+    })
+  ),
+});
+
 const HomePage: React.FC = () => {
   const title = "Home";
 
   const [segment, setSegment] = useState<"demand" | "supply">("demand");
 
   let jobList = useGet("/jobs", jobListParser);
+
+  let bookmarkList = useGet("/jobs/bookmark", bookmarkParser);
+
+  // console.log("jobList:", jobList);
 
   /////////////////////////////////////////////
 

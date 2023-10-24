@@ -17,6 +17,8 @@ import {
   IonLabel,
   IonCardSubtitle,
   IonCardTitle,
+  IonModal,
+  IonInput,
 } from "@ionic/react";
 import {
   add,
@@ -187,6 +189,62 @@ const Chatroom: React.FC = () => {
   //   console.log("No chatroom user IDs available.");
   // }
 
+  const [showModal, setShowModal] = useState(false);
+  const [formData, setFormData] = useState({
+    description: "",
+    price: 0,
+    date: "",
+    time: "",
+  });
+
+  const handleFormSubmit = () => {
+    // 在这里执行表单提交操作
+    console.log(formData);
+    // 重置表单数据
+    setFormData({
+      description: "",
+      price: 0,
+      date: "",
+      time: "",
+    });
+    // 关闭模态框
+    setShowModal(false);
+
+    post(`/chat/${params.id}/contract`, formData, object({ id: number() }))
+      .then((res) => {
+        console.log("post contract result:", res);
+      })
+      .catch((err) => {
+        console.log("post contract fail:", err);
+      });
+  };
+
+  const handleDateChange = (e: CustomEvent) => {
+    const selectedDate = e.detail.value;
+    const currentDate = new Date().toISOString().split("T")[0];
+
+    if (selectedDate < currentDate) {
+      // 处理日期早于当前日期的情况
+      // 这里可以显示错误消息或执行其他逻辑
+      console.log("日期不能早于当前日期");
+    } else {
+      setFormData({ ...formData, date: selectedDate! });
+    }
+  };
+
+  const handleTimeChange = (e: CustomEvent) => {
+    const selectedTime = e.detail.value;
+    const currentTime = new Date().toISOString().split("T")[1];
+
+    if (selectedTime < currentTime) {
+      // 处理时间早于当前时间的情况
+      // 这里可以显示错误消息或执行其他逻辑
+      console.log("时间不能早于当前时间");
+    } else {
+      setFormData({ ...formData, time: selectedTime! });
+    }
+  };
+
   const chatroom_created_at = `${chatroomList.data?.chatroomList[
     +chatroom_id
   ].created_at
@@ -209,6 +267,27 @@ const Chatroom: React.FC = () => {
     contentRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [roomData.data?.content]); // 当 messages 状态发生变化时触发
 
+  const date = "2023-10-19";
+  const time = "19:01";
+
+  function formatDateTime(date: any, time: any) {
+    const [year, month, day] = date.split("-");
+    const [hours, minutes] = time.split(":");
+
+    const formattedDateTime = new Date(
+      parseInt(year),
+      parseInt(month) - 1, // 月份在 JavaScript 中是从 0 开始的，所以要减去 1
+      parseInt(day),
+      parseInt(hours),
+      parseInt(minutes)
+    ).toISOString();
+
+    return formattedDateTime;
+  }
+
+  const formattedDateTime = formatDateTime(date, time);
+  console.log(formattedDateTime);
+
   return (
     <IonPage>
       <IonHeader>
@@ -218,7 +297,7 @@ const Chatroom: React.FC = () => {
           </IonButtons>
 
           <IonCardTitle>{chatroom_title}</IonCardTitle>
-          <IonCardSubtitle>{chatroom_created_at}</IonCardSubtitle>
+          <IonCardSubtitle>Created at: {chatroom_created_at}</IonCardSubtitle>
         </IonToolbar>
       </IonHeader>
       <IonContent>
@@ -271,10 +350,58 @@ const Chatroom: React.FC = () => {
         >
           <IonItem>
             <IonButtons>
-              <IonButton id="present-chatroom-info">
+              <>
+                <IonButton onClick={() => setShowModal(true)}>
+                  <IonIcon
+                    style={{ color: "white" }}
+                    icon={addCircle}
+                  ></IonIcon>
+                </IonButton>
+
+                <IonModal
+                  isOpen={showModal}
+                  onDidDismiss={() => setShowModal(false)}
+                >
+                  <form onSubmit={handleFormSubmit}>
+                    <header>Contract</header>
+                    <IonInput
+                      type="text"
+                      placeholder="Job Description"
+                      value={formData.description}
+                      onIonChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          description: e.detail.value!,
+                        })
+                      }
+                    ></IonInput>
+                    <IonInput
+                      type="number"
+                      placeholder="Price"
+                      value={formData.price}
+                      onIonChange={(e) =>
+                        setFormData({ ...formData, price: +e.detail.value! })
+                      }
+                      min={1} // 设置最小值为1
+                    ></IonInput>
+                    <IonInput
+                      type="date"
+                      value={formData.date}
+                      onIonChange={handleDateChange}
+                    ></IonInput>
+                    <IonInput
+                      type="time"
+                      value={formData.time}
+                      onIonChange={handleTimeChange}
+                    ></IonInput>
+                    <IonButton type="submit">Submit</IonButton>
+                  </form>
+                </IonModal>
+              </>
+              {/*<IonButton id="present-chatroom-info">
                 <IonIcon style={{ color: "white" }} icon={addCircle}></IonIcon>
               </IonButton>
-              <IonAlert
+               <IonAlert
                 trigger="present-chatroom-info"
                 header="Contact Info"
                 buttons={["OK"]}
@@ -301,7 +428,7 @@ const Chatroom: React.FC = () => {
                     type: "time",
                   },
                 ]}
-              ></IonAlert>
+              ></IonAlert> */}
               <IonButton>
                 <IonIcon style={{ color: "white" }} icon={document}></IonIcon>
               </IonButton>

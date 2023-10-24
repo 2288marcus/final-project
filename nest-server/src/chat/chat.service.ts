@@ -9,7 +9,7 @@ export class ChatService {
   authorize(authorization: any) {
     throw new Error('Method not implemented.')
   }
-  async sendMessage(input: {
+  async postMessage(input: {
     chatroom_id: number
     content: string
     user_id: number
@@ -61,5 +61,20 @@ export class ChatService {
       .orderBy('chatroom.created_at', 'asc')
 
     return { chatroomList }
+  }
+
+  async postContract(input: {
+    contract_id: number
+    description: string
+    user_id: number
+  }) {
+    return await this.knex
+      .insert({
+        chatroom_id: input.contract_id,
+        real_description: input.description,
+        user_id: input.user_id,
+      })
+      .into('contract')
+      .returning('id')
   }
 }
