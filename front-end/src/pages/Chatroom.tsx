@@ -75,6 +75,7 @@ function formatTime(time: string) {
 }
 
 const Chatroom: React.FC = () => {
+  const title = "Chatroom List";
   const auth = useAuth();
   let getChatroomParser = object({
     chatroomList: array(
@@ -352,10 +353,7 @@ const Chatroom: React.FC = () => {
             <IonButtons>
               <>
                 <IonButton onClick={() => setShowModal(true)}>
-                  <IonIcon
-                    style={{ color: "white" }}
-                    icon={addCircle}
-                  ></IonIcon>
+                  <IonIcon icon={addCircle}></IonIcon>
                 </IonButton>
 
                 <IonModal
@@ -430,16 +428,16 @@ const Chatroom: React.FC = () => {
                 ]}
               ></IonAlert> */}
               <IonButton>
-                <IonIcon style={{ color: "white" }} icon={document}></IonIcon>
+                <IonIcon icon={document}></IonIcon>
               </IonButton>
               <IonButton>
-                <IonIcon style={{ color: "white" }} icon={image}></IonIcon>
+                <IonIcon icon={image}></IonIcon>
               </IonButton>
               <IonButton>
-                <IonIcon style={{ color: "white" }} icon={videocam}></IonIcon>
+                <IonIcon icon={videocam}></IonIcon>
               </IonButton>
               <IonButton>
-                <IonIcon style={{ color: "white" }} icon={camera}></IonIcon>
+                <IonIcon icon={camera}></IonIcon>
               </IonButton>
             </IonButtons>
             <IonTextarea
@@ -453,7 +451,6 @@ const Chatroom: React.FC = () => {
                 type="submit"
                 style={{
                   background: "#1DA1F2",
-                  color: "white",
                   borderRadius: "33%",
                 }}
               >

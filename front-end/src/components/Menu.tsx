@@ -44,19 +44,6 @@ const Menu: React.FC = () => {
   const auth = useAuth();
 
   const appPages: AppPage[] = [
-    auth.state
-      ? {
-          title: "Profile",
-          url: routes.ProfilePage,
-          iosIcon: personCircle,
-          mdIcon: personCircle,
-        }
-      : {
-          title: "Login / Register",
-          url: routes.register,
-          iosIcon: mailOutline,
-          mdIcon: mailSharp,
-        },
     {
       title: "Home",
       url: routes.home,
@@ -76,12 +63,12 @@ const Menu: React.FC = () => {
       iosIcon: mail,
       mdIcon: mail,
     },
-    {
-      title: "Self-Profile",
-      url: routes.ProfilePage,
-      iosIcon: personCircle,
-      mdIcon: personCircle,
-    },
+    // {
+    //   title: "Self-Profile",
+    //   url: routes.ProfilePage,
+    //   iosIcon: personCircle,
+    //   mdIcon: personCircle,
+    // },
 
     {
       title: "Submit Job",
@@ -89,12 +76,12 @@ const Menu: React.FC = () => {
       iosIcon: reader,
       mdIcon: reader,
     },
-    {
-      title: "Setting",
-      url: routes.SettingPage,
-      iosIcon: settingsOutline,
-      mdIcon: settingsSharp,
-    },
+    // {
+    //   title: "Setting",
+    //   url: routes.SettingPage,
+    //   iosIcon: settingsOutline,
+    //   mdIcon: settingsSharp,
+    // },
     {
       title: "Job status",
       url: routes.Jobstatus,
@@ -107,6 +94,19 @@ const Menu: React.FC = () => {
       iosIcon: link,
       mdIcon: link,
     },
+    auth.state
+      ? {
+          title: "Profile",
+          url: routes.ProfilePage,
+          iosIcon: personCircle,
+          mdIcon: personCircle,
+        }
+      : {
+          title: "Login / Register",
+          url: routes.register,
+          iosIcon: mailOutline,
+          mdIcon: mailSharp,
+        },
     {
       title: "Profile Checking",
       url: routes.othersProfilePage,

@@ -57,7 +57,7 @@ let bookmarkParser = object({
 });
 
 const BookmarkList: React.FC = () => {
-  const title = "";
+  const title = "Bookmark List";
 
   const [segment, setSegment] = useState<"demand" | "supply">("demand");
   // const [bookmark, setBookmark] = useState(true);

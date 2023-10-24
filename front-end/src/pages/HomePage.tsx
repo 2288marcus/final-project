@@ -11,11 +11,6 @@ import {
   IonPage,
   IonTitle,
   IonToolbar,
-  IonAvatar,
-  IonLabel,
-  IonSearchbar,
-  IonAccordion,
-  IonAccordionGroup,
   IonSegment,
   IonSegmentButton,
   IonCard,
@@ -125,7 +120,7 @@ const HomePage: React.FC = () => {
             <IonMenuButton />
           </IonButtons>
           <IonList class="SH">
-            <IonTitle>Home Page</IonTitle>
+            <IonTitle>Home</IonTitle>
             {/* <IonSearchbar animated={true} placeholder="Search"></IonSearchbar> */}
           </IonList>
           {/* <IonAccordionGroup>
