@@ -106,12 +106,6 @@ const HomePage: React.FC = () => {
     });
   });
 
-  // console.log("jobList:", jobList);
-
-  /////////////////////////////////////////////
-
-  /////////////////////////////////////////////
-
   return (
     <IonPage className="HomePage">
       <IonHeader>
@@ -120,28 +114,8 @@ const HomePage: React.FC = () => {
             <IonMenuButton />
           </IonButtons>
           <IonList class="SH">
-            <IonTitle>Home</IonTitle>
-            {/* <IonSearchbar animated={true} placeholder="Search"></IonSearchbar> */}
+            <IonTitle>Home Page</IonTitle>
           </IonList>
-          {/* <IonAccordionGroup>
-            <IonAccordion value="first">
-              <IonItem slot="header" color="light">
-                <IonLabel>Common Tag</IonLabel>
-              </IonItem>
-              <div slot="content">
-                <IonButton>Education</IonButton>
-                <IonButton>Cleaning</IonButton>
-                <IonButton>Logistics</IonButton>
-                <IonButton>Sport</IonButton>
-                <IonButton>Travel</IonButton>
-                <IonButton>Food and Beverage</IonButton>
-                <IonButton>IT</IonButton>
-                <IonButton>Photography</IonButton>
-                <IonButton>Journalist</IonButton>
-                <IonButton>Designer</IonButton>
-              </div>
-            </IonAccordion>
-          </IonAccordionGroup> */}
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen className="ion-padding">

@@ -66,7 +66,6 @@ const Jobstatus: React.FC = () => {
 
   const user_id = useAuth().state?.id;
   let jobList = useGet(`/jobs/search?user_id=${user_id}`, jobListParser);
-  // let jobList = useGet(`/jobs/1/profile`, jobListParser);
 
   function BookmarkCard(props: {
     job: (typeof jobListParser)["sampleValue"]["jobList"][0];
@@ -94,13 +93,10 @@ const Jobstatus: React.FC = () => {
             <IonButtons slot="end">
               <IonButton
                 onClick={() => {
-                  setBookmark(!bookmark);
+                  // deletepost();
                 }}
               >
-                <IonIcon
-                  slot="icon-only"
-                  icon={bookmark ? star : starOutline}
-                ></IonIcon>
+                del
               </IonButton>
             </IonButtons>
           </div>

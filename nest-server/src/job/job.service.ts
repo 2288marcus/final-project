@@ -5,7 +5,6 @@ import {
   UnauthorizedException,
 } from '@nestjs/common'
 import { Knex } from 'knex'
-
 import { InjectModel } from 'nest-knexjs'
 import { groupBy } from 'rxjs'
 import { TagService } from 'src/tag/tag.service'
@@ -51,6 +50,26 @@ export class JobService {
     }
     return { jobList }
   }
+
+  //////////////////////////////////////
+  async deletejobpost(id: number) {
+    await this.knex('job')
+      .select(
+        'job.id as job_id',
+        'job.user_id',
+        'user.username',
+        'job.title',
+        'job.description',
+        'job.price',
+        'job.type',
+        'job.created_at',
+      )
+      .where({ id })
+      .from('job')
+    return {}
+  }
+
+  //////////////////////////////////////
 
   async createJob(
     input: {
@@ -131,10 +150,8 @@ export class JobService {
         job_id,
       })
       .del()
-
     return {}
   }
-
   async addBookmark(user_id: number, job_id: number) {
     await this.deleteBookmark(user_id, job_id)
     await this.knex('bookmark')
