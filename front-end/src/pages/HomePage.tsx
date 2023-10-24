@@ -1,72 +1,40 @@
 import React, { useState, useEffect } from "react";
 import {
-  IonButton,
   IonButtons,
   IonContent,
   IonHeader,
-  IonInput,
-  IonItem,
   IonList,
   IonMenuButton,
   IonPage,
   IonTitle,
   IonToolbar,
-  IonAvatar,
-  IonLabel,
-  IonSearchbar,
-  IonAccordion,
-  IonAccordionGroup,
   IonSegment,
   IonSegmentButton,
-  IonCard,
-  IonChip,
-  IonIcon,
-  IonCardContent,
-  IonNavLink,
-  IonRouterLink,
 } from "@ionic/react";
-import { star, starOutline } from "ionicons/icons";
 import "./HomePage.css";
-import { get, post } from "../api/config";
 import useGet from "../hooks/useGet";
-import {
-  array,
-  date,
-  float,
-  id,
-  object,
-  string,
-  values,
-  ParseResult,
-  int,
-  number,
-} from "cast.ts";
-import { routes } from "../routes";
+import { array, object, string, values, number } from "cast.ts";
 import { JobCard, jobCardParser } from "../components/JobCard";
 import { useEvent } from "react-use-event";
 import { AddBookmarkEvent, RemoveBookmarkEvent } from "../events";
-
-function Fake() {
-  return <div className="real"></div>;
-}
 
 let jobListParser = object({
   jobList: array(jobCardParser),
 });
 
-let bookmarkParser = object({
-  bookmarkList: array(
-    object({
-      id: number(),
-      username: string(),
-      job_id: number(),
-      title: string(),
-      description: string(),
-      price: number(),
-      type: values(["demand" as const, "supply" as const]),
-    })
-  ),
-});
+// let bookmarkParser = object({
+//   bookmarkList: array(
+//     object({
+//       id: number(),
+//       username: string(),
+//       job_id: number(),
+//       title: string(),
+//       description: string(),
+//       price: number(),
+//       type: values(["demand" as const, "supply" as const]),
+//     })
+//   ),
+// });
 
 const HomePage: React.FC = () => {
   const title = "Home";

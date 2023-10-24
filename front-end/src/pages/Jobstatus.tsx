@@ -4,28 +4,19 @@ import {
   IonButtons,
   IonContent,
   IonHeader,
-  IonInput,
-  IonItem,
   IonList,
   IonMenuButton,
   IonPage,
   IonTitle,
   IonToolbar,
   IonAvatar,
-  IonLabel,
-  IonSearchbar,
-  IonAccordion,
-  IonAccordionGroup,
   IonSegment,
   IonSegmentButton,
   IonCard,
   IonChip,
-  IonIcon,
   IonCardContent,
 } from "@ionic/react";
-import { star, starOutline } from "ionicons/icons";
 import "./HomePage.css";
-import { get } from "../api/config";
 import useGet from "../hooks/useGet";
 import {
   array,
@@ -66,7 +57,9 @@ const Jobstatus: React.FC = () => {
 
   const user_id = useAuth().state?.id;
   let jobList = useGet(`/jobs/search?user_id=${user_id}`, jobListParser);
-
+  /////////////////////////////////////
+  function deletejobpost() {}
+  /////////////////////////////////////
   function BookmarkCard(props: {
     job: (typeof jobListParser)["sampleValue"]["jobList"][0];
   }) {
@@ -93,7 +86,7 @@ const Jobstatus: React.FC = () => {
             <IonButtons slot="end">
               <IonButton
                 onClick={() => {
-                  // deletepost();
+                  deletejobpost();
                 }}
               >
                 del

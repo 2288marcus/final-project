@@ -12,12 +12,11 @@ import {
   IonLabel,
   IonIcon,
 } from "@ionic/react";
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import "./ProfilePage.css";
 import { cloudUpload } from "ionicons/icons";
 import { selectFile } from "@beenotung/tslib/file";
-import { api_origin, get } from "../api/config";
-import { ParseResult, boolean, nullable, object, string } from "cast.ts";
+import { ParseResult, nullable, object, string } from "cast.ts";
 import useGet from "../hooks/useGet";
 import { InputContext, InputField } from "../components/InputField";
 import { useParams } from "react-router";
@@ -73,9 +72,6 @@ const OthersProfilePage: React.FC = () => {
           </IonToolbar>
         </IonHeader>
 
-        {/* <IonItemDivider>
-          <div className="session-title">Personal Information</div>
-        </IonItemDivider> */}
         <IonCard>
           {getProfileResult.render((json) => {
             const profile = json.profile;
