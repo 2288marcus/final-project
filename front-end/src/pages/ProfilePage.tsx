@@ -16,7 +16,7 @@ import {
 } from "@ionic/react";
 import React, { useState } from "react";
 import "./ProfilePage.css";
-import { close, cloudUpload, create, save } from "ionicons/icons";
+import { close, cloudUpload, save } from "ionicons/icons";
 import { selectFile } from "@beenotung/tslib/file";
 import { ParseResult, boolean, nullable, object, string } from "cast.ts";
 import useGet from "../hooks/useGet";

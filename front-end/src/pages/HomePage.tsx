@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import {
-  IonButton,
   IonButtons,
   IonContent,
   IonHeader,
@@ -11,18 +10,18 @@ import {
   IonToolbar,
   IonSegment,
   IonSegmentButton,
+  IonButton,
   IonIcon,
 } from "@ionic/react";
-import { star, starOutline } from "ionicons/icons";
 import "./HomePage.css";
-import { get, post } from "../api/config";
 import useGet from "../hooks/useGet";
-import { array, object, string, values, number } from "cast.ts";
-import { routes } from "../routes";
-import { JobCard, JobCardData, jobCardParser } from "../components/JobCard";
 import { useEvent } from "react-use-event";
 import { AddBookmarkEvent, RemoveBookmarkEvent } from "../events";
+import { get, post } from "../api/config";
+import { array, object, string, ParseResult, id, int } from "cast.ts";
+import { JobCard, JobCardData, jobCardParser } from "../components/JobCard";
 import useToast from "../hooks/useToast";
+import { star, starOutline } from "ionicons/icons";
 
 let jobListParser = object({
   jobList: array(jobCardParser),
@@ -33,6 +32,38 @@ const HomePage: React.FC = () => {
 
   const [segment, setSegment] = useState<"demand" | "supply">("demand");
 
+  /////////////////////////////////////////////////
+
+  let getTagListParser = object({
+    tagList: array(
+      object({
+        id: id(),
+        name: string(),
+        used: int(),
+      })
+    ),
+  });
+  type Tag = ParseResult<typeof getTagListParser>["tagList"][number];
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
+  const [newTag, setNewTag] = useState("");
+  const [searchedTags, setSearchedTags] = useState<Tag[]>([]);
+
+  useEffect(() => {
+    if (!newTag) {
+      setSearchedTags([]);
+      return;
+    }
+    get("/tags/search?" + new URLSearchParams({ q: newTag }), getTagListParser)
+      .then((json) => {
+        setSearchedTags(json.tagList);
+      })
+      .catch((err) => {
+        toast.showError(err);
+      });
+  }, [newTag]);
+  /////////////////////////////////////////////////
+
+  const toast = useToast();
   let jobList = useGet("/jobs", jobListParser);
 
   useEvent<RemoveBookmarkEvent>("RemoveBookmark", (event) => {
@@ -70,8 +101,6 @@ const HomePage: React.FC = () => {
       };
     });
   });
-
-  const toast = useToast();
 
   const dispatchAddBookmarkEvent = useEvent<AddBookmarkEvent>("AddBookmark");
 

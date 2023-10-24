@@ -73,9 +73,14 @@ export class JobController {
     return result
   }
   /////////////////////////////
-  @Delete(':id')
-  async deletePost(@Param('id') id: number) {
-    await this.jobService.deletejobpost(id)
+
+  @Delete()
+  async deletejobpost(
+    @Headers('Authorization') authorization,
+    @Param('job_id') job_id: string,
+  ) {
+    let user_id = await this.userService.authorize(authorization)
+    return await this.jobService.deletejobpost(user_id, parseInt(job_id))
   }
 
   /////////////////////////////

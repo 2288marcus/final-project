@@ -61,20 +61,14 @@ export class JobService {
   }
 
   //////////////////////////////////////
-  async deletejobpost(id: number) {
+
+  async deletejobpost(user_id: number, job_id: number) {
     await this.knex('job')
-      .select(
-        'job.id as job_id',
-        'job.user_id',
-        'user.username',
-        'job.title',
-        'job.description',
-        'job.price',
-        'job.type',
-        'job.created_at',
-      )
-      .where({ id })
-      .from('job')
+      .where({
+        user_id,
+        job_id,
+      })
+      .del()
     return {}
   }
 
