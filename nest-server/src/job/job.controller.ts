@@ -6,9 +6,19 @@ import {
   Post,
   Delete,
   Param,
+  Query,
 } from '@nestjs/common'
 import { JobService } from './job.service'
-import { array, int, number, object, string, values } from 'cast.ts'
+import {
+  array,
+  int,
+  number,
+  object,
+  string,
+  values,
+  id,
+  optional,
+} from 'cast.ts'
 import { UserService } from '../user/user.service'
 
 @Controller('jobs')
@@ -19,8 +29,22 @@ export class JobController {
   ) {}
 
   @Get()
-  getJobList() {
-    return this.jobService.getJobList()
+  getAllJobList(@Query() query) {
+    return this.jobService.getJobList({
+      user_id: null,
+    })
+  }
+
+  @Get('search')
+  getUserJobList(@Query() query) {
+    let input = object({
+      query: object({
+        user_id: optional(id()),
+      }),
+    }).parse({ query })
+    return this.jobService.getJobList({
+      user_id: input.query.user_id,
+    })
   }
 
   @Post()

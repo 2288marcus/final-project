@@ -1,5 +1,11 @@
-import { Injectable } from '@nestjs/common'
+import {
+  Injectable,
+  NotFoundException,
+  NotImplementedException,
+  UnauthorizedException,
+} from '@nestjs/common'
 import { Knex } from 'knex'
+
 import { InjectModel } from 'nest-knexjs'
 import { TagService } from 'src/tag/tag.service'
 @Injectable()
@@ -9,8 +15,8 @@ export class JobService {
     private readonly tagService: TagService,
   ) {}
 
-  async getJobList() {
-    let jobList = await this.knex
+  async getJobList(filter: { user_id: number | null }) {
+    let query = this.knex
       .select(
         'job.id as job_id',
         'job.user_id',
@@ -23,6 +29,10 @@ export class JobService {
       )
       .from('job')
       .innerJoin('user', 'user.id', 'job.user_id')
+    if (filter.user_id) {
+      query = query.where('user.id', filter.user_id)
+    }
+    let jobList = await query
     for (let job of jobList) {
       let rows = await this.knex('tag')
         .select('tag.name')
