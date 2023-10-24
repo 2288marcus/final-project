@@ -29,7 +29,7 @@ import useGet from "../hooks/useGet";
 import { api_origin, del } from "../api/config";
 import { useParams } from "react-router";
 import useAuth from "../hooks/useAuth";
-
+import { useEvent } from "react-use-event";
 import {
   array,
   date,
@@ -41,11 +41,11 @@ import {
   number,
 } from "cast.ts";
 import useToast from "../hooks/useToast";
+import { AddBookmarkEvent, RemoveBookmarkEvent } from "../events";
 
 let bookmarkParser = object({
   bookmarkList: array(
     object({
-      id: number(),
       username: string(),
       job_id: number(),
       title: string(),
@@ -64,18 +64,42 @@ const BookmarkList: React.FC = () => {
 
   let bookmarkList = useGet("/jobs/bookmark", bookmarkParser);
 
+  const dispatchRemoveBookmarkEvent =
+    useEvent<RemoveBookmarkEvent>("RemoveBookmark");
+
+  useEvent<AddBookmarkEvent>("AddBookmark", (event) => {
+    bookmarkList.setData((data) => {
+      if (
+        data?.bookmarkList.find(
+          (bookmark) => bookmark.job_id == event.job.job_id
+        )
+      ) {
+        return data;
+      }
+      return {
+        bookmarkList: [event.job, ...(data?.bookmarkList || [])],
+      };
+    });
+  });
+
   const toast = useToast();
 
-  const deleteBookmark = async (bookmarkID: number) => {
+  const deleteBookmark = async (job_id: number) => {
     try {
-      let json = await del(`/jobs/bookmark/${bookmarkID}`, object({}));
+      let json = await del(`/jobs/${job_id}/bookmark`, object({}));
       // const json = await handleFetch2(`/jobs/bookmark/${bookmarkID}`, "DELETE");
       // if (json.error) {
       //   console.log(json.error);
       //   return;
       // }
       console.log("successfully deleted");
-      bookmarkList.reload();
+      bookmarkList.setData((data) => ({
+        bookmarkList: data!.bookmarkList.filter(
+          (bookmark) => bookmark.job_id != job_id
+        ),
+      }));
+      dispatchRemoveBookmarkEvent({ job_id });
+      // bookmarkList.reload();
       // const res = await fetch(`${api_origin}/jobs/bookmark/${7}`, {
       //   method: "DELETE",
       //   headers:{
@@ -171,7 +195,9 @@ const BookmarkList: React.FC = () => {
                       </div>
                       <div>
                         <h1>- {bookmark.title} -</h1>
+                        <p>{bookmark.username}</p>
                         <p>{bookmark.description}</p>
+                        <p>${bookmark.price.toLocaleString()}</p>
                       </div>
                       <IonButtons slot="end">
                         {/* <IonButton
@@ -182,7 +208,9 @@ const BookmarkList: React.FC = () => {
                             icon={bookmark ? star : starOutline}
                           /> 
                         </IonButton>*/}
-                        <IonButton onClick={() => deleteBookmark(bookmark.id)}>
+                        <IonButton
+                          onClick={() => deleteBookmark(bookmark.job_id)}
+                        >
                           <IonIcon slot="icon-only" icon={star}></IonIcon>
                         </IonButton>
                       </IonButtons>

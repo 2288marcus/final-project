@@ -20,7 +20,12 @@ import {
   values,
   array,
   ParseResult,
+  int,
 } from "cast.ts";
+import { post } from "../api/config";
+import useToast from "../hooks/useToast";
+import { AddBookmarkEvent, RemoveBookmarkEvent } from "../events";
+import { useEvent } from "react-use-event";
 
 export let jobCardParser = object({
   job_id: id(),
@@ -32,6 +37,7 @@ export let jobCardParser = object({
   created_at: date(),
   type: values(["demand" as const, "supply" as const]),
   tags: array(string()),
+  has_bookmark: int(),
 });
 
 export type JobCardData = ParseResult<typeof jobCardParser>;
@@ -39,7 +45,23 @@ export type JobType = JobCardData["type"];
 
 export function JobCard(props: { job: JobCardData }) {
   const { job } = props;
-  const [bookmark, setBookmark] = useState(false);
+
+  const toast = useToast();
+
+  const dispatchAddBookmarkEvent = useEvent<AddBookmarkEvent>("AddBookmark");
+
+  const addBookmark = async (job: JobCardData) => {
+    try {
+      const json = await post(`/jobs/${job.job_id}/bookmark`, {}, object({}));
+      console.log("successfully add");
+      dispatchAddBookmarkEvent({ job });
+    } catch (error) {
+      console.log(error);
+      toast.showError(error);
+
+      return;
+    }
+  };
 
   return (
     <IonCard key={job.job_id}>
@@ -50,13 +72,10 @@ export function JobCard(props: { job: JobCardData }) {
               job.job_id ? routes.othersProfilePage(job.user_id) : undefined
             }
           >
-            <div
-              className="d-flex col align-center ion-justify-content-center user-part"
-              onClick={() => {}}
-            >
+            <div className="d-flex col align-center ion-justify-content-center user-part">
               <IonAvatar>
                 <img
-                  src={"https://picsum.photos/80/80?random=" + job.job_id}
+                  src={`https://picsum.photos/seed/${job.user_id}/80/80`}
                   alt="avatar"
                 />
               </IonAvatar>
@@ -72,12 +91,14 @@ export function JobCard(props: { job: JobCardData }) {
             <IonButton
               hidden={!job.job_id}
               onClick={() => {
-                setBookmark(!bookmark);
+                // if (job.has_bookmark == 0) {
+                addBookmark(job);
+                // }
               }}
             >
               <IonIcon
                 slot="icon-only"
-                icon={bookmark ? star : starOutline}
+                icon={job.has_bookmark == 0 ? starOutline : star}
               ></IonIcon>
             </IonButton>
           </IonButtons>
