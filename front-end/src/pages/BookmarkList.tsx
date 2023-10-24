@@ -9,35 +9,20 @@ import {
   IonPage,
   IonTitle,
   IonToolbar,
-  IonAvatar,
   IonSearchbar,
   IonAccordion,
   IonAccordionGroup,
   IonSegment,
   IonSegmentButton,
-  IonCard,
   IonIcon,
-  IonCardContent,
 } from "@ionic/react";
-import { bookmark, star, starOutline } from "ionicons/icons";
+import { star } from "ionicons/icons";
 import "./HomePage.css";
 import useGet from "../hooks/useGet";
-import { api_origin, del } from "../api/config";
-import { useParams } from "react-router";
-import useAuth from "../hooks/useAuth";
+import { del } from "../api/config";
 import { useEvent } from "react-use-event";
 import { JobCard, jobCardParser } from "../components/JobCard";
-import {
-  array,
-  date,
-  float,
-  id,
-  object,
-  string,
-  int,
-  values,
-  number,
-} from "cast.ts";
+import { array, object } from "cast.ts";
 import useToast from "../hooks/useToast";
 import { AddBookmarkEvent, RemoveBookmarkEvent } from "../events";
 
@@ -106,10 +91,6 @@ const BookmarkList: React.FC = () => {
     }
   };
 
-  useEffect(() => {
-    console.log("bookmark page");
-  }, []);
-
   return (
     <IonPage className="HomePage">
       <IonHeader>
@@ -123,9 +104,6 @@ const BookmarkList: React.FC = () => {
           </IonList>
           <IonAccordionGroup>
             <IonAccordion value="first">
-              {/* <IonItem slot="header" color="light">
-                <IonLabel>Common Tag</IonLabel>
-              </IonItem> */}
               <div slot="content">
                 <IonButton>Education</IonButton>
                 <IonButton>Cleaning</IonButton>
@@ -143,11 +121,6 @@ const BookmarkList: React.FC = () => {
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen className="ion-padding">
-        <IonHeader collapse="condense">
-          <IonToolbar>
-            <IonTitle size="large">{title}</IonTitle>
-          </IonToolbar>
-        </IonHeader>
         <IonSegment
           value={segment}
           onIonChange={(e) => setSegment(e.detail.value as any)}

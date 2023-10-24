@@ -69,7 +69,7 @@ const JobStatus: React.FC = () => {
                   key={index}
                   job={job}
                   buttons={
-                    <IonButton color="danger">
+                    <IonButton>
                       <IonIcon src={trash} slot="icon-only"></IonIcon>
                     </IonButton>
                   }

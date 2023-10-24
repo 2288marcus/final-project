@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import {
   IonButton,
   IonButtons,
@@ -13,7 +13,7 @@ import {
   IonCardContent,
 } from "@ionic/react";
 import useGet from "../hooks/useGet";
-import { useParams } from "react-router";
+
 import useAuth from "../hooks/useAuth";
 import { array, object, string, values, number } from "cast.ts";
 import { id } from "@beenotung/tslib";
@@ -94,7 +94,9 @@ const ChatroomList: React.FC = () => {
                       <h1>Job: {chatroom.title}</h1>
                       <p>
                         created_at:
-                        {chatroom.created_at.replace("T", " ").replace("Z", "")}
+                        {chatroom.created_at
+                          .replace("T", ", ")
+                          .replace("Z", "")}
                       </p>
                       <p>supplier: {chatroom.supplier_username}</p>
                       <p>demander: {chatroom.demander_username}</p>

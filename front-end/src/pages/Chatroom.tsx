@@ -232,7 +232,7 @@ const Chatroom: React.FC = () => {
   const chatroom_created_at = `${chatroomList.data?.chatroomList[
     +chatroom_id
   ].created_at
-    .replace("T", " ")
+    .replace("T", ", ")
     .replace("Z", "")}`;
   const roomData = useGet(`/chat/${params.id}/messages`, getContentParser);
   // console.log("roomData:", roomData);
@@ -251,26 +251,26 @@ const Chatroom: React.FC = () => {
     contentRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [roomData.data?.content]); // 当 messages 状态发生变化时触发
 
-  const date = "2023-10-19";
-  const time = "19:01";
+  // const date = "2023-10-19";
+  // const time = "19:01";
 
-  function formatDateTime(date: any, time: any) {
-    const [year, month, day] = date.split("-");
-    const [hours, minutes] = time.split(":");
+  // function formatDateTime(date: any, time: any) {
+  //   const [year, month, day] = date.split("-");
+  //   const [hours, minutes] = time.split(":");
 
-    const formattedDateTime = new Date(
-      parseInt(year),
-      parseInt(month) - 1, // 月份在 JavaScript 中是从 0 开始的，所以要减去 1
-      parseInt(day),
-      parseInt(hours),
-      parseInt(minutes)
-    ).toISOString();
+  //   const formattedDateTime = new Date(
+  //     parseInt(year),
+  //     parseInt(month) - 1, // 月份在 JavaScript 中是从 0 开始的，所以要减去 1
+  //     parseInt(day),
+  //     parseInt(hours),
+  //     parseInt(minutes)
+  //   ).toISOString();
 
-    return formattedDateTime;
-  }
+  //   return formattedDateTime;
+  // }
 
-  const formattedDateTime = formatDateTime(date, time);
-  console.log(formattedDateTime);
+  // const formattedDateTime = formatDateTime(date, time);
+  // console.log(formattedDateTime);
 
   return (
     <IonPage>
@@ -306,7 +306,7 @@ const Chatroom: React.FC = () => {
                   <small>{message.username}</small>
                   <div>{message.content}</div>
                   <small>
-                    {formatTime(message.time)}{" "}
+                    {formatTime(message.time)}
                     <IonIcon icon={checkmarkDone}></IonIcon>
                   </small>
                 </div>
@@ -340,11 +340,12 @@ const Chatroom: React.FC = () => {
                 </IonButton>
 
                 <IonModal
+                  // className="contract-modal"
                   isOpen={showModal}
                   onDidDismiss={() => setShowModal(false)}
                 >
                   <form onSubmit={handleFormSubmit}>
-                    <header>Contract</header>
+                    <header style={{ textAlign: "center" }}>Contract</header>
                     <IonInput
                       type="text"
                       placeholder="Job Description"
@@ -379,37 +380,6 @@ const Chatroom: React.FC = () => {
                   </form>
                 </IonModal>
               </>
-              {/*<IonButton id="present-chatroom-info">
-                <IonIcon style={{ color: "white" }} icon={addCircle}></IonIcon>
-              </IonButton>
-               <IonAlert
-                trigger="present-chatroom-info"
-                header="Contact Info"
-                buttons={["OK"]}
-                inputs={[
-                  { type: "textarea", placeholder: "job description" },
-                  // {
-                  //   placeholder: "Nickname (max 8 characters)",
-                  //   attributes: {
-                  //     maxlength: 8,
-                  //   },
-                  // },
-                  {
-                    type: "number",
-                    placeholder: "price",
-                    attributes: {
-                      min: 1,
-                      // max: 100,
-                    },
-                  },
-                  {
-                    type: "date",
-                  },
-                  {
-                    type: "time",
-                  },
-                ]}
-              ></IonAlert> */}
               <IonButton>
                 <IonIcon icon={document}></IonIcon>
               </IonButton>

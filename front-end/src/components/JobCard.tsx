@@ -67,7 +67,9 @@ export function JobCard(props: { job: JobCardData; buttons: React.ReactNode }) {
                     alt="avatar"
                   />
                 </IonAvatar>
-                <span className="author-name">{job.username}</span>
+                <span className="author-name " style={{ fontSize: "medium" }}>
+                  {job.username}
+                </span>
               </div>
             </IonRouterLink>
             <div>

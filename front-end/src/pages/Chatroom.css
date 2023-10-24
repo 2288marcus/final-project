@@ -8,3 +8,8 @@
   padding: 0.5rem;
   border-radius: 0.5rem;
 }
+
+ion-modal > .ion-page {
+  padding: 10%;
+  /* background-color: rgb(53, 53, 53); */
+}
