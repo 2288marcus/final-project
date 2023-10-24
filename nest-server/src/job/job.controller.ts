@@ -63,7 +63,13 @@ export class JobController {
     let result = await this.jobService.createJob(input.body, user_id)
     return result
   }
+  /////////////////////////////
+  @Delete(':id')
+  async deletePost(@Param('id') id: number) {
+    await this.jobService.deletejobpost(id)
+  }
 
+  /////////////////////////////
   @Get('bookmark')
   async bookmark(@Headers('Authorization') authorization) {
     let user_id = await this.userService.authorize(authorization)
