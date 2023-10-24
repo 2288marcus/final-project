@@ -56,6 +56,24 @@ export class JobController {
     })
   }
 
+  // @Post()
+  // async createJob(@Body() body, @Headers('Authorization') authorization) {
+  //   let user_id = await this.userService.authorize(authorization)
+  //   // let user_id = 1
+  //   let input = object({
+  //     body: object({
+  //       price: int({ min: 1 }),
+  //       title: string({ nonEmpty: true }),
+  //       description: string({ nonEmpty: true }),
+  //       type: values(['demand' as const, 'supply' as const]),
+  //       tags: array(string({ nonEmpty: true })),
+  //     }),
+  //   }).parse({ body })
+  //   let result = await this.jobService.createJob(input.body, user_id)
+  //   return result
+  // }
+  /////////////////////////////
+
   @Post()
   async createJob(@Body() body, @Headers('Authorization') authorization) {
     let user_id = await this.userService.authorize(authorization)
@@ -72,17 +90,6 @@ export class JobController {
     let result = await this.jobService.createJob(input.body, user_id)
     return result
   }
-  /////////////////////////////
-
-  @Delete()
-  async deletejobpost(
-    @Headers('Authorization') authorization,
-    @Param('job_id') job_id: string,
-  ) {
-    let user_id = await this.userService.authorize(authorization)
-    return await this.jobService.deletejobpost(user_id, parseInt(job_id))
-  }
-
   /////////////////////////////
   @Get('bookmark')
   async getBookmarkList(@Headers('Authorization') authorization) {
@@ -106,5 +113,14 @@ export class JobController {
   ) {
     let user_id = await this.userService.authorize(authorization)
     return await this.jobService.addBookmark(user_id, parseInt(job_id))
+  }
+
+  @Post(':job_id/cancel')
+  async cancelJob(
+    @Headers('Authorization') authorization,
+    @Param('job_id') job_id: string,
+  ) {
+    let user_id = await this.userService.authorize(authorization)
+    return await this.jobService.cancelJob(user_id, parseInt(job_id))
   }
 }
