@@ -76,10 +76,9 @@ const App: React.FC = () => {
                 <Route path={routes.Jobstatus} exact={true}>
                   <Jobstatus />
                 </Route>
-                <Route path="/BookmarkList" exact={true}>
+                <Route path={routes.BookmarkList} exact={true}>
                   <BookmarkList />
                 </Route>
-
                 <Route path={routes.ProfilePage} exact={true}>
                   <ProfilePage />
                 </Route>

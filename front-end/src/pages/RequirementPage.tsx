@@ -11,6 +11,7 @@ import {
   IonLabel,
   IonListHeader,
   IonMenuButton,
+  IonModal,
   IonNote,
   IonPage,
   IonSelect,
@@ -26,11 +27,13 @@ import { InputContext, InputField } from "../components/InputField";
 import { add } from "ionicons/icons";
 import useToast from "../hooks/useToast";
 import useGet from "../hooks/useGet";
+import { JobCard, JobType } from "../components/JobCard";
+import useAuth from "../hooks/useAuth";
 
-let defaultState = {
+const defaultState = {
   price: "",
   description: "",
-  type: "",
+  type: "demand" as JobType,
   title: "",
 };
 
@@ -53,7 +56,20 @@ const RequirementPage: React.FC = () => {
 
   const toast = useToast();
 
+  const auth = useAuth();
+
+  type Mode = "draft" | "preview" | "submit";
+  const [mode, setMode] = useState<Mode>("draft");
+
+  function reset() {
+    setState(defaultState);
+    setMode("draft");
+    setNewTag("");
+    setSelectedTags([]);
+  }
+
   const submit = () => {
+    setMode("submit");
     let data = {
       ...state,
       tags: selectedTags,
@@ -64,6 +80,8 @@ const RequirementPage: React.FC = () => {
     post("/jobs", data, object({}))
       .then((res) => {
         console.log("Result:", res);
+        toast.showSuccess("message");
+        reset();
       })
       .catch((err) => {
         console.log("Fail:", err);
@@ -73,8 +91,11 @@ const RequirementPage: React.FC = () => {
             "The price must be greater than zero, and round to dollar (no cents)";
         }
         toast.showError(message);
+        setMode("draft");
       });
   };
+
+  /////////////////////////
 
   let price = +state.price;
   let priceErrorMessage =
@@ -250,10 +271,53 @@ const RequirementPage: React.FC = () => {
             type="textarea"
           />
         </IonCard>
-        <IonButton expand="full" onClick={submit}>
-          Post
+        <IonButton
+          hidden={mode != "draft"}
+          expand="full"
+          onClick={() => setMode("preview")}
+        >
+          Preview
+        </IonButton>
+        <IonButton
+          hidden={mode != "submit"}
+          disabled
+          expand="full"
+          onClick={() => setMode("preview")}
+        >
+          Submitting...
         </IonButton>
       </IonContent>
+
+      <IonModal isOpen={mode == "preview"}>
+        <IonHeader>
+          <IonToolbar>
+            <IonButtons slot="end">
+              <IonButton onClick={() => setMode("draft")}>Cancel</IonButton>
+            </IonButtons>
+            <IonTitle>{title}</IonTitle>
+          </IonToolbar>
+        </IonHeader>
+        <IonContent className="ion-padding">
+          <p>
+            Editing post is not allowed after submission. Please double-check
+            before confirming.
+          </p>
+          <JobCard
+            job={{
+              job_id: 0,
+              username: auth.state!.username,
+              user_id: auth.state!.id,
+              title: state.title,
+              description: state.description,
+              price: +state.price,
+              created_at: new Date(),
+              type: state.type,
+              tags: selectedTags,
+            }}
+          />
+          <IonButton onClick={submit}>Confirm & Submit</IonButton>
+        </IonContent>
+      </IonModal>
     </IonPage>
   );
 };
