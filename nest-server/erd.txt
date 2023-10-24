@@ -46,6 +46,7 @@ title varchar(255)
 description text
 price integer
 type enum('demand','supply')
+cancel_time timestamp NULL
 
 
 job_tag

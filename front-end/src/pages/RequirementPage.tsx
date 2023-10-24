@@ -29,6 +29,8 @@ import useToast from "../hooks/useToast";
 import useGet from "../hooks/useGet";
 import { JobCard, JobType } from "../components/JobCard";
 import useAuth from "../hooks/useAuth";
+import useEvent from "react-use-event";
+import { NewJobEvent } from "../events";
 
 const defaultState = {
   price: "",
@@ -61,6 +63,8 @@ const RequirementPage: React.FC = () => {
   type Mode = "draft" | "preview" | "submit";
   const [mode, setMode] = useState<Mode>("draft");
 
+  const dispatchNewJobEvent = useEvent<NewJobEvent>("NewJob");
+
   function reset() {
     setState(defaultState);
     setMode("draft");
@@ -77,11 +81,26 @@ const RequirementPage: React.FC = () => {
     console.log("data:", data);
 
     // 发送POST请求到后端
-    post("/jobs", data, object({}))
-      .then((res) => {
-        console.log("Result:", res);
-        toast.showSuccess("message");
+    post("/jobs", data, object({ job_id: id() }))
+      .then((json) => {
+        console.log("create job result:", json);
+        toast.showSuccess("Submitted Job");
         reset();
+        dispatchNewJobEvent({
+          job: {
+            job_id: json.job_id,
+            username: auth.state!.username,
+            user_id: auth.state!.id,
+            title: state.title,
+            description: state.description,
+            price: +state.price,
+            created_at: new Date(),
+            type: state.type,
+            tags: selectedTags,
+            has_bookmark: 0,
+            cancel_time: null,
+          },
+        });
       })
       .catch((err) => {
         console.log("Fail:", err);
@@ -316,7 +335,9 @@ const RequirementPage: React.FC = () => {
               type: state.type,
               tags: selectedTags,
               has_bookmark: 0,
+              cancel_time: null,
             }}
+            buttons={undefined}
           />
           <IonButton onClick={submit}>Confirm & Submit</IonButton>
         </IonContent>

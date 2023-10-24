@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Injectable,
   NotFoundException,
   NotImplementedException,
@@ -17,6 +18,7 @@ export class JobService {
 
   private async queryJobList(query: Knex.QueryBuilder) {
     let jobList = await query
+      .whereNull('cancel_time')
       .select(
         'job.id as job_id',
         'job.user_id',
@@ -26,6 +28,7 @@ export class JobService {
         'job.price',
         'job.type',
         'job.created_at',
+        'job.cancel_time',
         this.knex.raw('count(bookmark.user_id) as has_bookmark'),
       )
       .orderBy('job.id', 'desc')
@@ -61,17 +64,21 @@ export class JobService {
   }
 
   //////////////////////////////////////
-
-  async deletejobpost(user_id: number, job_id: number) {
+  async cancelJob(user_id: number, job_id: number) {
+    let contract = await this.knex('contract')
+      .select('id')
+      .where({ job_id })
+      .first()
+    if (contract) {
+      throw new BadRequestException(
+        'the job has already established contract, cannot be cancelled',
+      )
+    }
     await this.knex('job')
-      .where({
-        user_id,
-        job_id,
-      })
-      .del()
+      .update({ cancel_time: this.knex.fn.now() })
+      .where({ id: job_id, user_id })
     return {}
   }
-
   //////////////////////////////////////
 
   async createJob(
@@ -125,6 +132,7 @@ export class JobService {
       .del()
     return {}
   }
+
   async addBookmark(user_id: number, job_id: number) {
     await this.deleteBookmark(user_id, job_id)
     await this.knex('bookmark')

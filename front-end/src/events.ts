@@ -9,3 +9,13 @@ export type RemoveBookmarkEvent = {
   type: "RemoveBookmark";
   job_id: number;
 };
+
+export type NewJobEvent = {
+  type: "NewJob";
+  job: JobCardData;
+};
+
+export type CancelJobEvent = {
+  type: "CancelJob";
+  job_id: number;
+};

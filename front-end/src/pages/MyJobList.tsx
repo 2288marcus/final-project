@@ -12,28 +12,71 @@ import {
   IonSegment,
   IonSegmentButton,
   IonIcon,
+  useIonAlert,
 } from "@ionic/react";
 import { trash } from "ionicons/icons";
 import "./HomePage.css";
 import useGet from "../hooks/useGet";
-import { array, object } from "cast.ts";
+import { array, date, object } from "cast.ts";
+import { post } from "../api/config";
 import useAuth from "../hooks/useAuth";
 import { JobCard, jobCardParser } from "../components/JobCard";
+import { del } from "../api/config";
+import useToast from "../hooks/useToast";
+import useEvent from "react-use-event";
+import { CancelJobEvent, NewJobEvent } from "../events";
 
 let jobListParser = object({
   jobList: array(jobCardParser),
 });
 
-const JobStatus: React.FC = () => {
-  const title = "Job Status";
+const MyJobList: React.FC = () => {
+  const title = "My Jobs";
 
-  const [segment, setSegment] = useState<"demand" | "supply">("demand");
+  const [segment, setSegment] = useState<"demand" | "supply" | "Cancel">(
+    "demand"
+  );
 
   const user_id = useAuth().state?.id;
   let jobList = useGet(`/jobs/search?user_id=${user_id}`, jobListParser);
   /////////////////////////////////////
-  function deleteJobPost() {}
+  useEvent<NewJobEvent>("NewJob", (event) => {
+    jobList.setData((json) => ({
+      jobList: [event.job, ...(json?.jobList || [])],
+    }));
+  });
+  const dispatchCancelJobEvent = useEvent<CancelJobEvent>("CancelJob");
 
+  const toast = useToast();
+
+  const [presentAlert] = useIonAlert();
+
+  async function cancelJob(job_id: number) {
+    presentAlert("Confirm to cancel job #" + job_id + " ?", [
+      {
+        text: "Keep the job",
+        role: "cancel",
+      },
+      {
+        text: "Cancel job",
+        role: "destructive",
+        handler: async () => {
+          try {
+            let json = await post(`/jobs/${job_id}/cancel`, {}, object({}));
+            toast.showSuccess("cancelled job #" + job_id);
+            jobList.setData((json) => ({
+              jobList: json!.jobList.filter((job) => job.job_id !== job_id),
+            }));
+            dispatchCancelJobEvent({ job_id });
+          } catch (error) {
+            toast.showError(error);
+          }
+        },
+      },
+    ]);
+  }
+
+  ///////////////////////////////////////////
   return (
     <IonPage className="HomePage">
       <IonHeader>
@@ -69,7 +112,10 @@ const JobStatus: React.FC = () => {
                   key={index}
                   job={job}
                   buttons={
-                    <IonButton>
+                    <IonButton
+                      color="danger"
+                      onClick={() => cancelJob(job.job_id)}
+                    >
                       <IonIcon src={trash} slot="icon-only"></IonIcon>
                     </IonButton>
                   }
@@ -82,4 +128,4 @@ const JobStatus: React.FC = () => {
   );
 };
 
-export default JobStatus;
+export default MyJobList;
