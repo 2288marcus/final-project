@@ -313,6 +313,7 @@ const RequirementPage: React.FC = () => {
               created_at: new Date(),
               type: state.type,
               tags: selectedTags,
+              has_bookmark: 0,
             }}
           />
           <IonButton onClick={submit}>Confirm & Submit</IonButton>

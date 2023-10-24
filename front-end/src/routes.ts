@@ -18,5 +18,5 @@ export let routes = {
   register: "/register",
   othersProfilePage: (user_id: string | number) => `/profile/${user_id}`,
   BookmarkList: "/BookmarkList",
-  Jobstatus: "/Jobstatus",
+  JobStatus: "/JobStatus",
 };

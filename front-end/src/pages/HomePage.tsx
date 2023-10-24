@@ -4,8 +4,6 @@ import {
   IonButtons,
   IonContent,
   IonHeader,
-  IonInput,
-  IonItem,
   IonList,
   IonMenuButton,
   IonPage,
@@ -13,54 +11,21 @@ import {
   IonToolbar,
   IonSegment,
   IonSegmentButton,
-  IonCard,
-  IonChip,
   IonIcon,
-  IonCardContent,
-  IonNavLink,
-  IonRouterLink,
 } from "@ionic/react";
 import { star, starOutline } from "ionicons/icons";
 import "./HomePage.css";
 import { get, post } from "../api/config";
 import useGet from "../hooks/useGet";
-import {
-  array,
-  date,
-  float,
-  id,
-  object,
-  string,
-  values,
-  ParseResult,
-  int,
-  number,
-} from "cast.ts";
+import { array, object, string, values, number } from "cast.ts";
 import { routes } from "../routes";
-import { JobCard, jobCardParser } from "../components/JobCard";
+import { JobCard, JobCardData, jobCardParser } from "../components/JobCard";
 import { useEvent } from "react-use-event";
 import { AddBookmarkEvent, RemoveBookmarkEvent } from "../events";
-
-function Fake() {
-  return <div className="real"></div>;
-}
+import useToast from "../hooks/useToast";
 
 let jobListParser = object({
   jobList: array(jobCardParser),
-});
-
-let bookmarkParser = object({
-  bookmarkList: array(
-    object({
-      id: number(),
-      username: string(),
-      job_id: number(),
-      title: string(),
-      description: string(),
-      price: number(),
-      type: values(["demand" as const, "supply" as const]),
-    })
-  ),
 });
 
 const HomePage: React.FC = () => {
@@ -106,6 +71,21 @@ const HomePage: React.FC = () => {
     });
   });
 
+  const toast = useToast();
+
+  const dispatchAddBookmarkEvent = useEvent<AddBookmarkEvent>("AddBookmark");
+
+  const addBookmark = async (job: JobCardData) => {
+    try {
+      const json = await post(`/jobs/${job.job_id}/bookmark`, {}, object({}));
+      console.log("successfully add");
+      dispatchAddBookmarkEvent({ job });
+    } catch (error) {
+      console.log(error);
+      toast.showError(error);
+    }
+  };
+
   return (
     <IonPage className="HomePage">
       <IonHeader>
@@ -137,7 +117,23 @@ const HomePage: React.FC = () => {
             json.jobList
               ?.filter((job) => job.type == segment)
               .map((job, index) => {
-                return <JobCard key={index} job={job} />;
+                return (
+                  <JobCard
+                    key={index}
+                    job={job}
+                    buttons={
+                      <IonButton
+                        hidden={!job.job_id}
+                        onClick={() => addBookmark(job)}
+                      >
+                        <IonIcon
+                          slot="icon-only"
+                          icon={job.has_bookmark == 0 ? starOutline : star}
+                        ></IonIcon>
+                      </IonButton>
+                    }
+                  />
+                );
               })
           )}
         </div>

@@ -23,7 +23,7 @@ import {
   IonIcon,
   IonCardContent,
 } from "@ionic/react";
-import { star, starOutline } from "ionicons/icons";
+import { star, starOutline, trash } from "ionicons/icons";
 import "./HomePage.css";
 import { get } from "../api/config";
 import useGet from "../hooks/useGet";
@@ -40,75 +40,19 @@ import {
 } from "cast.ts";
 import { useParams } from "react-router";
 import useAuth from "../hooks/useAuth";
+import { JobCard, jobCardParser } from "../components/JobCard";
 
 let jobListParser = object({
-  jobList: array(
-    object({
-      job_id: id(),
-      username: string(),
-      user_id: id(),
-      title: string(),
-      description: string(),
-      price: float(),
-      created_at: date(),
-      type: values(["demand" as const, "supply" as const]),
-      tags: array(string()),
-    })
-  ),
+  jobList: array(jobCardParser),
 });
 
-type Jobstatus = ParseResult<typeof jobListParser>["jobList"];
-
-const Jobstatus: React.FC = () => {
+const JobStatus: React.FC = () => {
   const title = "Job Status";
 
   const [segment, setSegment] = useState<"demand" | "supply">("demand");
 
   const user_id = useAuth().state?.id;
   let jobList = useGet(`/jobs/search?user_id=${user_id}`, jobListParser);
-
-  function BookmarkCard(props: {
-    job: (typeof jobListParser)["sampleValue"]["jobList"][0];
-  }) {
-    const { job } = props;
-    const [bookmark, setBookmark] = useState(false);
-
-    return (
-      <IonCard key={job.job_id}>
-        <IonCardContent>
-          <div className="d-flex align-center" style={{ gap: "8px" }}>
-            <div className="d-flex col align-center ion-justify-content-center">
-              <IonAvatar>
-                <img
-                  src={"https://picsum.photos/80/80?random=" + job.job_id}
-                  alt="avatar"
-                />
-              </IonAvatar>
-              <span className="author-name">{job.username}</span>
-            </div>
-            <div>
-              <h1>- {job.title} -</h1>
-              <p>{job.description}</p>
-            </div>
-            <IonButtons slot="end">
-              <IonButton
-                onClick={() => {
-                  // deletepost();
-                }}
-              >
-                del
-              </IonButton>
-            </IonButtons>
-          </div>
-        </IonCardContent>
-        <div>
-          {job.tags.map((tag: string) => (
-            <IonChip key={tag}>{tag}</IonChip>
-          ))}
-        </div>
-      </IonCard>
-    );
-  }
 
   return (
     <IonPage className="HomePage">
@@ -118,7 +62,7 @@ const Jobstatus: React.FC = () => {
             <IonMenuButton />
           </IonButtons>
           <IonList class="SH">
-            <IonTitle>Jobstatus</IonTitle>
+            <IonTitle>{title}</IonTitle>
           </IonList>
         </IonToolbar>
       </IonHeader>
@@ -140,9 +84,17 @@ const Jobstatus: React.FC = () => {
           {jobList.render((json) =>
             json.jobList
               ?.filter((job) => job.type == segment)
-              .map((job, index) => {
-                return <BookmarkCard key={index} job={job} />;
-              })
+              .map((job, index) => (
+                <JobCard
+                  key={index}
+                  job={job}
+                  buttons={
+                    <IonButton color="danger">
+                      <IonIcon src={trash} slot="icon-only"></IonIcon>
+                    </IonButton>
+                  }
+                />
+              ))
           )}
         </div>
       </IonContent>
@@ -150,4 +102,4 @@ const Jobstatus: React.FC = () => {
   );
 };
 
-export default Jobstatus;
+export default JobStatus;

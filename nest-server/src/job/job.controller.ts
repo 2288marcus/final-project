@@ -33,7 +33,7 @@ export class JobController {
     let user_id = await this.userService
       .authorize(authorization)
       .catch(() => null)
-    return this.jobService.getJobList(user_id, {
+    return this.jobService.searchJobList(user_id, {
       user_id: null,
     })
   }
@@ -51,7 +51,7 @@ export class JobController {
         user_id: optional(id()),
       }),
     }).parse({ query })
-    return this.jobService.getJobList(user_id, {
+    return this.jobService.searchJobList(user_id, {
       user_id: input.query.user_id,
     })
   }
@@ -80,7 +80,7 @@ export class JobController {
 
   /////////////////////////////
   @Get('bookmark')
-  async bookmark(@Headers('Authorization') authorization) {
+  async getBookmarkList(@Headers('Authorization') authorization) {
     let user_id = await this.userService.authorize(authorization)
     return await this.jobService.getBookmarkList(user_id)
   }

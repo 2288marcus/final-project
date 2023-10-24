@@ -1,0 +1,16 @@
+.JobCard ion-avatar {
+  width: 64px;
+  height: 64px;
+}
+
+@media screen and (max-width: 650px) {
+  .JobCard .mobile-row {
+    flex-direction: row;
+    gap: 16px;
+  }
+
+  .JobCard .mobile-col {
+    flex-direction: column;
+    gap: 16px;
+  }
+}

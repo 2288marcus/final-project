@@ -15,8 +15,8 @@ export class JobService {
     private readonly tagService: TagService,
   ) {}
 
-  async getJobList(user_id: number | null, filter: { user_id: number | null }) {
-    let query = this.knex
+  private async queryJobList(query: Knex.QueryBuilder) {
+    let jobList = await query
       .select(
         'job.id as job_id',
         'job.user_id',
@@ -28,6 +28,23 @@ export class JobService {
         'job.created_at',
         this.knex.raw('count(bookmark.user_id) as has_bookmark'),
       )
+      .orderBy('job.id', 'desc')
+    for (let job of jobList) {
+      let rows = await this.knex('tag')
+        .select('tag.name')
+        .innerJoin('job_tag', 'job_tag.tag_id', 'tag.id')
+        .where('job_tag.job_id', job.job_id)
+      job.tags = rows.map(row => row.name)
+    }
+    return { jobList }
+  }
+
+  async searchJobList(
+    user_id: number | null,
+    filter: { user_id: number | null },
+  ) {
+    let query = this.knex
+
       .from('job')
       .innerJoin('user', 'user.id', 'job.user_id')
       .leftJoin(
@@ -40,15 +57,7 @@ export class JobService {
     if (filter.user_id) {
       query = query.where('user.id', filter.user_id)
     }
-    let jobList = await query.orderBy('job.id', 'desc')
-    for (let job of jobList) {
-      let rows = await this.knex('tag')
-        .select('tag.name')
-        .innerJoin('job_tag', 'job_tag.tag_id', 'tag.id')
-        .where('job_tag.job_id', job.job_id)
-      job.tags = rows.map(row => row.name)
-    }
-    return { jobList }
+    return this.queryJobList(query)
   }
 
   //////////////////////////////////////
@@ -102,45 +111,15 @@ export class JobService {
     })
   }
 
-  async bookmark(
-    input: {
-      title: string
-      description: string
-      price: number
-      type: string
-      // type: enum(jobtype)
-    },
-    user_id: number,
-  ) {
-    return await this.knex
-      .insert({
-        user_id,
-        title: input.title,
-        description: input.description,
-        price: input.price,
-        type: input.type,
-      })
-      .into('job')
-      .returning('id')
-  }
-
   async getBookmarkList(user_id: number) {
-    let bookmarkList = await this.knex
+    let query = this.knex
       .from('bookmark')
       .innerJoin('job', 'job.id', 'bookmark.job_id')
       .innerJoin('user', 'user.id', 'bookmark.user_id')
-      .select(
-        'job.id as job_id',
-        'user.username',
-        'job.title',
-        'job.description',
-        'job.price',
-        'job.type',
-      )
       .where('bookmark.user_id', user_id)
       .groupBy('job.id', 'user.id')
       .orderByRaw(this.knex.raw('max(bookmark.id) desc'))
-    return { bookmarkList }
+    return this.queryJobList(query)
   }
 
   async deleteBookmark(user_id: number, job_id: number) {

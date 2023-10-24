@@ -4,22 +4,18 @@ import {
   IonButtons,
   IonContent,
   IonHeader,
-  IonInput,
-  IonItem,
   IonList,
   IonMenuButton,
   IonPage,
   IonTitle,
   IonToolbar,
   IonAvatar,
-  IonLabel,
   IonSearchbar,
   IonAccordion,
   IonAccordionGroup,
   IonSegment,
   IonSegmentButton,
   IonCard,
-  IonChip,
   IonIcon,
   IonCardContent,
 } from "@ionic/react";
@@ -30,6 +26,7 @@ import { api_origin, del } from "../api/config";
 import { useParams } from "react-router";
 import useAuth from "../hooks/useAuth";
 import { useEvent } from "react-use-event";
+import { JobCard, jobCardParser } from "../components/JobCard";
 import {
   array,
   date,
@@ -37,6 +34,7 @@ import {
   id,
   object,
   string,
+  int,
   values,
   number,
 } from "cast.ts";
@@ -44,16 +42,7 @@ import useToast from "../hooks/useToast";
 import { AddBookmarkEvent, RemoveBookmarkEvent } from "../events";
 
 let bookmarkParser = object({
-  bookmarkList: array(
-    object({
-      username: string(),
-      job_id: number(),
-      title: string(),
-      description: string(),
-      price: number(),
-      type: values(["demand" as const, "supply" as const]),
-    })
-  ),
+  jobList: array(jobCardParser),
 });
 
 const BookmarkList: React.FC = () => {
@@ -61,7 +50,6 @@ const BookmarkList: React.FC = () => {
 
   const [segment, setSegment] = useState<"demand" | "supply">("demand");
   // const [bookmark, setBookmark] = useState(true);
-
   let bookmarkList = useGet("/jobs/bookmark", bookmarkParser);
 
   const dispatchRemoveBookmarkEvent =
@@ -69,15 +57,11 @@ const BookmarkList: React.FC = () => {
 
   useEvent<AddBookmarkEvent>("AddBookmark", (event) => {
     bookmarkList.setData((data) => {
-      if (
-        data?.bookmarkList.find(
-          (bookmark) => bookmark.job_id == event.job.job_id
-        )
-      ) {
+      if (data?.jobList.find((job) => job.job_id == event.job.job_id)) {
         return data;
       }
       return {
-        bookmarkList: [event.job, ...(data?.bookmarkList || [])],
+        jobList: [event.job, ...(data?.jobList || [])],
       };
     });
   });
@@ -94,9 +78,7 @@ const BookmarkList: React.FC = () => {
       // }
       console.log("successfully deleted");
       bookmarkList.setData((data) => ({
-        bookmarkList: data!.bookmarkList.filter(
-          (bookmark) => bookmark.job_id != job_id
-        ),
+        jobList: data!.jobList.filter((bookmark) => bookmark.job_id != job_id),
       }));
       dispatchRemoveBookmarkEvent({ job_id });
       // bookmarkList.reload();
@@ -175,49 +157,21 @@ const BookmarkList: React.FC = () => {
         </IonSegment>
         <div>
           {bookmarkList.render((json) =>
-            json.bookmarkList
-              ?.filter((bookmark) => bookmark.type == segment)
-              .map((bookmark) => (
-                <IonCard key={bookmark.job_id}>
-                  <IonCardContent>
-                    <div className="d-flex align-center" style={{ gap: "8px" }}>
-                      <div className="d-flex col align-center ion-justify-content-center">
-                        <IonAvatar>
-                          <img
-                            src={
-                              "https://picsum.photos/80/80?random=" +
-                              bookmark.job_id
-                            }
-                            alt="avatar"
-                          />
-                        </IonAvatar>
-                        {/* <span className="author-name">{job.username}</span> */}
-                      </div>
-                      <div>
-                        <h1>- {bookmark.title} -</h1>
-                        <p>{bookmark.username}</p>
-                        <p>{bookmark.description}</p>
-                        <p>${bookmark.price.toLocaleString()}</p>
-                      </div>
-                      <IonButtons slot="end">
-                        {/* <IonButton
-                          onClick={() => handleBookmarkToggle(bookmark.job_id)}
-                        >
-                          <IonIcon
-                            slot="icon-only"
-                            icon={bookmark ? star : starOutline}
-                          /> 
-                        </IonButton>*/}
-                        <IonButton
-                          onClick={() => deleteBookmark(bookmark.job_id)}
-                        >
-                          <IonIcon slot="icon-only" icon={star}></IonIcon>
-                        </IonButton>
-                      </IonButtons>
-                    </div>
-                  </IonCardContent>
-                </IonCard>
-              ))
+            json.jobList
+              ?.filter((job) => job.type == segment)
+              .map((job, index) => {
+                return (
+                  <JobCard
+                    key={index}
+                    job={job}
+                    buttons={
+                      <IonButton onClick={() => deleteBookmark(job.job_id)}>
+                        <IonIcon slot="icon-only" icon={star}></IonIcon>
+                      </IonButton>
+                    }
+                  />
+                );
+              })
           )}
         </div>
       </IonContent>
@@ -226,105 +180,3 @@ const BookmarkList: React.FC = () => {
 };
 
 export default BookmarkList;
-
-// function useDelete(arg0: string, bookmarkParser: { sampleValue: { bookmarkList: { id: number; username: string; job_id: number; title: string; description: string; price: number; type: "demand" | "supply"; }[]; }; randomSample: () => { bookmarkList: { id: number; username: string; job_id: number; title: string; description: string; price: number; type: "demand" | "supply"; }[]; }; parse: (input: unknown, context?: import("cast.ts").ParserContext | undefined) => { bookmarkList: { id: number; username: string; job_id: number; title: string; description: string; price: number; type: "demand" | "supply"; }[]; }; options: import("cast.ts").ObjectFieldParsers<{ bookmarkList: { id: number; username: string; job_id: number; title: string; description: string; price: number; type: "demand" | "supply"; }[]; }>; type: string; }) {
-//   throw new Error("Function not implemented.");
-// }
-// function useDelete(
-//   arg0: string,
-//   bookmarkParser: {
-//     sampleValue: {
-//       bookmarkList: {
-//         username: string;
-//         job_id: number;
-//         title: string;
-//         description: string;
-//         price: number;
-//         type: "demand" | "supply";
-//       }[];
-//     };
-//     randomSample: () => {
-//       bookmarkList: {
-//         username: string;
-//         job_id: number;
-//         title: string;
-//         description: string;
-//         price: number;
-//         type: "demand" | "supply";
-//       }[];
-//     };
-//     parse: (
-//       input: unknown,
-//       context?: import("cast.ts").ParserContext | undefined
-//     ) => {
-//       bookmarkList: {
-//         username: string;
-//         job_id: number;
-//         title: string;
-//         description: string;
-//         price: number;
-//         type: "demand" | "supply";
-//       }[];
-//     };
-//     options: import("cast.ts").ObjectFieldParsers<{
-//       bookmarkList: {
-//         username: string;
-//         job_id: number;
-//         title: string;
-//         description: string;
-//         price: number;
-//         type: "demand" | "supply";
-//       }[];
-//     }>;
-//     type: string;
-//   }
-// ) {
-//   throw new Error("Function not implemented.");
-// }
-// function useDelete(
-//   arg0: string,
-//   bookmarkParser: {
-//     sampleValue: {
-//       bookmarkList: {
-//         job_id: number;
-//         title: string;
-//         description: string;
-//         price: number;
-//         type: "demand" | "supply";
-//       }[];
-//     };
-//     randomSample: () => {
-//       bookmarkList: {
-//         job_id: number;
-//         title: string;
-//         description: string;
-//         price: number;
-//         type: "demand" | "supply";
-//       }[];
-//     };
-//     parse: (
-//       input: unknown,
-//       context?: import("cast.ts").ParserContext | undefined
-//     ) => {
-//       bookmarkList: {
-//         job_id: number;
-//         title: string;
-//         description: string;
-//         price: number;
-//         type: "demand" | "supply";
-//       }[];
-//     };
-//     options: import("cast.ts").ObjectFieldParsers<{
-//       bookmarkList: {
-//         job_id: number;
-//         title: string;
-//         description: string;
-//         price: number;
-//         type: "demand" | "supply";
-//       }[];
-//     }>;
-//     type: string;
-//   }
-// ) {
-//   throw new Error("Function not implemented.");
-// }

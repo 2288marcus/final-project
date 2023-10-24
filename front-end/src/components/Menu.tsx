@@ -25,6 +25,7 @@ import {
   link,
   heartOutline,
   heartSharp,
+  sunny,
 } from "ionicons/icons";
 import "./Menu.css";
 import { routes } from "../routes";
@@ -84,7 +85,7 @@ const Menu: React.FC = () => {
     // },
     {
       title: "Job status",
-      url: routes.Jobstatus,
+      url: routes.JobStatus,
       iosIcon: mail,
       mdIcon: mail,
     },
@@ -107,12 +108,12 @@ const Menu: React.FC = () => {
           iosIcon: mailOutline,
           mdIcon: mailSharp,
         },
-    {
-      title: "Profile Checking",
-      url: routes.othersProfilePage,
-      iosIcon: personCircle,
-      mdIcon: personCircle,
-    },
+    // {
+    //   title: "Profile Checking",
+    //   url: routes.othersProfilePage,
+    //   iosIcon: personCircle,
+    //   mdIcon: personCircle,
+    // },
   ];
 
   return (
@@ -122,7 +123,9 @@ const Menu: React.FC = () => {
           <IonListHeader>Fair</IonListHeader>
           <IonNote>Deal</IonNote>
           <IonItem>
-            <IonToggle>Dark Mode</IonToggle>
+            <IonToggle>
+              Dark Mode <IonIcon icon={sunny}></IonIcon>
+            </IonToggle>
           </IonItem>
           {appPages.map((appPage, index) => {
             return (

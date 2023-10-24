@@ -26,11 +26,12 @@ import { post } from "../api/config";
 import useToast from "../hooks/useToast";
 import { AddBookmarkEvent, RemoveBookmarkEvent } from "../events";
 import { useEvent } from "react-use-event";
+import "./JobCard.css";
 
 export let jobCardParser = object({
   job_id: id(),
-  username: string(),
   user_id: id(),
+  username: string(),
   title: string(),
   description: string(),
   price: float(),
@@ -43,65 +44,39 @@ export let jobCardParser = object({
 export type JobCardData = ParseResult<typeof jobCardParser>;
 export type JobType = JobCardData["type"];
 
-export function JobCard(props: { job: JobCardData }) {
+export function JobCard(props: { job: JobCardData; buttons: React.ReactNode }) {
   const { job } = props;
 
-  const toast = useToast();
-
-  const dispatchAddBookmarkEvent = useEvent<AddBookmarkEvent>("AddBookmark");
-
-  const addBookmark = async (job: JobCardData) => {
-    try {
-      const json = await post(`/jobs/${job.job_id}/bookmark`, {}, object({}));
-      console.log("successfully add");
-      dispatchAddBookmarkEvent({ job });
-    } catch (error) {
-      console.log(error);
-      toast.showError(error);
-
-      return;
-    }
-  };
-
   return (
-    <IonCard key={job.job_id}>
+    <IonCard key={job.job_id} className="JobCard">
       <IonCardContent>
-        <div className="d-flex align-center" style={{ gap: "8px" }}>
-          <IonRouterLink
-            routerLink={
-              job.job_id ? routes.othersProfilePage(job.user_id) : undefined
-            }
-          >
-            <div className="d-flex col align-center ion-justify-content-center user-part">
-              <IonAvatar>
-                <img
-                  src={`https://picsum.photos/seed/${job.user_id}/80/80`}
-                  alt="avatar"
-                />
-              </IonAvatar>
-              <span className="author-name">{job.username}</span>
-            </div>
-          </IonRouterLink>
-          <div>
-            <h1>-&nbsp; {job.title} &nbsp;-</h1>
-            <p>${job.price.toLocaleString()}</p>
-            <p>{job.description}</p>
-          </div>
-          <IonButtons slot="end">
-            <IonButton
-              hidden={!job.job_id}
-              onClick={() => {
-                // if (job.has_bookmark == 0) {
-                addBookmark(job);
-                // }
-              }}
+        <div className="d-flex align-center ion-justify-content-between">
+          <div className="d-flex mobile-col">
+            <IonRouterLink
+              routerLink={
+                job.job_id ? routes.othersProfilePage(job.user_id) : undefined
+              }
             >
-              <IonIcon
-                slot="icon-only"
-                icon={job.has_bookmark == 0 ? starOutline : star}
-              ></IonIcon>
-            </IonButton>
-          </IonButtons>
+              <div
+                className="d-flex col align-center ion-justify-content-center user-part mobile-row"
+                style={{ marginInlineEnd: "2rem" }}
+              >
+                <IonAvatar>
+                  <img
+                    src={`https://picsum.photos/seed/${job.user_id}/80/80`}
+                    alt="avatar"
+                  />
+                </IonAvatar>
+                <span className="author-name">{job.username}</span>
+              </div>
+            </IonRouterLink>
+            <div>
+              <h1>-&nbsp; {job.title} &nbsp;-</h1>
+              <p>${job.price.toLocaleString()}</p>
+              <p>{job.description}</p>
+            </div>
+          </div>
+          <IonButtons>{props.buttons}</IonButtons>
         </div>
       </IonCardContent>
       <div>
