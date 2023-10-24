@@ -15,13 +15,7 @@ import {
   IonIcon,
   IonButton,
 } from "@ionic/react";
-import {
-  caretDown,
-  caretUp,
-  caretUpCircle,
-  caretUpOutline,
-  link,
-} from "ionicons/icons";
+import { caretDown, caretUp, link } from "ionicons/icons";
 import "./Blockchain.css";
 
 const Blockchain: React.FC = () => {

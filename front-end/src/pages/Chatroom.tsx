@@ -5,14 +5,11 @@ import {
   IonHeader,
   IonIcon,
   IonItem,
-  IonMenuButton,
   IonPage,
-  IonTitle,
   IonToolbar,
   IonFooter,
   IonTextarea,
   IonBackButton,
-  IonAlert,
   useIonToast,
   IonLabel,
   IonCardSubtitle,
@@ -21,35 +18,21 @@ import {
   IonInput,
 } from "@ionic/react";
 import {
-  add,
   document,
   camera,
   image,
-  mic,
   paperPlane,
   videocam,
-  checkmark,
   checkmarkDone,
   addCircle,
 } from "ionicons/icons";
 import React, { useState, useEffect, useRef, useLayoutEffect } from "react";
-// import io from "socket.io-client";
-import { get, post } from "../api/config";
-import {
-  ParseResult,
-  boolean,
-  nullable,
-  object,
-  string,
-  number,
-  array,
-} from "cast.ts";
+import { post } from "../api/config";
+import { object, string, number, array } from "cast.ts";
 import "./Chatroom.css";
-// import { number } from "@beenotung/tslib";
 import useGet from "../hooks/useGet";
 import useAuth from "../hooks/useAuth";
 import { useParams } from "react-router";
-import { id } from "@beenotung/tslib";
 
 // const socket = io(api_origin);
 let getContentParser = object({
