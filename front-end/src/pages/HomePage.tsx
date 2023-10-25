@@ -12,6 +12,13 @@ import {
   IonSegmentButton,
   IonButton,
   IonIcon,
+  IonSearchbar,
+  IonChip,
+  IonInput,
+  IonItem,
+  IonLabel,
+  IonListHeader,
+  IonNote,
 } from "@ionic/react";
 import "./HomePage.css";
 import useGet from "../hooks/useGet";
@@ -26,7 +33,7 @@ import { get, post } from "../api/config";
 import { array, object, string, ParseResult, id, int } from "cast.ts";
 import { JobCard, JobCardData, jobCardParser } from "../components/JobCard";
 import useToast from "../hooks/useToast";
-import { star, starOutline } from "ionicons/icons";
+import { add, star, starOutline } from "ionicons/icons";
 
 let jobListParser = object({
   jobList: array(jobCardParser),
@@ -48,6 +55,8 @@ const HomePage: React.FC = () => {
       })
     ),
   });
+
+  const commonTags = useGet("/tags", getTagListParser);
   type Tag = ParseResult<typeof getTagListParser>["tagList"][number];
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [newTag, setNewTag] = useState("");
@@ -150,7 +159,48 @@ const HomePage: React.FC = () => {
             <IonTitle size="large">{title}</IonTitle>
           </IonToolbar>
         </IonHeader>
-
+        {/* /////////////////////////////// */}
+        <div>
+          <IonItem>
+            <IonLabel position="fixed">Search:</IonLabel>
+            <IonInput
+              placeholder="Enter"
+              type="text"
+              value={newTag}
+              onIonInput={(e) => setNewTag(e.detail.value || "")}
+            />
+            <IonButtons slot="end">
+              <IonButton
+                onClick={() => {
+                  setSelectedTags([...selectedTags, newTag]);
+                  setNewTag("");
+                }}
+              >
+                <IonIcon src={add}></IonIcon>
+              </IonButton>
+            </IonButtons>
+          </IonItem>
+        </div>
+        <IonListHeader>Selected Tags:</IonListHeader>
+        <div className="ion-padding-horizontal d-flex">
+          {selectedTags.length == 0 ? (
+            <IonNote className="ion-padding-horizontal">No result</IonNote>
+          ) : null}
+          {selectedTags.map((tag) => (
+            <IonChip
+              key={tag}
+              onClick={() =>
+                setSelectedTags(
+                  selectedTags.filter((selectedTag) => selectedTag != tag)
+                )
+              }
+            >
+              {tag}
+            </IonChip>
+          ))}
+        </div>
+        {newTag && searchedTags.length > 0}
+        {/* /////////////////////////////// */}
         <IonSegment
           value={segment}
           onIonChange={(e) => setSegment(e.detail.value as any)}
