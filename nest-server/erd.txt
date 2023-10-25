@@ -75,6 +75,7 @@ id integer PK
 real_price integer
 contract_id integer FK >0- contract.id
 direction enum('buyer_to_system','system_to_seller','system_to_buyer')
+stripe_checkout_session_id varchar(255)
 
 
 message
@@ -120,7 +121,7 @@ job_id integer FK - job.id
 # job_tag (217, 79)
 # tag (58, 105)
 # bookmark (411, 293)
-# transaction (653, 36)
+# transaction (687, 18)
 # message (941, 281)
 # chatroom (685, 309)
 # contract (880, 65)
