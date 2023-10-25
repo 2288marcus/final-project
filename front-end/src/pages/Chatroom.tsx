@@ -16,6 +16,8 @@ import {
   IonCardTitle,
   IonModal,
   IonInput,
+  IonCard,
+  IonTitle,
 } from "@ionic/react";
 import {
   document,
@@ -25,18 +27,36 @@ import {
   videocam,
   checkmarkDone,
   addCircle,
+  reader,
 } from "ionicons/icons";
 import React, { useState, useEffect, useRef, useLayoutEffect } from "react";
 import { post } from "../api/config";
-import { object, string, number, array } from "cast.ts";
+import {
+  object,
+  string,
+  number,
+  array,
+  nullable,
+  id,
+  date,
+  float,
+} from "cast.ts";
 import "./Chatroom.css";
 import useGet from "../hooks/useGet";
 import useAuth from "../hooks/useAuth";
 import { useParams } from "react-router";
+import { div } from "@beenotung/tslib";
+import useToast from "../hooks/useToast";
 
 // const socket = io(api_origin);
-let getContentParser = object({
-  content: array(
+let getRoomDataParser = object({
+  room: object({
+    job_id: id(),
+    created_at: date(),
+    title: string(),
+    type: string(),
+  }),
+  messages: array(
     object({
       id: number(),
       username: string(),
@@ -44,6 +64,22 @@ let getContentParser = object({
       time: string(),
     })
   ),
+  contract: nullable(
+    object({
+      contract_id: id(),
+      real_description: string(),
+      real_price: float(),
+      created_at: date(),
+    })
+  ),
+  supplier: object({
+    id: id(),
+    username: string(),
+  }),
+  demander: object({
+    id: id(),
+    username: string(),
+  }),
 });
 
 interface Message {
@@ -57,29 +93,22 @@ function formatTime(time: string) {
   return new Date(time).toLocaleString("zh-CN");
 }
 
+let defaultContractData = {
+  real_description: "",
+  real_price: 0,
+  date: "",
+  time: "",
+};
+
 const Chatroom: React.FC = () => {
   const title = "Chatroom List";
   const auth = useAuth();
-  let getChatroomParser = object({
-    chatroomList: array(
-      object({
-        id: number(),
-        supplier_username: string(),
-        demander_username: string(),
-        created_at: string(),
-        supplier_id: number(),
-        demander_id: number(),
-        title: string(),
-      })
-    ),
-  });
-  let chatroomList = useGet("/chat/chatroom", getChatroomParser);
 
   const username = auth.state?.username || "unknown";
   const user_id = auth.state?.id || "unknown";
   // console.log("登入的user id:", user_id);
 
-  const contentRef = useRef<HTMLElement>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
 
   const [present, dismiss] = useIonToast();
 
@@ -113,10 +142,11 @@ const Chatroom: React.FC = () => {
         form.newMessage.value = "";
         form.newMessage.parentElement.dataset.replicatedValue = "";
         roomData.setData((json) => {
-          if (!json?.content) return json;
+          if (!json?.messages) return json;
           return {
-            content: [
-              ...json.content,
+            ...json,
+            messages: [
+              ...json.messages,
               {
                 id,
                 content: newMessage,
@@ -148,11 +178,7 @@ const Chatroom: React.FC = () => {
   };
   const params = useParams<{ id: string }>();
   // console.log("params:", params["id"]);
-  const chatroom_id = +params["id"] - 1;
   // console.log(chatroom_id);
-  const chatroom_title = `${
-    chatroomList.data?.chatroomList[+chatroom_id].title
-  }`;
 
   // const chatroom_user_id = chatroomList.data?.chatroomList.map(
   //   (chatroom) => chatroom.id
@@ -173,34 +199,36 @@ const Chatroom: React.FC = () => {
   //   console.log("No chatroom user IDs available.");
   // }
 
-  const [showModal, setShowModal] = useState(false);
-  const [formData, setFormData] = useState({
-    description: "",
-    price: 0,
-    date: "",
-    time: "",
-  });
+  const [isShowCreateContractModal, setIsShowCreateContractModal] =
+    useState(false);
 
-  const handleFormSubmit = () => {
+  const [contractData, setContractData] = useState(defaultContractData);
+
+  const toast = useToast();
+
+  const submitContract = async () => {
     // 在这里执行表单提交操作
-    console.log(formData);
-    // 重置表单数据
-    setFormData({
-      description: "",
-      price: 0,
-      date: "",
-      time: "",
-    });
-    // 关闭模态框
-    setShowModal(false);
+    console.log(contractData);
 
-    post(`/chat/${params.id}/contract`, formData, object({ id: number() }))
-      .then((res) => {
-        console.log("post contract result:", res);
-      })
-      .catch((err) => {
-        console.log("post contract fail:", err);
-      });
+    try {
+      let json = await post(
+        `/chat/${params.id}/contract`,
+        {
+          real_description: contractData.real_description,
+          real_price: contractData.real_price,
+          estimated_finish_time: contractData.date + " " + contractData.time,
+        },
+        object({ contract_id: number() })
+      );
+      console.log("post contract result:", json);
+      // 关闭模态框
+      setIsShowCreateContractModal(false);
+      // 重置表单数据
+      setContractData(defaultContractData);
+    } catch (error) {
+      console.log("post contract fail:", error);
+      toast.showError(error);
+    }
   };
 
   const handleDateChange = (e: CustomEvent) => {
@@ -212,7 +240,7 @@ const Chatroom: React.FC = () => {
       // 这里可以显示错误消息或执行其他逻辑
       console.log("日期不能早于当前日期");
     } else {
-      setFormData({ ...formData, date: selectedDate! });
+      setContractData({ ...contractData, date: selectedDate! });
     }
   };
 
@@ -225,16 +253,11 @@ const Chatroom: React.FC = () => {
       // 这里可以显示错误消息或执行其他逻辑
       console.log("时间不能早于当前时间");
     } else {
-      setFormData({ ...formData, time: selectedTime! });
+      setContractData({ ...contractData, time: selectedTime! });
     }
   };
 
-  const chatroom_created_at = `${chatroomList.data?.chatroomList[
-    +chatroom_id
-  ].created_at
-    .replace("T", " ")
-    .replace("Z", "")}`;
-  const roomData = useGet(`/chat/${params.id}/messages`, getContentParser);
+  const roomData = useGet(`/chat/room/${params.id}`, getRoomDataParser);
   // console.log("roomData:", roomData);
 
   const [error, setError] = useState("");
@@ -249,45 +272,65 @@ const Chatroom: React.FC = () => {
     // console.log("messages", { messages });
     // 监听 messages 状态的变化
     contentRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [roomData.data?.content]); // 当 messages 状态发生变化时触发
+  }, [roomData.data?.messages]); // 当 messages 状态发生变化时触发
 
-  const date = "2023-10-19";
-  const time = "19:01";
+  // let contract = useGet(`/chat/${params.id}/contract`, getRoomDataParser);
 
-  function formatDateTime(date: any, time: any) {
-    const [year, month, day] = date.split("-");
-    const [hours, minutes] = time.split(":");
-
-    const formattedDateTime = new Date(
-      parseInt(year),
-      parseInt(month) - 1, // 月份在 JavaScript 中是从 0 开始的，所以要减去 1
-      parseInt(day),
-      parseInt(hours),
-      parseInt(minutes)
-    ).toISOString();
-
-    return formattedDateTime;
-  }
-
-  const formattedDateTime = formatDateTime(date, time);
-  console.log(formattedDateTime);
+  const [isShowContractModal, setIsShowContractModal] = useState(false);
 
   return (
-    <IonPage>
+    <IonPage className="Chatroom">
       <IonHeader>
-        <IonToolbar>
+        <IonToolbar color="light">
           <IonButtons slot="start">
             <IonBackButton defaultHref="/ChatroomList"></IonBackButton>
           </IonButtons>
-
-          <IonCardTitle>{chatroom_title}</IonCardTitle>
-          <IonCardSubtitle>Created at: {chatroom_created_at}</IonCardSubtitle>
+          <IonTitle>
+            <div>{roomData.data?.room.title}</div>
+            <small>{roomData.data?.room.created_at.toLocaleString()}</small>
+          </IonTitle>
+          {/* <IonCardTitle>{chatroom_title}</IonCardTitle>
+          <IonCardSubtitle>Created at: {chatroom_created_at}</IonCardSubtitle> */}
+          <IonButtons slot="end">
+            <IonButton onClick={() => setIsShowContractModal(true)}>
+              <IonIcon icon={reader} slot="icon-only"></IonIcon>
+            </IonButton>
+          </IonButtons>
         </IonToolbar>
       </IonHeader>
+      <IonModal
+        isOpen={isShowContractModal}
+        onDidDismiss={() => setIsShowContractModal(false)}
+      >
+        <IonHeader>
+          <IonToolbar color="light">
+            <IonTitle>Job Contract</IonTitle>
+            <IonButtons slot="start">
+              <IonButton
+                color="primary"
+                onClick={() => setIsShowContractModal(false)}
+              >
+                Dismiss
+              </IonButton>
+            </IonButtons>
+          </IonToolbar>
+        </IonHeader>
+        <IonContent className="ion-padding" color="light">
+          <IonCard className="ion-padding">
+            <IonCardTitle>
+              {roomData.data?.contract?.real_description}
+              <br />${roomData.data?.contract?.real_price.toLocaleString()}
+            </IonCardTitle>
+            <IonCardSubtitle>
+              {roomData.data?.contract?.created_at.toLocaleString()}
+            </IonCardSubtitle>
+          </IonCard>
+        </IonContent>
+      </IonModal>
       <IonContent>
-        <div>
+        {/* <div>
           {roomData.render((json) =>
-            json.content.map((message) => (
+            json.messages.map((message) => (
               <div
                 key={message.id}
                 className="chat-message-container"
@@ -306,7 +349,7 @@ const Chatroom: React.FC = () => {
                   <small>{message.username}</small>
                   <div>{message.content}</div>
                   <small>
-                    {formatTime(message.time)}{" "}
+                    {formatTime(message.time)}
                     <IonIcon icon={checkmarkDone}></IonIcon>
                   </small>
                 </div>
@@ -314,6 +357,28 @@ const Chatroom: React.FC = () => {
             ))
           )}
           <div ref={contentRef}></div>
+        </div> */}
+        <div>
+          {roomData.render((json) =>
+            json.messages.map((message) => (
+              <div
+                key={message.id}
+                className="message-box-line"
+                data-by={message.username == username ? "me" : "other"}
+              >
+                <IonCard className="message-box" color="light">
+                  <div className="chat-message-box">
+                    <small>{message.username}</small>
+                    <div>{message.content}</div>
+                    <small>
+                      {formatTime(message.time)}
+                      <IonIcon icon={checkmarkDone}></IonIcon>
+                    </small>
+                  </div>
+                </IonCard>
+              </div>
+            ))
+          )}
         </div>
       </IonContent>
       <IonFooter>
@@ -335,81 +400,10 @@ const Chatroom: React.FC = () => {
           <IonItem>
             <IonButtons>
               <>
-                <IonButton onClick={() => setShowModal(true)}>
+                <IonButton onClick={() => setIsShowCreateContractModal(true)}>
                   <IonIcon icon={addCircle}></IonIcon>
                 </IonButton>
-
-                <IonModal
-                  isOpen={showModal}
-                  onDidDismiss={() => setShowModal(false)}
-                >
-                  <form onSubmit={handleFormSubmit}>
-                    <header>Contract</header>
-                    <IonInput
-                      type="text"
-                      placeholder="Job Description"
-                      value={formData.description}
-                      onIonChange={(e) =>
-                        setFormData({
-                          ...formData,
-                          description: e.detail.value!,
-                        })
-                      }
-                    ></IonInput>
-                    <IonInput
-                      type="number"
-                      placeholder="Price"
-                      value={formData.price}
-                      onIonChange={(e) =>
-                        setFormData({ ...formData, price: +e.detail.value! })
-                      }
-                      min={1} // 设置最小值为1
-                    ></IonInput>
-                    <IonInput
-                      type="date"
-                      value={formData.date}
-                      onIonChange={handleDateChange}
-                    ></IonInput>
-                    <IonInput
-                      type="time"
-                      value={formData.time}
-                      onIonChange={handleTimeChange}
-                    ></IonInput>
-                    <IonButton type="submit">Submit</IonButton>
-                  </form>
-                </IonModal>
               </>
-              {/*<IonButton id="present-chatroom-info">
-                <IonIcon style={{ color: "white" }} icon={addCircle}></IonIcon>
-              </IonButton>
-               <IonAlert
-                trigger="present-chatroom-info"
-                header="Contact Info"
-                buttons={["OK"]}
-                inputs={[
-                  { type: "textarea", placeholder: "job description" },
-                  // {
-                  //   placeholder: "Nickname (max 8 characters)",
-                  //   attributes: {
-                  //     maxlength: 8,
-                  //   },
-                  // },
-                  {
-                    type: "number",
-                    placeholder: "price",
-                    attributes: {
-                      min: 1,
-                      // max: 100,
-                    },
-                  },
-                  {
-                    type: "date",
-                  },
-                  {
-                    type: "time",
-                  },
-                ]}
-              ></IonAlert> */}
               <IonButton>
                 <IonIcon icon={document}></IonIcon>
               </IonButton>
@@ -443,6 +437,70 @@ const Chatroom: React.FC = () => {
           </IonItem>
         </form>
       </IonFooter>
+
+      <IonModal
+        // className="create-contract-modal"
+        // className="contract-modal"
+        isOpen={isShowCreateContractModal}
+        onDidDismiss={() => setIsShowCreateContractModal(false)}
+      >
+        <IonHeader>
+          <IonToolbar color="light">
+            <IonTitle>Create Contract</IonTitle>
+            <IonButtons slot="start">
+              <IonButton
+                color="primary"
+                onClick={() => setIsShowCreateContractModal(false)}
+              >
+                Dismiss
+              </IonButton>
+            </IonButtons>
+          </IonToolbar>
+        </IonHeader>
+        <IonContent className="ion-padding" color="light">
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              submitContract();
+            }}
+          >
+            <IonInput
+              type="text"
+              placeholder="Job Description"
+              value={contractData.real_description}
+              onIonChange={(e) =>
+                setContractData({
+                  ...contractData,
+                  real_description: e.detail.value!,
+                })
+              }
+            ></IonInput>
+            <IonInput
+              type="number"
+              placeholder="Price"
+              value={contractData.real_price}
+              onIonChange={(e) =>
+                setContractData({
+                  ...contractData,
+                  real_price: +e.detail.value!,
+                })
+              }
+              min={1} // 设置最小值为1
+            ></IonInput>
+            <IonInput
+              type="date"
+              value={contractData.date}
+              onIonChange={handleDateChange}
+            ></IonInput>
+            <IonInput
+              type="time"
+              value={contractData.time}
+              onIonChange={handleTimeChange}
+            ></IonInput>
+            <IonButton type="submit">Submit</IonButton>
+          </form>
+        </IonContent>
+      </IonModal>
     </IonPage>
   );
 };

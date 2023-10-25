@@ -8,3 +8,20 @@
   padding: 0.5rem;
   border-radius: 0.5rem;
 }
+
+.Chatroom .message-box-line {
+  display: flex;
+}
+.Chatroom .message-box-line[data-by="me"] {
+  justify-content: flex-end;
+}
+.Chatroom .message-box-line[data-by="other"] {
+  justify-content: flex-start;
+}
+.Chatroom .message-box {
+}
+
+ion-modal.create-contract-modal > .ion-page {
+  padding: 10%;
+  /* background-color: rgb(53, 53, 53); */
+}

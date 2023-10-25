@@ -19,3 +19,8 @@ export type CancelJobEvent = {
   type: "CancelJob";
   job_id: number;
 };
+
+export type AddChatroomEvent = {
+  type: "AddChatroom";
+  chatroom_id: number;
+};

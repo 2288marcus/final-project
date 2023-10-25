@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import {
   IonButton,
   IonButtons,
@@ -13,30 +13,34 @@ import {
   IonCardContent,
 } from "@ionic/react";
 import useGet from "../hooks/useGet";
-import { useParams } from "react-router";
+
 import useAuth from "../hooks/useAuth";
 import { array, object, string, values, number } from "cast.ts";
-import { id } from "@beenotung/tslib";
+import useEvent from "react-use-event";
+import { AddChatroomEvent } from "../events";
+
+let getChatroomParser = object({
+  chatroomList: array(
+    object({
+      id: number(),
+      supplier_username: string(),
+      demander_username: string(),
+      created_at: string(),
+      supplier_id: number(),
+      demander_id: number(),
+      title: string(),
+      type: values(["demand" as const, "supply" as const]),
+    })
+  ),
+});
 
 const ChatroomList: React.FC = () => {
   const title = "Chatroom List";
   const auth = useAuth();
-  let getChatroomParser = object({
-    chatroomList: array(
-      object({
-        id: number(),
-        supplier_username: string(),
-        demander_username: string(),
-        created_at: string(),
-        supplier_id: number(),
-        demander_id: number(),
-        title: string(),
-        type: values(["demand" as const, "supply" as const]),
-      })
-    ),
-  });
 
   let chatroomList = useGet("/chat/chatroom", getChatroomParser);
+
+  useEvent<AddChatroomEvent>("AddChatroom", chatroomList.reload);
 
   const user_id = auth.state?.id || "unknown";
   // const chatroom_user_id = chatroomList.data?.chatroomList.map(
@@ -94,7 +98,9 @@ const ChatroomList: React.FC = () => {
                       <h1>Job: {chatroom.title}</h1>
                       <p>
                         created_at:
-                        {chatroom.created_at.replace("T", " ").replace("Z", "")}
+                        {chatroom.created_at
+                          .replace("T", ", ")
+                          .replace("Z", "")}
                       </p>
                       <p>supplier: {chatroom.supplier_username}</p>
                       <p>demander: {chatroom.demander_username}</p>

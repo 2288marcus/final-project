@@ -4,8 +4,7 @@ export type User = {
   fullName: string
   hkId: string
   email: string
-  card: null | string
-  public_key: null | string // char(64)
+  public_key: string
   hk_phone: string
   human_verification: null | boolean
   cv_upload: null | string
@@ -19,7 +18,8 @@ export type Job = {
   title: string
   description: string
   price: number
-  type: ('demand' | 'offer')
+  type: ('demand' | 'supply')
+  cancel_time: null | string
 }
 
 export type JobComment = {
@@ -47,52 +47,49 @@ export type JobTag = {
 
 export type Bookmark = {
   id?: null | number
-  buyer_user_id: number
-  buyer_user?: User
-  seller_user_id: number
-  seller_user?: User
-  created_at: string
-  updated_at: string
   job_id: number
   job?: Job
-}
-
-export type Transaction = {
-  id?: null | number
-  amount: number
   user_id: number
   user?: User
-  direction: ('from_system' | 'to_system')
 }
 
 export type Contract = {
   id?: null | number
-  buyer_user_id: number
-  buyer_user?: User
-  seller_user_id: number
-  seller_user?: User
-  start_time: string
+  real_price: number
+  real_description: string
   estimated_finish_time: string
-  claim_finish_time: null | string
+  real_finish_time: null | string
   confirm_finish_time: null | string
-  reject_finish_time: null | string
   cancel_time: null | string
-  cancel_by_user_id: null | number
-  cancel_by_user?: User
-  estimated_payment_release_time: string
-  system_receive_payment_id: null | number
-  system_receive_payment?: Transaction
-  system_send_payment_id: null | number
-  system_send_payment?: Transaction
   job_id: number
   job?: Job
 }
 
-export type ChatMessage = {
+export type Chatroom = {
   id?: null | number
-  contract_id: number
+  job_id: number
+  job?: Job
+  supplier_id: number
+  supplier?: User
+  demander_id: number
+  demander?: User
+  contract_id: null | number
   contract?: Contract
+}
+
+export type Message = {
+  id?: null | number
+  chatroom_id: number
+  chatroom?: Chatroom
   user_id: number
   user?: User
-  content: number
+  content: string
+}
+
+export type Transaction = {
+  id?: null | number
+  real_price: number
+  contract_id: number
+  contract?: Contract
+  direction: ('buyer_to_system' | 'system_to_seller' | 'system_to_buyer')
 }

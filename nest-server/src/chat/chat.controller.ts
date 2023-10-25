@@ -9,7 +9,7 @@ import {
 } from '@nestjs/common'
 import { ChatService } from './chat.service'
 import { UserService } from '../user/user.service'
-import { id, int, object, string } from 'cast.ts'
+import { date, id, int, object, string } from 'cast.ts'
 
 @Controller('chat')
 export class ChatController {
@@ -42,21 +42,16 @@ export class ChatController {
     return result[0]
   }
 
-  @Get(':chatroom_id/messages')
-  async getContent(
+  @Get('room/:chatroom_id')
+  async getRoomData(
     @Headers('Authorization') authorization,
     @Param('chatroom_id') chatroom_id,
   ) {
+    console.log({ authorization })
+
     let user_id = await this.userService.authorize(authorization)
     // 获取消息
-    return await this.chatService.getMessage(chatroom_id)
-
-    // return {
-    //   contract_id: contract_id,
-    //   messages: messages,
-    // }
-    return this.chatService.getMessage(1)
-    // return this.chatService.getMessage(contract_id)
+    return await this.chatService.getRoomData({ user_id, chatroom_id })
   }
 
   @Get('chatroom')
@@ -76,20 +71,37 @@ export class ChatController {
     let input = object({
       body: object({
         // updated_at: int(),
-        description: string(),
-        price: int(),
-        date: string(),
-        time: string(),
+        real_description: string(),
+        real_price: int(),
+        estimated_finish_time: date(),
       }),
       params: object({
-        contract_id: id(),
+        chatroom_id: id(),
       }),
     }).parse({ body, params })
-    const result = await this.chatService.postContract({
-      contract_id: input.params.contract_id,
-      description: input.body.description,
+    return await this.chatService.postContract({
+      chatroom_id: input.params.chatroom_id,
+      real_description: input.body.real_description,
+      real_price: input.body.real_price,
+      estimated_finish_time: input.body.estimated_finish_time,
       user_id,
     })
-    return result[0]
+  }
+
+  @Post(':job_id/start-chat')
+  async startChatroom(
+    @Param() params,
+    @Headers('Authorization') authorization,
+  ) {
+    let user_id = await this.userService.authorize(authorization)
+    let input = object({
+      params: object({
+        job_id: id(),
+      }),
+    }).parse({ params })
+    return this.chatService.startChatroom({
+      job_id: input.params.job_id,
+      user_id,
+    })
   }
 }

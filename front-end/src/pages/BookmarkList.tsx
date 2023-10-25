@@ -9,41 +9,28 @@ import {
   IonPage,
   IonTitle,
   IonToolbar,
-  IonAvatar,
   IonSearchbar,
   IonAccordion,
   IonAccordionGroup,
   IonSegment,
   IonSegmentButton,
-  IonCard,
   IonIcon,
-  IonCardContent,
 } from "@ionic/react";
-import { bookmark, star, starOutline } from "ionicons/icons";
+import { add, star } from "ionicons/icons";
 import "./HomePage.css";
 import useGet from "../hooks/useGet";
-import { api_origin, del } from "../api/config";
-import { useParams } from "react-router";
-import useAuth from "../hooks/useAuth";
+import { del, post } from "../api/config";
 import { useEvent } from "react-use-event";
 import { JobCard, jobCardParser } from "../components/JobCard";
-import {
-  array,
-  date,
-  float,
-  id,
-  object,
-  string,
-  int,
-  values,
-  number,
-} from "cast.ts";
+import { array, number, object } from "cast.ts";
 import useToast from "../hooks/useToast";
 import {
   AddBookmarkEvent,
+  AddChatroomEvent,
   CancelJobEvent,
   RemoveBookmarkEvent,
 } from "../events";
+import { useParams } from "react-router";
 
 let bookmarkParser = object({
   jobList: array(jobCardParser),
@@ -58,6 +45,8 @@ const BookmarkList: React.FC = () => {
 
   const dispatchRemoveBookmarkEvent =
     useEvent<RemoveBookmarkEvent>("RemoveBookmark");
+
+  const dispatchAddChatroomEvent = useEvent<AddChatroomEvent>("AddChatroom");
 
   useEvent<AddBookmarkEvent>("AddBookmark", (event) => {
     bookmarkList.setData((data) => {
@@ -116,9 +105,19 @@ const BookmarkList: React.FC = () => {
     }
   };
 
-  useEffect(() => {
-    console.log("bookmark page");
-  }, []);
+  const startChatroom = async (job_id: number) => {
+    post(`/chat/${job_id}/start-chat`, {}, object({ chatroom_id: number() }))
+      .then((json) => {
+        console.log("POST result:", json);
+        let chatroom_id = json.chatroom_id;
+        // 在这里执行打开新聊天室的操作，例如导航到聊天室页面
+        // TODO
+        dispatchAddChatroomEvent({ chatroom_id });
+      })
+      .catch((error) => {
+        toast.showError(error);
+      });
+  };
 
   return (
     <IonPage className="HomePage">
@@ -133,9 +132,6 @@ const BookmarkList: React.FC = () => {
           </IonList>
           <IonAccordionGroup>
             <IonAccordion value="first">
-              {/* <IonItem slot="header" color="light">
-                <IonLabel>Common Tag</IonLabel>
-              </IonItem> */}
               <div slot="content">
                 <IonButton>Education</IonButton>
                 <IonButton>Cleaning</IonButton>
@@ -153,11 +149,6 @@ const BookmarkList: React.FC = () => {
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen className="ion-padding">
-        <IonHeader collapse="condense">
-          <IonToolbar>
-            <IonTitle size="large">{title}</IonTitle>
-          </IonToolbar>
-        </IonHeader>
         <IonSegment
           value={segment}
           onIonChange={(e) => setSegment(e.detail.value as any)}
@@ -174,11 +165,14 @@ const BookmarkList: React.FC = () => {
                   <JobCard
                     key={index}
                     job={job}
-                    buttons={
+                    buttons={[
+                      <IonButton onClick={() => startChatroom(job.job_id)}>
+                        chat
+                      </IonButton>,
                       <IonButton onClick={() => deleteBookmark(job.job_id)}>
                         <IonIcon slot="icon-only" icon={star}></IonIcon>
-                      </IonButton>
-                    }
+                      </IonButton>,
+                    ]}
                   />
                 );
               })

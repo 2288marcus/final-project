@@ -30,6 +30,7 @@ import {
 import "./Menu.css";
 import { routes } from "../routes";
 import useAuth from "../hooks/useAuth";
+import { useEffect, useState } from "react";
 
 interface AppPage {
   url: string;
@@ -116,6 +117,13 @@ const Menu: React.FC = () => {
     // },
   ];
 
+  const [mode, setMode] = useState("dark");
+
+  useEffect(() => {
+    let html = document.body.parentElement!;
+    html.dataset.theme = mode;
+  }, [mode]);
+
   return (
     <IonMenu contentId="main" type="overlay">
       <IonContent>
@@ -123,8 +131,14 @@ const Menu: React.FC = () => {
           <IonListHeader>Fair</IonListHeader>
           <IonNote>Deal</IonNote>
           <IonItem>
-            <IonToggle>
-              Dark Mode <IonIcon icon={sunny}></IonIcon>
+            <IonToggle
+              value={mode}
+              onIonChange={() => {
+                setMode(mode == "dark" ? "light" : "dark");
+              }}
+              style={{ textTransform: "capitalize" }}
+            >
+              {mode} Mode <IonIcon icon={sunny}></IonIcon>
             </IonToggle>
           </IonItem>
           {appPages.map((appPage, index) => {

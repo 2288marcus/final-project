@@ -149,7 +149,7 @@ const HomePage: React.FC = () => {
             <IonMenuButton />
           </IonButtons>
           <IonList class="SH">
-            <IonTitle>Home Page</IonTitle>
+            <IonTitle>{title}</IonTitle>
           </IonList>
         </IonToolbar>
       </IonHeader>

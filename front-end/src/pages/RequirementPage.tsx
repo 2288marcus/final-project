@@ -271,11 +271,12 @@ const RequirementPage: React.FC = () => {
               <div className="ion-padding-horizontal d-flex">
                 {commonTags.data?.tagList?.map((tag) => (
                   <IonChip
+                    style={{ padding: "25px" }}
                     key={tag.id}
                     onClick={() => setSelectedTags([...selectedTags, tag.name])}
                     hidden={selectedTags.includes(tag.name)}
                   >
-                    <div>
+                    <div style={{ fontSize: "5px" }}>
                       <div>{tag.name}</div>
                       <div>({tag.used} used)</div>
                     </div>
