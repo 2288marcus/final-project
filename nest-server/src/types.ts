@@ -55,14 +55,14 @@ export type Bookmark = {
 
 export type Contract = {
   id?: null | number
+  job_id: number
+  job?: Job
   real_price: number
   real_description: string
   estimated_finish_time: string
   real_finish_time: null | string
   confirm_finish_time: null | string
   cancel_time: null | string
-  job_id: number
-  job?: Job
 }
 
 export type Chatroom = {
@@ -73,8 +73,6 @@ export type Chatroom = {
   supplier?: User
   demander_id: number
   demander?: User
-  contract_id: null | number
-  contract?: Contract
 }
 
 export type Message = {
@@ -92,4 +90,8 @@ export type Transaction = {
   contract_id: number
   contract?: Contract
   direction: ('buyer_to_system' | 'system_to_seller' | 'system_to_buyer')
+  stripe_checkout_session_id: string
+  start_time: string
+  confirm_time: null | string
+  cancel_time: null | string
 }
