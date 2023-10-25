@@ -24,3 +24,8 @@ export type AddChatroomEvent = {
   type: "AddChatroom";
   chatroom_id: number;
 };
+
+export type AddSearchTagEvent = {
+  type: "AddSearchTag";
+  chatroom_id: number;
+};
