@@ -42,6 +42,7 @@ import {
   id,
   date,
   float,
+  optional,
 } from "cast.ts";
 import "./Chatroom.css";
 import useGet from "../hooks/useGet";
@@ -68,7 +69,7 @@ let getRoomDataParser = object({
       time: string(),
     })
   ),
-  contract: nullable(
+  contract: optional(
     object({
       contract_id: id(),
       real_description: string(),
@@ -290,8 +291,8 @@ const Chatroom: React.FC = () => {
             <IonBackButton defaultHref={routes.ChatroomList}></IonBackButton>
           </IonButtons>
           <IonTitle>
-            <div>{roomData.data?.room.title}</div>
-            <small>{roomData.data?.room.created_at.toLocaleString()}</small>
+            <div>{roomData.data?.room?.title}</div>
+            <small>{roomData.data?.room?.created_at?.toLocaleString()}</small>
           </IonTitle>
           {/* <IonCardTitle>{chatroom_title}</IonCardTitle>
           <IonCardSubtitle>Created at: {chatroom_created_at}</IonCardSubtitle> */}
@@ -323,10 +324,10 @@ const Chatroom: React.FC = () => {
           <IonListHeader>Job Info</IonListHeader>
           <IonCard>
             <IonCardContent>
-              <p>Title: {roomData.data?.room.title}</p>
-              <p>Type: {roomData.data?.room.type}</p>
-              <p>Price: ${roomData.data?.room.price}HKD</p>
-              <p>Description: {roomData.data?.room.description}</p>
+              <p>Title: {roomData.data?.room?.title}</p>
+              <p>Type: {roomData.data?.room?.type}</p>
+              <p>Price: ${roomData.data?.room?.price}HKD</p>
+              <p>Description: {roomData.data?.room?.description}</p>
             </IonCardContent>
           </IonCard>
 
