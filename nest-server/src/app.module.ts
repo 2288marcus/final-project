@@ -4,14 +4,12 @@ import { AppService } from './app.service'
 import { UserModule } from './user/user.module'
 import { KnexModule } from 'nest-knexjs'
 import * as dotenv from 'dotenv'
-import { MulterModule } from '@nestjs/platform-express'
 import { env } from '../env'
 import { JobModule } from './job/job.module'
 import { ChatService } from './chat/chat.service'
 import { ChatModule } from './chat/chat.module'
 import { TagModule } from './tag/tag.module'
 import { ContractModule } from './contract/contract.module'
-import { StripeModule } from '@golevelup/nestjs-stripe'
 
 dotenv.config()
 @Module({
