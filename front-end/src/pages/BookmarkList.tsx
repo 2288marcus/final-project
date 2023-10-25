@@ -16,19 +16,21 @@ import {
   IonSegmentButton,
   IonIcon,
 } from "@ionic/react";
-import { star } from "ionicons/icons";
+import { add, star } from "ionicons/icons";
 import "./HomePage.css";
 import useGet from "../hooks/useGet";
-import { del } from "../api/config";
+import { del, post } from "../api/config";
 import { useEvent } from "react-use-event";
 import { JobCard, jobCardParser } from "../components/JobCard";
-import { array, object } from "cast.ts";
+import { array, number, object } from "cast.ts";
 import useToast from "../hooks/useToast";
 import {
   AddBookmarkEvent,
+  AddChatroomEvent,
   CancelJobEvent,
   RemoveBookmarkEvent,
 } from "../events";
+import { useParams } from "react-router";
 
 let bookmarkParser = object({
   jobList: array(jobCardParser),
@@ -43,6 +45,8 @@ const BookmarkList: React.FC = () => {
 
   const dispatchRemoveBookmarkEvent =
     useEvent<RemoveBookmarkEvent>("RemoveBookmark");
+
+  const dispatchAddChatroomEvent = useEvent<AddChatroomEvent>("AddChatroom");
 
   useEvent<AddBookmarkEvent>("AddBookmark", (event) => {
     bookmarkList.setData((data) => {
@@ -101,6 +105,20 @@ const BookmarkList: React.FC = () => {
     }
   };
 
+  const startChatroom = async (job_id: number) => {
+    post(`/chat/${job_id}/start-chat`, {}, object({ chatroom_id: number() }))
+      .then((json) => {
+        console.log("POST result:", json);
+        let chatroom_id = json.chatroom_id;
+        // 在这里执行打开新聊天室的操作，例如导航到聊天室页面
+        // TODO
+        dispatchAddChatroomEvent({ chatroom_id });
+      })
+      .catch((error) => {
+        toast.showError(error);
+      });
+  };
+
   return (
     <IonPage className="HomePage">
       <IonHeader>
@@ -147,11 +165,14 @@ const BookmarkList: React.FC = () => {
                   <JobCard
                     key={index}
                     job={job}
-                    buttons={
+                    buttons={[
+                      <IonButton onClick={() => startChatroom(job.job_id)}>
+                        chat
+                      </IonButton>,
                       <IonButton onClick={() => deleteBookmark(job.job_id)}>
                         <IonIcon slot="icon-only" icon={star}></IonIcon>
-                      </IonButton>
-                    }
+                      </IonButton>,
+                    ]}
                   />
                 );
               })

@@ -4,7 +4,9 @@ export default function useToast() {
   const [present, dismiss] = useIonToast();
   function showError(error: any) {
     present({
-      message: String(error),
+      message: String(error)
+        .replace("Error: ", "")
+        .replace("Invalid object, ", ""),
       color: "danger",
       duration: 5000,
       buttons: [{ text: "Dismiss", handler: dismiss }],
@@ -18,7 +20,7 @@ export default function useToast() {
       buttons: [{ text: "Dismiss", handler: dismiss }],
     });
   }
-  function Warning(message: string) {
+  function showWarning(message: string) {
     present({
       message,
       color: "Warning",
@@ -26,5 +28,5 @@ export default function useToast() {
       buttons: [{ text: "Dismiss", handler: dismiss }],
     });
   }
-  return { showError, showSuccess, Warning };
+  return { showError, showSuccess, showWarning };
 }

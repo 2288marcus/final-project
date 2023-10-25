@@ -30,8 +30,17 @@ export class ChatService {
 
   async getRoomData(input: { user_id: number; chatroom_id: number }) {
     let room = await this.knex('chatroom')
-      .select('job_id', 'supplier_id', 'demander_id', 'contract_id')
-      .where('id', input.chatroom_id)
+      .select(
+        'chatroom.job_id',
+        'chatroom.supplier_id',
+        'chatroom.demander_id',
+        'chatroom.contract_id',
+        'chatroom.created_at',
+        'job.title',
+        'job.type',
+      )
+      .innerJoin('job', 'job.id', 'chatroom.job_id')
+      .where('chatroom.id', input.chatroom_id)
       .first()
 
     // console.log({ room }, { input })
@@ -60,6 +69,7 @@ export class ChatService {
             'contract.id as contract_id',
             'contract.real_description',
             'contract.created_at',
+            'contract.real_price',
             'user.username',
           )
           .from('contract')
@@ -68,6 +78,7 @@ export class ChatService {
           .first()
 
     return {
+      room,
       messages,
       contract,
       supplier: await this.selectRoomMember(room.supplier_id),
@@ -102,23 +113,73 @@ export class ChatService {
       .join('job', 'job.id', 'chatroom.job_id')
       .where('supplier_id', user_id)
       .orWhere('demander_id', user_id)
-      .orderBy('chatroom.created_at', 'asc')
+      .orderBy('chatroom.created_at', 'desc')
 
     return { chatroomList }
   }
 
   async postContract(input: {
-    contract_id: number
-    description: string
+    chatroom_id: number
+    real_description: string
+    real_price: number
+    estimated_finish_time: Date
     user_id: number
   }) {
-    return await this.knex
+    let chatroom = await this.knex('chatroom')
+      .select('job_id')
+      .where({ id: input.chatroom_id })
+      .andWhereRaw('supplier_id = ? or demander_id = ?', [
+        input.user_id,
+        input.user_id,
+      ])
+      .first()
+    if (!chatroom) throw new NotFoundException('chatroom not found')
+
+    let [{ id }] = await this.knex
       .insert({
-        chatroom_id: input.contract_id,
-        real_description: input.description,
-        user_id: input.user_id,
+        job_id: chatroom.job_id,
+        real_description: input.real_description,
+        real_price: input.real_price,
+        estimated_finish_time: input.estimated_finish_time,
       })
       .into('contract')
       .returning('id')
+    return { contract_id: id }
+  }
+
+  async startChatroom(input: { job_id: number; user_id: number }) {
+    let job = await this.knex('job')
+      .select('user_id', 'type')
+      .where({ id: input.job_id })
+      .first()
+
+    let supplier_id
+    let demander_id
+
+    if (job.type == 'supply') {
+      supplier_id = job.user_id
+      demander_id = input.user_id
+    } else if (job.type == 'demand') {
+      demander_id = job.user_id
+      supplier_id = input.user_id
+    }
+    let chatroom = await this.knex
+      .from('chatroom')
+      .select('id')
+      .where({ job_id: input.job_id, supplier_id, demander_id })
+      .first()
+    if (chatroom) {
+      return { chatroom_id: chatroom.id }
+    }
+
+    let [{ id }] = await this.knex
+      .insert({
+        job_id: input.job_id,
+        supplier_id,
+        demander_id,
+      })
+      .into('chatroom')
+      .returning('id')
+    return { chatroom_id: id }
   }
 }
