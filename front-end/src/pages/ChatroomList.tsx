@@ -97,13 +97,13 @@ const ChatroomList: React.FC = () => {
                     <div>
                       <h1>Job: {chatroom.title}</h1>
                       <p>
-                        created_at:
+                        Created_at:
                         {chatroom.created_at
                           .replace("T", ", ")
                           .replace("Z", "")}
                       </p>
-                      <p>supplier: {chatroom.supplier_username}</p>
-                      <p>demander: {chatroom.demander_username}</p>
+                      <p>Supplier: {chatroom.supplier_username}</p>
+                      <p>Demander: {chatroom.demander_username}</p>
                       <IonButton routerLink={`/Chatroom/${chatroom.id}`}>
                         chat now !!
                       </IonButton>

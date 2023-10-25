@@ -34,10 +34,11 @@ export class ChatService {
         'chatroom.job_id',
         'chatroom.supplier_id',
         'chatroom.demander_id',
-        'chatroom.contract_id',
         'chatroom.created_at',
         'job.title',
         'job.type',
+        'job.price',
+        'job.description',
       )
       .innerJoin('job', 'job.id', 'chatroom.job_id')
       .where('chatroom.id', input.chatroom_id)
@@ -62,20 +63,16 @@ export class ChatService {
       .where({ chatroom_id: input.chatroom_id })
       .orderBy('message.created_at', 'asc')
 
-    let contract = !room.contract_id
-      ? null
-      : await this.knex
-          .select(
-            'contract.id as contract_id',
-            'contract.real_description',
-            'contract.created_at',
-            'contract.real_price',
-            'user.username',
-          )
-          .from('contract')
-          .join('user', 'user.id', 'contract.job_id')
-          .where('contract.id', room.contract_id)
-          .first()
+    let contract = await this.knex
+      .select(
+        'contract.id as contract_id',
+        'contract.real_description',
+        'contract.created_at',
+        'contract.real_price',
+      )
+      .from('contract')
+      .where('contract.job_id', room.job_id)
+      .first()
 
     return {
       room,
@@ -128,7 +125,7 @@ export class ChatService {
     let chatroom = await this.knex('chatroom')
       .select('job_id')
       .where({ id: input.chatroom_id })
-      .andWhereRaw('supplier_id = ? or demander_id = ?', [
+      .andWhereRaw('(supplier_id = ? or demander_id = ?)', [
         input.user_id,
         input.user_id,
       ])
@@ -144,6 +141,7 @@ export class ChatService {
       })
       .into('contract')
       .returning('id')
+
     return { contract_id: id }
   }
 

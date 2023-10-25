@@ -15,6 +15,7 @@ import {
   IonSegment,
   IonSegmentButton,
   IonIcon,
+  useIonRouter,
 } from "@ionic/react";
 import { add, star } from "ionicons/icons";
 import "./HomePage.css";
@@ -31,6 +32,7 @@ import {
   RemoveBookmarkEvent,
 } from "../events";
 import { useParams } from "react-router";
+import { routes } from "../routes";
 
 let bookmarkParser = object({
   jobList: array(jobCardParser),
@@ -105,6 +107,8 @@ const BookmarkList: React.FC = () => {
     }
   };
 
+  const router = useIonRouter();
+
   const startChatroom = async (job_id: number) => {
     post(`/chat/${job_id}/start-chat`, {}, object({ chatroom_id: number() }))
       .then((json) => {
@@ -113,6 +117,7 @@ const BookmarkList: React.FC = () => {
         // 在这里执行打开新聊天室的操作，例如导航到聊天室页面
         // TODO
         dispatchAddChatroomEvent({ chatroom_id });
+        router.push(routes.Chatroom(chatroom_id));
       })
       .catch((error) => {
         toast.showError(error);

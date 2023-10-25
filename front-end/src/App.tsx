@@ -100,7 +100,7 @@ const App: React.FC = () => {
                 <Route path={routes.welcome} exact={true}>
                   <Welcome />
                 </Route>
-                <Route path={routes.Chatroom} exact={true}>
+                <Route path={routes.Chatroom(":id")} exact={true}>
                   <Chatroom />
                 </Route>
                 <Route path={routes.ChatroomList} exact={true}>

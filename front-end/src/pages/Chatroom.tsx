@@ -18,6 +18,8 @@ import {
   IonInput,
   IonCard,
   IonTitle,
+  IonListHeader,
+  IonCardContent,
 } from "@ionic/react";
 import {
   document,
@@ -45,8 +47,8 @@ import "./Chatroom.css";
 import useGet from "../hooks/useGet";
 import useAuth from "../hooks/useAuth";
 import { useParams } from "react-router";
-import { div } from "@beenotung/tslib";
 import useToast from "../hooks/useToast";
+import { routes } from "../routes";
 
 // const socket = io(api_origin);
 let getRoomDataParser = object({
@@ -55,6 +57,8 @@ let getRoomDataParser = object({
     created_at: date(),
     title: string(),
     type: string(),
+    description: string(),
+    price: string(),
   }),
   messages: array(
     object({
@@ -283,7 +287,7 @@ const Chatroom: React.FC = () => {
       <IonHeader>
         <IonToolbar color="light">
           <IonButtons slot="start">
-            <IonBackButton defaultHref="/ChatroomList"></IonBackButton>
+            <IonBackButton defaultHref={routes.ChatroomList}></IonBackButton>
           </IonButtons>
           <IonTitle>
             <div>{roomData.data?.room.title}</div>
@@ -304,7 +308,7 @@ const Chatroom: React.FC = () => {
       >
         <IonHeader>
           <IonToolbar color="light">
-            <IonTitle>Job Contract</IonTitle>
+            <IonTitle>Job Details</IonTitle>
             <IonButtons slot="start">
               <IonButton
                 color="primary"
@@ -316,15 +320,40 @@ const Chatroom: React.FC = () => {
           </IonToolbar>
         </IonHeader>
         <IonContent className="ion-padding" color="light">
-          <IonCard className="ion-padding">
-            <IonCardTitle>
-              {roomData.data?.contract?.real_description}
-              <br />${roomData.data?.contract?.real_price.toLocaleString()}
-            </IonCardTitle>
-            <IonCardSubtitle>
-              {roomData.data?.contract?.created_at.toLocaleString()}
-            </IonCardSubtitle>
+          <IonListHeader>Job Info</IonListHeader>
+          <IonCard>
+            <IonCardContent>
+              <p>Title: {roomData.data?.room.title}</p>
+              <p>Type: {roomData.data?.room.type}</p>
+              <p>Price: ${roomData.data?.room.price}HKD</p>
+              <p>Description: {roomData.data?.room.description}</p>
+            </IonCardContent>
           </IonCard>
+
+          {roomData.data?.contract ? (
+            <>
+              <IonListHeader>Contract</IonListHeader>
+              <IonCard className="ion-padding">
+                <IonCardContent>
+                  <p>Payment Status: Demander not pay yet.</p>
+                  {auth.state?.id == roomData.data.demander.id ? (
+                    <>
+                      <IonButton>Pay</IonButton>
+                    </>
+                  ) : null}
+                </IonCardContent>
+                <IonCardContent>
+                  Description: {roomData.data?.contract?.real_description}
+                  <br />
+                  Price: ${roomData.data?.contract?.real_price.toLocaleString()}
+                  HKD
+                  <br />
+                  Estimated finish time:{" "}
+                  {roomData.data?.contract?.created_at.toLocaleString()}
+                </IonCardContent>
+              </IonCard>
+            </>
+          ) : null}
         </IonContent>
       </IonModal>
       <IonContent>
@@ -358,9 +387,10 @@ const Chatroom: React.FC = () => {
           )}
           <div ref={contentRef}></div>
         </div> */}
-        <div>
-          {roomData.render((json) =>
-            json.messages.map((message) => (
+
+        {roomData.render((json) => (
+          <>
+            {json.messages.map((message) => (
               <div
                 key={message.id}
                 className="message-box-line"
@@ -377,9 +407,9 @@ const Chatroom: React.FC = () => {
                   </div>
                 </IonCard>
               </div>
-            ))
-          )}
-        </div>
+            ))}
+          </>
+        ))}
       </IonContent>
       <IonFooter>
         {error ? (
