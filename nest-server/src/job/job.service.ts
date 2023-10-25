@@ -44,7 +44,10 @@ export class JobService {
 
   async searchJobList(
     user_id: number | null,
-    filter: { user_id: number | null },
+    filter: {
+      user_id: number | null
+      keyword: string | null
+    },
   ) {
     let query = this.knex
 
@@ -59,6 +62,9 @@ export class JobService {
       .groupBy('job.id', 'user.id')
     if (filter.user_id) {
       query = query.where('user.id', filter.user_id)
+    }
+    if (filter.keyword) {
+      query = query.whereILike('job.title', '%' + filter.keyword + '%')
     }
     return this.queryJobList(query)
   }

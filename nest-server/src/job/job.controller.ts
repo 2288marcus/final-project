@@ -28,31 +28,20 @@ export class JobController {
     private userService: UserService,
   ) {}
 
-  @Get()
-  async getAllJobList(@Query() query, @Headers('Authorization') authorization) {
-    let user_id = await this.userService
-      .authorize(authorization)
-      .catch(() => null)
-    return this.jobService.searchJobList(user_id, {
-      user_id: null,
-    })
-  }
-
   @Get('search')
-  async getUserJobList(
-    @Query() query,
-    @Headers('Authorization') authorization,
-  ) {
+  async searchJobList(@Query() query, @Headers('Authorization') authorization) {
     let user_id = await this.userService
       .authorize(authorization)
       .catch(() => null)
     let input = object({
       query: object({
         user_id: optional(id()),
+        keyword: optional(string()),
       }),
     }).parse({ query })
     return this.jobService.searchJobList(user_id, {
       user_id: input.query.user_id,
+      keyword: input.query.keyword,
     })
   }
 
