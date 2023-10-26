@@ -8,7 +8,6 @@ import { env } from '../env'
 import { Stripe } from 'stripe'
 import { InjectModel } from 'nest-knexjs'
 import { Knex } from 'knex'
-import { later } from '@beenotung/tslib/async/wait'
 
 const stripe = new Stripe(env.STRIPE_SECRET_KEY, {
   apiVersion: '2023-10-16',
@@ -26,39 +25,6 @@ export class ContractService {
       .first()
     if (!contract) throw new NotFoundException('contract not found')
     let amount_in_cent = contract.real_price * 100
-
-    // const checkoutSession = await stripe.checkout.sessions.create({
-    //   line_items: [
-    //     {
-    //       price_data: {
-    //         currency: 'hkd',
-    //         product_data: {
-    //           name: contract.title,
-    //         },
-    //         unit_amount: amount_in_cent,
-    //       },
-    //       quantity: 1,
-    //     },
-    //   ],
-    //   mode: 'payment',
-    //   success_url: `${env.SERVER_ORIGIN}/contract/${contract_id}/confirm-payment`,
-    //   cancel_url: `${env.SERVER_ORIGIN}/contract/${contract_id}/cancel-payment`,
-    // })
-    // console.log('stripe checkout session id:', checkoutSession.id)
-
-    // console.log('stripe checkout session:', checkoutSession)
-
-    // const paymentIntent = await stripe.paymentIntents.create({
-    //   amount: amount_in_cent,
-    //   currency: 'hkd',
-    //   automatic_payment_methods: { enabled: true },
-    //   description: 'Service Fee of ' + contract.title,
-    //   confirm: true,
-    //   payment_method: 'card',
-    //   return_url: `${env.SERVER_ORIGIN}/contract/${contract_id}/confirm-payment`,
-    // })
-    // console.log('payment intent id:', paymentIntent.id)
-    // console.log('payment intent:', paymentIntent)
 
     const checkoutSession = await stripe.checkout.sessions.create({
       mode: 'payment',
@@ -100,13 +66,23 @@ export class ContractService {
     return { url: checkoutSession.url }
     // return { url: paymentIntent.url }
   }
+  //////////////////////////////////////////
+  async getChatroom(id: number) {
+    let room_id = await this.knex
+      .select('room_id')
+      .from('contract')
+      .where({ id })
 
-  async confirmCheckout(contract_id: number) {
+    return { room_id }
+  }
+  //////////////////////////////////////////
+  async confirmCheckout(contract_id: number, id: number) {
     // TODO check status from stripe(stripe:API)
     let transaction = await this.knex
       .select('transaction.stripe_checkout_session_id', 'transaction.id')
       .from('transaction')
       .where('transaction.contract_id', contract_id)
+
       .orderBy('id', 'desc')
       .first()
 
