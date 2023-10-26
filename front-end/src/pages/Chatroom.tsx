@@ -62,8 +62,6 @@ let getRoomDataParser = object({
     type: string(),
     description: string(),
     price: string(),
-    real_finish_time: optional(date()),
-    confirm_finish_time: optional(date()),
   }),
   messages: array(
     object({
@@ -79,6 +77,8 @@ let getRoomDataParser = object({
       real_description: string(),
       real_price: float(),
       created_at: date(),
+      real_finish_time: optional(date()),
+      confirm_finish_time: optional(date()),
     })
   ),
   supplier: object({
@@ -395,7 +395,7 @@ const Chatroom: React.FC = () => {
               <IonListHeader>Contract</IonListHeader>
               <small>
                 Status:
-                {roomData.data.room.real_finish_time != null
+                {roomData.data.contract.real_finish_time != null
                   ? " contract finished"
                   : " contract not finished"}
               </small>
@@ -406,8 +406,8 @@ const Chatroom: React.FC = () => {
                       <IonButton onClick={() => Payment}>Pay</IonButton>
                       <IonButton
                         disabled={
-                          roomData.data?.room?.real_finish_time != null ||
-                          roomData.data?.room?.confirm_finish_time == null
+                          roomData.data?.contract?.real_finish_time != null ||
+                          roomData.data?.contract?.confirm_finish_time == null
                         }
                         onClick={() =>
                           createRealFinishTime(
@@ -423,7 +423,7 @@ const Chatroom: React.FC = () => {
                     <>
                       <IonButton
                         disabled={
-                          roomData.data?.room?.confirm_finish_time != null
+                          roomData.data?.contract?.confirm_finish_time != null
                         }
                         onClick={() =>
                           createConfirmFinishTime(
@@ -446,10 +446,10 @@ const Chatroom: React.FC = () => {
                   {roomData.data?.contract?.created_at.toLocaleString()}
                   <br />
                   Confirm finish time:
-                  {roomData.data?.room?.confirm_finish_time?.toLocaleString()}
+                  {roomData.data?.contract?.confirm_finish_time?.toLocaleString()}
                   <br />
                   Real finish time:
-                  {roomData.data?.room?.real_finish_time?.toLocaleString()}
+                  {roomData.data?.contract?.real_finish_time?.toLocaleString()}
                 </IonCardContent>
               </IonCard>
             </>

@@ -35,15 +35,12 @@ export class ChatService {
         'chatroom.supplier_id',
         'chatroom.demander_id',
         'chatroom.created_at',
-        'contract.confirm_finish_time',
-        'contract.real_finish_time',
         'job.title',
         'job.type',
         'job.price',
         'job.description',
       )
       .innerJoin('job', 'job.id', 'chatroom.job_id')
-      .join('contract', 'contract.job_id', 'chatroom.job_id')
       .where('chatroom.id', input.chatroom_id)
       .first()
 
@@ -72,6 +69,8 @@ export class ChatService {
         'contract.real_description',
         'contract.created_at',
         'contract.real_price',
+        'contract.confirm_finish_time',
+        'contract.real_finish_time',
       )
       .from('contract')
       .where('contract.job_id', room.job_id)
