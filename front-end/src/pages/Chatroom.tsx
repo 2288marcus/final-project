@@ -241,6 +241,23 @@ const Chatroom: React.FC = () => {
     }
   };
 
+  const Payment = async (contract_id: number) => {
+    try {
+      let res = await fetch(`${contract_id}/create-payment`, {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          Authorization: getAuthorization(),
+        },
+      });
+      let result = await res.json();
+      console.log("post real finish time result:", result[0]);
+    } catch (error) {
+      console.log("post real finish time fail:", error);
+      toast.showError(error);
+    }
+  };
+
   const createRealFinishTime = async (contract_id: number) => {
     try {
       let res = await fetch(
@@ -396,7 +413,7 @@ const Chatroom: React.FC = () => {
                 <IonCardContent>
                   {auth.state?.id == roomData.data.demander.id ? (
                     <>
-                      <IonButton>Pay</IonButton>
+                      <IonButton onClick={() => Payment}>Pay</IonButton>
                       <IonButton
                         disabled={
                           roomData.data?.contract?.real_finish_time != null ||

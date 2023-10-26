@@ -243,6 +243,9 @@ const HomePage: React.FC = () => {
               .map((job, index) => {
                 return (
                   <JobCard
+                    tagOnClick={(tag) => {
+                      setSearchText((searchText.trim() + " " + tag).trim());
+                    }}
                     key={index}
                     job={job}
                     buttons={

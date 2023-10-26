@@ -16,9 +16,14 @@ export class JobService {
     private readonly tagService: TagService,
   ) {}
 
-  private async queryJobList(query: Knex.QueryBuilder) {
-    let jobList = await query
-      .whereNull('cancel_time')
+  private async queryJobList(
+    query: Knex.QueryBuilder,
+    whereSQL: string = '',
+    whereBindings: string[] = [],
+  ) {
+    whereSQL += ` and "job"."cancel_time" is null`
+    query = query
+      .whereRaw(whereSQL, whereBindings)
       .select(
         'job.id as job_id',
         'job.user_id',
@@ -31,9 +36,9 @@ export class JobService {
         'job.cancel_time',
         this.knex.raw('count(bookmark.user_id) as has_bookmark'),
       )
-      .innerJoin('job_tag', 'job_tag.tag_id', 'tag.id')
-      .where('job_tag.job_id')
       .orderBy('job.id', 'desc')
+    // console.log('query:', query.toSQL().sql, query.toSQL().bindings)
+    let jobList = await query
     for (let job of jobList) {
       let rows = await this.knex('tag')
         .select('tag.name')
@@ -61,17 +66,38 @@ export class JobService {
         ]),
       )
       .groupBy('job.id', 'user.id')
+
+    let whereSQL = 'true'
+    let whereBindings = []
+
     if (filter.user_id) {
-      query = query.where('user.id', filter.user_id)
-    }
-    if (filter.keyword) {
-      query = query
-        .whereILike('job.description', '%' + filter.keyword + '%')
-        .orWhereILike('job.title', '%' + filter.keyword + '%')
-        .orWhereILike('user.username', '%' + filter.keyword + '%')
+      whereSQL += ` and "user.id" = ?`
+      whereBindings.push(filter.user_id)
     }
 
-    return this.queryJobList(query)
+    let keywords = filter.keyword?.split(' ') || []
+
+    for (let keyword of keywords) {
+      whereSQL += ` and (
+         "job"."description" ilike ?
+      or "job"."title" ilike ?
+      or "user"."username" ilike ?
+      or "job"."id" in (
+          select "job_tag"."job_id"
+          from "job_tag"
+          inner join "tag" on "tag"."id" = "job_tag"."tag_id"
+          where "tag"."name" ilike ?
+        )
+      )`
+      whereBindings.push(
+        '%' + keyword + '%',
+        '%' + keyword + '%',
+        '%' + keyword + '%',
+        '%' + keyword + '%',
+      )
+    }
+
+    return this.queryJobList(query, whereSQL, whereBindings)
   }
 
   //////////////////////////////////////
