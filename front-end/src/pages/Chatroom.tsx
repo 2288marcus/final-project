@@ -234,6 +234,7 @@ const Chatroom: React.FC = () => {
       setIsShowCreateContractModal(false);
       // 重置表单数据
       setContractData(defaultContractData);
+      roomData.reload();
     } catch (error) {
       console.log("post contract fail:", error);
       toast.showError(error);
@@ -270,7 +271,12 @@ const Chatroom: React.FC = () => {
         }
       );
       let result = await res.json();
-      console.log("post real finish time result:", result[0]);
+      if (result.message && result.statusCode) {
+        throw new Error(result.message);
+      }
+
+      console.log("post real finish time success");
+      roomData.reload();
     } catch (error) {
       console.log("post real finish time fail:", error);
       toast.showError(error);
@@ -290,7 +296,11 @@ const Chatroom: React.FC = () => {
         }
       );
       let result = await res.json();
-      console.log("post confirm finish time result:", result[0]);
+      if (result.message && result.statusCode) {
+        throw new Error(result.message);
+      }
+      console.log("post confirm finish time success");
+      roomData.reload();
     } catch (error) {
       console.log("post confirm finish time fail:", error);
       toast.showError(error);
