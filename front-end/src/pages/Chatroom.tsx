@@ -20,6 +20,8 @@ import {
   IonTitle,
   IonListHeader,
   IonCardContent,
+  IonRadioGroup,
+  IonRadio,
 } from "@ionic/react";
 import {
   document,
@@ -32,6 +34,7 @@ import {
   reader,
   body,
   roseOutline,
+  star,
 } from "ionicons/icons";
 import React, { useState, useEffect, useRef, useLayoutEffect } from "react";
 import { api_origin, getAuthorization, post } from "../api/config";
@@ -390,7 +393,7 @@ const Chatroom: React.FC = () => {
           </IonToolbar>
         </IonHeader>
         <IonContent className="ion-padding" color="light">
-          <IonListHeader>Job Info</IonListHeader>
+          <IonListHeader>Job Information</IonListHeader>
           <IonCard>
             <IonCardContent>
               <p>Title: {roomData.data?.room?.title}</p>
@@ -464,6 +467,20 @@ const Chatroom: React.FC = () => {
               </IonCard>
             </>
           ) : null}
+          <IonListHeader>Rating</IonListHeader>
+          <IonCard>
+            <IonRadioGroup value="strawberries">
+              <IonRadio value="grapes">1</IonRadio>
+              <br />
+              <IonRadio value="strawberries">2</IonRadio>
+              <br />
+              <IonRadio value="pineapple">3</IonRadio>
+              <br />
+              <IonRadio value="cherries">4</IonRadio>
+              <br />
+              <IonRadio value="apple">5</IonRadio>
+            </IonRadioGroup>
+          </IonCard>
         </IonContent>
       </IonModal>
       <IonContent>
