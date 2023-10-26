@@ -5,6 +5,9 @@ import {
   Param,
   HttpException,
   NotImplementedException,
+  Body,
+  Headers,
+  Query,
 } from '@nestjs/common'
 import { ContractService } from './contract.service'
 import { env } from '../env'
@@ -17,6 +20,10 @@ export class ContractController {
   async createPaymentIntent(@Param('contract_id') contract_id) {
     const paymentIntent = await this.contractService.createCheckout(contract_id)
     return paymentIntent
+  }
+  @Get(':room_id/chatroom')
+  async getChatroom(@Param('room_id') room_id) {
+    return await this.contractService.getChatroom(room_id)
   }
 
   @Get(':contract_id/confirm-payment')
@@ -33,11 +40,11 @@ export class ContractController {
 
     return `<!DOCTYPE html><html>
     <head>
-      <meta http-equiv="Refresh" content="0; url='${env.APP_ORIGIN}/Chatroom/${contract_id}" />
+      <meta http-equiv="Refresh" content="0; url='${env.APP_ORIGIN}/Chatroom/${room_id}" />
     </head>
     <body>
       <p>
-        Redirecting to ${env.APP_ORIGIN}/Chatroom/${contract_id} ...
+        Redirecting to ${env.APP_ORIGIN}/Chatroom/${room_id} ...
       </p>
     </body>
     </html>`
