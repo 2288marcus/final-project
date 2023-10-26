@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Injectable,
   NotFoundException,
   NotImplementedException,
@@ -103,7 +104,7 @@ export class ContractService {
   async confirmCheckout(contract_id: number) {
     // TODO check status from stripe(stripe:API)
     let transaction = await this.knex
-      .select('transaction.stripe_checkout_session_id')
+      .select('transaction.stripe_checkout_session_id', 'transaction.id')
       .from('transaction')
       .where('transaction.contract_id', contract_id)
       .orderBy('id', 'desc')
@@ -118,14 +119,57 @@ export class ContractService {
     if (session.status == 'complete' && session.payment_status == 'paid') {
       await this.knex
         .update({
-          confirm_time: new Date(),
+          confirm_time: this.knex.fn.now(),
         })
         .into('transaction')
+<<<<<<< HEAD
         .where('contract.id', contract_id)
         .returning('id')
       return {}
     }
 
     throw new NotImplementedException('TODO')
+=======
+        .where('transaction.id', transaction.id)
+        .returning('id')
+
+      return {}
+    }
+
+    // throw new BadRequestException('payment not completed')
+    // async getTagList(query: { searchText: string }) {
+    //   let tagList = await this.knex
+    //     .select(
+    //       'tag.id',
+    //       'tag.name',
+    //       this.knex.raw('COUNT(job_tag.job_id) as used'),
+    //     )
+    //     .from('tag')
+    //     .innerJoin('job_tag', 'tag.id', 'job_tag.tag_id')
+    //     .whereILike('tag.name', '%' + query.searchText + '%')
+    //     .groupBy('tag.id')
+    //     .orderByRaw('COUNT(job_tag.job_id) desc')
+    //     .limit(10)
+
+    //   return { tagList }
+    // }
+    //////////////////////
+
+    //////////////////////
+    // TODO update transaction
+    ///////////////////////
+    // await this.knex
+    //   .update({
+    //     confirm_time: new Date(),
+    //   })
+    //   .into('transaction')
+    //   .where('id', contract_id)
+    //   .returning('id')
+
+    ///////////////////////
+
+    // return { room_id: 2 }
+    // return {}
+>>>>>>> refs/remotes/origin/main
   }
 }
