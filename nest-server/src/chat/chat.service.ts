@@ -184,22 +184,24 @@ export class ChatService {
   }
 
   async createRealFinishTime(contract_id: number) {
-    return await this.knex
+    await this.knex
       .update({
         real_finish_time: new Date(),
       })
       .into('contract')
       .where('id', contract_id)
       .returning('id')
+    return {}
   }
 
   async createConfirmFinishTime(contract_id: number) {
-    return await this.knex
+    await this.knex
       .update({
         confirm_finish_time: new Date(),
       })
       .into('contract')
       .where('id', contract_id)
       .returning('id')
+    return {}
   }
 }

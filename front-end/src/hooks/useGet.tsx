@@ -29,8 +29,14 @@ export default function useGet<T>(url: string, parser: Parser<T>) {
     }, 1000 * 0);
   }
 
+  // useEffect(() => {
+  //   reload();
+  // }, [url]);
+
   useEffect(() => {
     reload();
+    // let timer = setInterval(reload, 1000);
+    // return () => clearInterval(timer);
   }, [url]);
 
   function render(customRender: (data: T) => any) {
