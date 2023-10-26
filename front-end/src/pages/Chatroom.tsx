@@ -30,9 +30,11 @@ import {
   checkmarkDone,
   addCircle,
   reader,
+  body,
+  roseOutline,
 } from "ionicons/icons";
 import React, { useState, useEffect, useRef, useLayoutEffect } from "react";
-import { post } from "../api/config";
+import { api_origin, getAuthorization, post } from "../api/config";
 import {
   object,
   string,
@@ -60,6 +62,8 @@ let getRoomDataParser = object({
     type: string(),
     description: string(),
     price: string(),
+    real_finish_time: optional(date()),
+    confirm_finish_time: optional(date()),
   }),
   messages: array(
     object({
@@ -236,6 +240,46 @@ const Chatroom: React.FC = () => {
     }
   };
 
+  const createRealFinishTime = async (contract_id: number) => {
+    try {
+      let res = await fetch(
+        `${api_origin}/chat/${contract_id}/contract/real-finish-time`,
+        {
+          method: "POST",
+          headers: {
+            Accept: "application/json",
+            Authorization: getAuthorization(),
+          },
+        }
+      );
+      let result = await res.json();
+      console.log("post real finish time result:", result[0]);
+    } catch (error) {
+      console.log("post real finish time fail:", error);
+      toast.showError(error);
+    }
+  };
+
+  const createConfirmFinishTime = async (contract_id: number) => {
+    try {
+      let res = await fetch(
+        `${api_origin}/chat/${contract_id}/contract/confirm-finish-time`,
+        {
+          method: "POST",
+          headers: {
+            Accept: "application/json",
+            Authorization: getAuthorization(),
+          },
+        }
+      );
+      let result = await res.json();
+      console.log("post confirm finish time result:", result[0]);
+    } catch (error) {
+      console.log("post confirm finish time fail:", error);
+      toast.showError(error);
+    }
+  };
+
   const handleDateChange = (e: CustomEvent) => {
     const selectedDate = e.detail.value;
     const currentDate = new Date().toISOString().split("T")[0];
@@ -278,8 +322,6 @@ const Chatroom: React.FC = () => {
     // 监听 messages 状态的变化
     contentRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [roomData.data?.messages]); // 当 messages 状态发生变化时触发
-
-  // let contract = useGet(`/chat/${params.id}/contract`, getRoomDataParser);
 
   const [isShowContractModal, setIsShowContractModal] = useState(false);
 
@@ -334,12 +376,46 @@ const Chatroom: React.FC = () => {
           {roomData.data?.contract ? (
             <>
               <IonListHeader>Contract</IonListHeader>
+              <small>
+                Status:
+                {roomData.data.room.real_finish_time != null
+                  ? " contract finished"
+                  : " contract not finished"}
+              </small>
               <IonCard className="ion-padding">
                 <IonCardContent>
-                  <p>Payment Status: Demander not pay yet.</p>
                   {auth.state?.id == roomData.data.demander.id ? (
                     <>
                       <IonButton>Pay</IonButton>
+                      <IonButton
+                        disabled={
+                          roomData.data?.room?.real_finish_time != null ||
+                          roomData.data?.room?.confirm_finish_time == null
+                        }
+                        onClick={() =>
+                          createRealFinishTime(
+                            roomData.data?.contract?.contract_id!
+                          )
+                        }
+                      >
+                        confirm by demander
+                      </IonButton>
+                    </>
+                  ) : null}
+                  {auth.state?.id == roomData.data.supplier.id ? (
+                    <>
+                      <IonButton
+                        disabled={
+                          roomData.data?.room?.confirm_finish_time != null
+                        }
+                        onClick={() =>
+                          createConfirmFinishTime(
+                            roomData.data?.contract?.contract_id!
+                          )
+                        }
+                      >
+                        confirm by supplier
+                      </IonButton>
                     </>
                   ) : null}
                 </IonCardContent>
@@ -349,8 +425,14 @@ const Chatroom: React.FC = () => {
                   Price: ${roomData.data?.contract?.real_price.toLocaleString()}
                   HKD
                   <br />
-                  Estimated finish time:{" "}
+                  Estimated finish time:
                   {roomData.data?.contract?.created_at.toLocaleString()}
+                  <br />
+                  Confirm finish time:
+                  {roomData.data?.room?.confirm_finish_time?.toLocaleString()}
+                  <br />
+                  Real finish time:
+                  {roomData.data?.room?.real_finish_time?.toLocaleString()}
                 </IonCardContent>
               </IonCard>
             </>

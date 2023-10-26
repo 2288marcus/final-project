@@ -35,18 +35,21 @@ export class ChatService {
         'chatroom.supplier_id',
         'chatroom.demander_id',
         'chatroom.created_at',
+        'contract.confirm_finish_time',
+        'contract.real_finish_time',
         'job.title',
         'job.type',
         'job.price',
         'job.description',
       )
       .innerJoin('job', 'job.id', 'chatroom.job_id')
+      .join('contract', 'contract.job_id', 'chatroom.job_id')
       .where('chatroom.id', input.chatroom_id)
       .first()
 
     // console.log({ room }, { input })
 
-    if (!room) throw new NotFoundException('romm not found')
+    if (!room) throw new NotFoundException('room not found')
 
     if (input.user_id != room.supplier_id && input.user_id != room.demander_id)
       throw new ForbiddenException('user not in room')
@@ -179,5 +182,25 @@ export class ChatService {
       .into('chatroom')
       .returning('id')
     return { chatroom_id: id }
+  }
+
+  async createRealFinishTime(contract_id: number) {
+    return await this.knex
+      .update({
+        real_finish_time: new Date(),
+      })
+      .into('contract')
+      .where('id', contract_id)
+      .returning('id')
+  }
+
+  async createConfirmFinishTime(contract_id: number) {
+    return await this.knex
+      .update({
+        confirm_finish_time: new Date(),
+      })
+      .into('contract')
+      .where('id', contract_id)
+      .returning('id')
   }
 }
