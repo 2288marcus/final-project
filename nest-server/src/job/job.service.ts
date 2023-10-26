@@ -31,6 +31,8 @@ export class JobService {
         'job.cancel_time',
         this.knex.raw('count(bookmark.user_id) as has_bookmark'),
       )
+      .innerJoin('job_tag', 'job_tag.tag_id', 'tag.id')
+      .where('job_tag.job_id')
       .orderBy('job.id', 'desc')
     for (let job of jobList) {
       let rows = await this.knex('tag')
@@ -41,7 +43,7 @@ export class JobService {
     }
     return { jobList }
   }
-
+  ///////////////////////////////////
   async searchJobList(
     user_id: number | null,
     filter: {
@@ -50,7 +52,6 @@ export class JobService {
     },
   ) {
     let query = this.knex
-
       .from('job')
       .innerJoin('user', 'user.id', 'job.user_id')
       .leftJoin(
@@ -64,8 +65,12 @@ export class JobService {
       query = query.where('user.id', filter.user_id)
     }
     if (filter.keyword) {
-      query = query.whereILike('job.title', '%' + filter.keyword + '%')
+      query = query
+        .whereILike('job.description', '%' + filter.keyword + '%')
+        .orWhereILike('job.title', '%' + filter.keyword + '%')
+        .orWhereILike('user.username', '%' + filter.keyword + '%')
     }
+
     return this.queryJobList(query)
   }
 
