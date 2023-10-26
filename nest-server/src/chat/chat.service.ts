@@ -201,4 +201,14 @@ export class ChatService {
       .returning('id')
     return {}
   }
+
+  async getTransactionConfirmTime(transaction_id: number) {
+    let transaction = await this.knex
+      .select('transaction.confirm_time')
+      .from('transaction')
+      .where('transaction.id', transaction_id)
+      .first()
+    if (!transaction) throw new NotFoundException('transaction not found')
+    return { transaction }
+  }
 }

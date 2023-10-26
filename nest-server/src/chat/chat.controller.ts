@@ -120,4 +120,14 @@ export class ChatController {
     let user_id = await this.userService.authorize(authorization)
     return this.chatService.createConfirmFinishTime(+contract_id)
   }
+
+  @Get('transaction/:transaction_id/confirm-time')
+  async getTransactionConfirmTime(
+    @Headers('Authorization') authorization,
+    @Param('transaction_id') transaction_id,
+  ) {
+    let user_id = await this.userService.authorize(authorization)
+    // 获取消息
+    return await this.chatService.getTransactionConfirmTime(transaction_id)
+  }
 }

@@ -8,6 +8,7 @@ import { env } from '../env'
 import { Stripe } from 'stripe'
 import { InjectModel } from 'nest-knexjs'
 import { Knex } from 'knex'
+import { later } from '@beenotung/tslib/async/wait'
 
 const stripe = new Stripe(env.STRIPE_SECRET_KEY, {
   apiVersion: '2023-10-16',
@@ -98,6 +99,14 @@ export class ContractService {
           confirm_time: this.knex.fn.now(),
         })
         .into('transaction')
+<<<<<<< HEAD
+        .where('contract.id', contract_id)
+        .returning('id')
+      return {}
+    }
+
+    throw new NotImplementedException('TODO')
+=======
         .where('transaction.id', transaction.id)
         .returning('id')
 
@@ -138,5 +147,6 @@ export class ContractService {
 
     // return { room_id: 2 }
     // return {}
+>>>>>>> refs/remotes/origin/main
   }
 }
