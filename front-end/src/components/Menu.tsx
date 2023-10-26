@@ -26,6 +26,7 @@ import {
   heartOutline,
   heartSharp,
   sunny,
+  heart,
 } from "ionicons/icons";
 import "./Menu.css";
 import { routes } from "../routes";
@@ -55,7 +56,7 @@ const Menu: React.FC = () => {
     {
       title: "Bookmark List",
       url: routes.BookmarkList,
-      iosIcon: heartOutline,
+      iosIcon: heart,
       mdIcon: heartSharp,
     },
 

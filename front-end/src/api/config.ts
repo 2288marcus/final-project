@@ -63,7 +63,7 @@ export async function get<T>(url: string, parser: Parser<T>) {
   );
 }
 
-function getAuthorization() {
+export function getAuthorization() {
   let privateKeyBase64 = "";
 
   try {

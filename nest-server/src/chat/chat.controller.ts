@@ -104,4 +104,22 @@ export class ChatController {
       user_id,
     })
   }
+
+  @Post(':contract_id/contract/real-finish-time')
+  async createRealFinishTime(
+    @Param('contract_id') contract_id,
+    @Headers('Authorization') authorization,
+  ) {
+    let user_id = await this.userService.authorize(authorization)
+    return this.chatService.createRealFinishTime(+contract_id)
+  }
+
+  @Post(':contract_id/contract/confirm-finish-time')
+  async createConfirmFinishTime(
+    @Param('contract_id') contract_id,
+    @Headers('Authorization') authorization,
+  ) {
+    let user_id = await this.userService.authorize(authorization)
+    return this.chatService.createConfirmFinishTime(+contract_id)
+  }
 }

@@ -20,6 +20,8 @@ export default function useGet<T>(url: string, parser: Parser<T>) {
     setTimeout(async () => {
       try {
         let json = await get(url, parser);
+        console.log(url, json);
+
         setData(json as State);
       } catch (error) {
         setData({ error } as State);
