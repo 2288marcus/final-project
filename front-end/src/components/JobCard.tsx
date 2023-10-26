@@ -37,7 +37,6 @@ export let jobCardParser = object({
 
 export type JobCardData = ParseResult<typeof jobCardParser>;
 export type JobType = JobCardData["type"];
-
 export function JobCard(props: {
   job: JobCardData;
   buttons: React.ReactNode;

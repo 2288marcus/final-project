@@ -90,6 +90,7 @@ export async function seed(knex: Knex): Promise<void> {
     real_finish_time: new Date(),
     confirm_finish_time: new Date(),
     cancel_time: null,
+    room_id:
   })
 
   let design_contract_id = await seedRow('contract', 'job_id', {
@@ -100,6 +101,7 @@ export async function seed(knex: Knex): Promise<void> {
     real_finish_time: new Date(),
     confirm_finish_time: new Date(),
     cancel_time: null,
+    room_id:
   })
 
   // 关联Jane Smith的第一个收藏夹数据
