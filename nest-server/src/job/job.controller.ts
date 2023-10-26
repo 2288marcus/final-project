@@ -9,16 +9,7 @@ import {
   Query,
 } from '@nestjs/common'
 import { JobService } from './job.service'
-import {
-  array,
-  int,
-  number,
-  object,
-  string,
-  values,
-  id,
-  optional,
-} from 'cast.ts'
+import { array, int, object, string, values, id, optional } from 'cast.ts'
 import { UserService } from '../user/user.service'
 
 @Controller('jobs')
@@ -45,24 +36,6 @@ export class JobController {
     })
   }
 
-  // @Post()
-  // async createJob(@Body() body, @Headers('Authorization') authorization) {
-  //   let user_id = await this.userService.authorize(authorization)
-  //   // let user_id = 1
-  //   let input = object({
-  //     body: object({
-  //       price: int({ min: 1 }),
-  //       title: string({ nonEmpty: true }),
-  //       description: string({ nonEmpty: true }),
-  //       type: values(['demand' as const, 'supply' as const]),
-  //       tags: array(string({ nonEmpty: true })),
-  //     }),
-  //   }).parse({ body })
-  //   let result = await this.jobService.createJob(input.body, user_id)
-  //   return result
-  // }
-  /////////////////////////////
-
   @Post()
   async createJob(@Body() body, @Headers('Authorization') authorization) {
     let user_id = await this.userService.authorize(authorization)
@@ -79,11 +52,27 @@ export class JobController {
     let result = await this.jobService.createJob(input.body, user_id)
     return result
   }
-  /////////////////////////////
   @Get('bookmark')
-  async getBookmarkList(@Headers('Authorization') authorization) {
-    let user_id = await this.userService.authorize(authorization)
-    return await this.jobService.getBookmarkList(user_id)
+  async getBookmarkList(
+    @Query() query,
+    @Headers('Authorization') authorization, //  {
+  ) //   let user_id = await this.userService.authorize(authorization)
+  //   return await this.jobService.getBookmarkList(user_id)
+  // }
+  {
+    let user_id = await this.userService
+      .authorize(authorization)
+      .catch(() => null)
+    let input = object({
+      query: object({
+        user_id: optional(id()),
+        keyword: optional(string()),
+      }),
+    }).parse({ query })
+    return this.jobService.getBookmarkList(user_id, {
+      user_id: input.query.user_id,
+      keyword: input.query.keyword,
+    })
   }
 
   @Delete(':job_id/bookmark')

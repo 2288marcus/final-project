@@ -114,7 +114,7 @@ const OthersProfilePage: React.FC = () => {
                     field="description"
                   />
                 </div>
-                <IonItem>
+                {/* <IonItem>
                   <IonLabel position="fixed">CV:</IonLabel>
                   <div>{draftFile?.name || profile.cv_upload}</div>
                   <IonButtons>
@@ -126,18 +126,18 @@ const OthersProfilePage: React.FC = () => {
                       <IonIcon src={cloudUpload} slot="icon-only"></IonIcon>
                     </IonButton>
                   </IonButtons>
-                </IonItem>
+                </IonItem> */}
                 <div className="d-flex-md HalfInputFieldContainer">
                   <InputField
                     inputContext={profileContext}
                     label="Full Name:"
                     field="fullName"
                   />
-                  <InputField
+                  {/* <InputField
                     inputContext={profileContext}
                     label="Volume :"
                     field="HK_phone"
-                  />
+                  /> */}
                 </div>
               </>
             );

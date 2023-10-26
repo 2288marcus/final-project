@@ -54,19 +54,19 @@ const HomePage: React.FC = () => {
   const [newTag, setNewTag] = useState("");
   const [searchedTags, setSearchedTags] = useState<Tag[]>([]);
 
-  useEffect(() => {
-    if (!newTag) {
-      setSearchedTags([]);
-      return;
-    }
-    get("/tags/search?" + new URLSearchParams({ q: newTag }), getTagListParser)
-      .then((json) => {
-        setSearchedTags(json.tagList);
-      })
-      .catch((err) => {
-        toast.showError(err);
-      });
-  }, [newTag]);
+  // useEffect(() => {
+  //   if (!newTag) {
+  //     setSearchedTags([]);
+  //     return;
+  //   }
+  //   get("/tags/search?" + new URLSearchParams({ q: newTag }), getTagListParser)
+  //     .then((json) => {
+  //       setSearchedTags(json.tagList);
+  //     })
+  //     .catch((err) => {
+  //       toast.showError(err);
+  //     });
+  // }, [newTag]);
 
   const toast = useToast();
 
@@ -153,73 +153,6 @@ const HomePage: React.FC = () => {
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen className="ion-padding">
-        {/* <IonHeader collapse="condense">
-          <IonToolbar>
-            <IonTitle size="large">{title}</IonTitle>
-          </IonToolbar>
-        </IonHeader> */}
-        {/* ///////////////////////////////////// */}
-        {/* <div className="flex-grow HalfInputField">
-          <IonItem>
-            <IonLabel position="fixed">Search:</IonLabel>
-            <IonInput
-              type="text"
-              placeholder="Tags"
-              value={newTag}
-              onIonInput={(e) => setNewTag(e.detail.value || "")}
-            />
-            <IonButtons slot="end">
-              <IonButton
-                onClick={() => {
-                  setSelectedTags([...selectedTags, newTag]);
-                  setNewTag("");
-                }}
-              >
-                <IonIcon src={add}></IonIcon>
-              </IonButton>
-            </IonButtons>
-          </IonItem>
-        </div>
-        <IonListHeader>Selected Tags:</IonListHeader>
-        <div className="ion-padding-horizontal d-flex">
-          {selectedTags.length == 0 ? (
-            <IonNote className="ion-padding-horizontal">No result</IonNote>
-          ) : null}
-          {selectedTags.map((tag) => (
-            <IonChip
-              key={tag}
-              onClick={() =>
-                setSelectedTags(
-                  selectedTags.filter((selectedTag) => selectedTag != tag)
-                )
-              }
-            >
-              {tag}
-            </IonChip>
-          ))}
-        </div>
-        {newTag && searchedTags.length > 0 ? (
-          <>
-            <IonListHeader>Suggested Tags:</IonListHeader>
-            <div className="ion-padding-horizontal d-flex">
-              {searchedTags.map((tag) => (
-                <IonChip
-                  key={tag.id}
-                  onClick={() => setSelectedTags([...selectedTags, tag.name])}
-                  hidden={selectedTags.includes(tag.name)}
-                >
-                  <div>
-                    <div>{tag.name}</div>
-                  </div>
-                </IonChip>
-              ))}
-            </div>
-          </>
-        ) : (
-          <></>
-        )} */}
-        {/* /////////////////////////////////// */}
-
         <IonSegment
           value={segment}
           onIonChange={(e) => setSegment(e.detail.value as any)}

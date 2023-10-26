@@ -45,7 +45,6 @@ import {
   date,
   float,
   optional,
-  url,
 } from "cast.ts";
 import "./Chatroom.css";
 import useGet from "../hooks/useGet";
@@ -109,10 +108,6 @@ let defaultContractData = {
   date: "",
   time: "",
 };
-
-let payResultParser = object({
-  url: url(),
-});
 
 const Chatroom: React.FC = () => {
   const title = "Chatroom List";
@@ -246,6 +241,23 @@ const Chatroom: React.FC = () => {
     }
   };
 
+  const Payment = async (contract_id: number) => {
+    try {
+      let res = await fetch(`${contract_id}/create-payment`, {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          Authorization: getAuthorization(),
+        },
+      });
+      let result = await res.json();
+      console.log("post real finish time result:", result[0]);
+    } catch (error) {
+      console.log("post real finish time fail:", error);
+      toast.showError(error);
+    }
+  };
+
   const createRealFinishTime = async (contract_id: number) => {
     try {
       let res = await fetch(
@@ -340,21 +352,6 @@ const Chatroom: React.FC = () => {
 
   const [isShowContractModal, setIsShowContractModal] = useState(false);
 
-  const contract_id = roomData.data?.contract?.contract_id;
-
-  async function pay(contract_id: number) {
-    try {
-      let json = await post(
-        `/contract/${contract_id}/create-payment`,
-        {},
-        payResultParser
-      );
-      window.location.href = json.url;
-    } catch (error) {
-      toast.showError(error);
-    }
-  }
-
   return (
     <IonPage className="Chatroom">
       <IonHeader>
@@ -414,12 +411,9 @@ const Chatroom: React.FC = () => {
               </small>
               <IonCard className="ion-padding">
                 <IonCardContent>
-                  {auth.state?.id == roomData.data.demander.id &&
-                  contract_id ? (
+                  {auth.state?.id == roomData.data.demander.id ? (
                     <>
-                      <IonButton onClick={() => pay(contract_id)}>
-                        Pay
-                      </IonButton>
+                      <IonButton onClick={() => Payment}>Pay</IonButton>
                       <IonButton
                         disabled={
                           roomData.data?.contract?.real_finish_time != null ||
