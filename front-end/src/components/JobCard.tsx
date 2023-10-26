@@ -46,7 +46,11 @@ export let jobCardParser = object({
 export type JobCardData = ParseResult<typeof jobCardParser>;
 export type JobType = JobCardData["type"];
 
-export function JobCard(props: { job: JobCardData; buttons: React.ReactNode }) {
+export function JobCard(props: {
+  job: JobCardData;
+  buttons: React.ReactNode;
+  tagOnClick?: (tag: string) => void;
+}) {
   const { job } = props;
 
   return (
@@ -85,7 +89,9 @@ export function JobCard(props: { job: JobCardData; buttons: React.ReactNode }) {
       </IonCardContent>
       <div>
         {job.tags.map((tag: string) => (
-          <IonChip key={tag}>{tag}</IonChip>
+          <IonChip onClick={() => props.tagOnClick?.(tag)} key={tag}>
+            {tag}
+          </IonChip>
         ))}
       </div>
     </IonCard>
