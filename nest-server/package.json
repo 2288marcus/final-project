@@ -22,6 +22,7 @@
     "db:update": "knex migrate:latest && erd-to-types < erd.txt > src/types.ts"
   },
   "dependencies": {
+    "@beenotung/tslib": "^22.1.1",
     "@nestjs/common": "^10.0.0",
     "@nestjs/core": "^10.0.0",
     "@nestjs/mapped-types": "*",

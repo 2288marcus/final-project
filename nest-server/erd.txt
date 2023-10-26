@@ -79,7 +79,6 @@ stripe_checkout_session_id varchar(255)
 start_time timestamp
 confirm_time timestamp null
 cancel_time timestamp null
-transaction_time timestamp null
 
 
 
