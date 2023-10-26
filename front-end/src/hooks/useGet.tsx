@@ -33,11 +33,11 @@ export default function useGet<T>(url: string, parser: Parser<T>) {
   //   reload();
   // }, [url]);
 
-  // useEffect(() => {
-  //   reload();
-  //   let timer = setInterval(reload, 1000);
-  //   return () => clearInterval(timer);
-  // }, [url]);
+  useEffect(() => {
+    reload();
+    //   let timer = setInterval(reload, 1000);
+    //   return () => clearInterval(timer);
+  }, [url]);
 
   function render(customRender: (data: T) => any) {
     if (!data) {

@@ -122,14 +122,6 @@ export class ContractService {
           confirm_time: this.knex.fn.now(),
         })
         .into('transaction')
-<<<<<<< HEAD
-        .where('contract.id', contract_id)
-        .returning('id')
-      return {}
-    }
-
-    throw new NotImplementedException('TODO')
-=======
         .where('transaction.id', transaction.id)
         .returning('id')
 
@@ -170,6 +162,5 @@ export class ContractService {
 
     // return { room_id: 2 }
     // return {}
->>>>>>> refs/remotes/origin/main
   }
 }

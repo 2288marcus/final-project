@@ -73,10 +73,21 @@ export class ChatService {
       .where('contract.job_id', room.job_id)
       .first()
 
+    let transaction = await this.knex
+      .select(
+        'transaction.id as transaction_id',
+        'transaction.created_at',
+        'transaction.confirm_time',
+      )
+      .from('transaction')
+      // .where('transaction.contract_id', contract.id)
+      .first()
+
     return {
       room,
       messages,
       contract,
+      transaction,
       supplier: await this.selectRoomMember(room.supplier_id),
       demander: await this.selectRoomMember(room.demander_id),
     }

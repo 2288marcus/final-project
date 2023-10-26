@@ -57,6 +57,16 @@ import { useParams } from "react-router";
 import useToast from "../hooks/useToast";
 import { routes } from "../routes";
 
+let getTransactionConfirmDateParser = object({
+  transaction: optional(
+    object({
+      transaction_id: id(),
+      created_at: date(),
+      confirm_time: optional(date()),
+    })
+  ),
+});
+
 // const socket = io(api_origin);
 let getRoomDataParser = object({
   room: object({
@@ -93,6 +103,13 @@ let getRoomDataParser = object({
     id: id(),
     username: string(),
   }),
+  transaction: optional(
+    object({
+      transaction_id: id(),
+      created_at: date(),
+      confirm_time: optional(date()),
+    })
+  ),
 });
 
 interface Message {
@@ -325,6 +342,10 @@ const Chatroom: React.FC = () => {
   };
 
   const roomData = useGet(`/chat/room/${params.id}`, getRoomDataParser);
+  const transactionConfirmDate = useGet(
+    `/chat/transaction/${params.id}`,
+    getTransactionConfirmDateParser
+  );
   // console.log("roomData:", roomData);
 
   const [error, setError] = useState("");
@@ -463,6 +484,9 @@ const Chatroom: React.FC = () => {
                   <br />
                   Estimated finish time:
                   {roomData.data?.contract?.created_at.toLocaleString()}
+                  <br />
+                  Payment Confirm time:
+                  {transactionConfirmDate.data?.transaction?.confirm_time?.toLocaleString()}
                   <br />
                   Confirm finish time:
                   {roomData.data?.contract?.confirm_finish_time?.toLocaleString()}
