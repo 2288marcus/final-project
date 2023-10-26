@@ -3,7 +3,6 @@ import {
   IonButtons,
   IonContent,
   IonHeader,
-  IonList,
   IonMenuButton,
   IonPage,
   IonTitle,
@@ -12,12 +11,6 @@ import {
   IonSegmentButton,
   IonButton,
   IonIcon,
-  IonChip,
-  IonInput,
-  IonItem,
-  IonLabel,
-  IonListHeader,
-  IonNote,
   IonSearchbar,
 } from "@ionic/react";
 import "./HomePage.css";
@@ -33,7 +26,7 @@ import { get, post } from "../api/config";
 import { array, object, string, ParseResult, id, int } from "cast.ts";
 import { JobCard, JobCardData, jobCardParser } from "../components/JobCard";
 import useToast from "../hooks/useToast";
-import { add, star, starOutline } from "ionicons/icons";
+import { star, starOutline } from "ionicons/icons";
 
 let jobListParser = object({
   jobList: array(jobCardParser),
@@ -150,15 +143,13 @@ const HomePage: React.FC = () => {
           <IonButtons slot="start">
             <IonMenuButton />
           </IonButtons>
-          {/* <IonList class="SH"> */}
           <IonTitle>{title}</IonTitle>
-          {/* </IonList> */}
         </IonToolbar>
         <IonToolbar>
           <IonSearchbar
             value={searchText}
             onIonInput={(e) => setSearchText(e.detail.value || "")}
-          ></IonSearchbar>
+          />
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen className="ion-padding">

@@ -71,7 +71,7 @@ export class JobService {
     let whereBindings = []
 
     if (filter.user_id) {
-      whereSQL += ` and "user.id" = ?`
+      whereSQL += ` and "user"."id" = ?`
       whereBindings.push(filter.user_id)
     }
 
@@ -154,10 +154,17 @@ export class JobService {
       .from('bookmark')
       .innerJoin('job', 'job.id', 'bookmark.job_id')
       .innerJoin('user', 'user.id', 'bookmark.user_id')
-      .where('bookmark.user_id', user_id)
+      // .where('bookmark.user_id', user_id)
       .groupBy('job.id', 'user.id')
       .orderByRaw(this.knex.raw('max(bookmark.id) desc'))
-    return this.queryJobList(query)
+
+    let whereSQL = 'true'
+    let whereBindings = []
+
+    whereSQL += ` and "user"."id" = ?`
+    whereBindings.push(user_id)
+
+    return this.queryJobList(query, whereSQL, whereBindings)
   }
 
   async deleteBookmark(user_id: number, job_id: number) {
