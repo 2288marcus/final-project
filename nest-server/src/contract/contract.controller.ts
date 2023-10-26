@@ -21,7 +21,9 @@ export class ContractController {
 
   @Get(':contract_id/confirm-payment')
   async confirmPaymentIntent(@Param('contract_id') contract_id) {
-    console.log('confirmPaymentIntent ?????')
-    return 'TODO'
+    // console.log('confirmPaymentIntent ?????')
+    // return 'TODO'
+    // const paymentIntent = await this.ContractService.createCheckout(contract_id)
+    // return paymentIntent
   }
 }

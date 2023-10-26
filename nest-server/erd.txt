@@ -76,7 +76,9 @@ real_price integer
 contract_id integer FK >0- contract.id
 direction enum('buyer_to_system','system_to_seller','system_to_buyer')
 stripe_checkout_session_id varchar(255)
-
+start_time timestamp
+confirm_time timestamp null
+cancel_time timestamp null
 
 message
 -------
@@ -107,7 +109,7 @@ cancel_time timestamp NULL
 
 
 # zoom: 0.810
-# view: (2, 2)
+# view: (-711, -297)
 # text-bg: #6495ed
 # text-color: #000000
 # diagram-bg: #f5f5f5
@@ -120,7 +122,7 @@ cancel_time timestamp NULL
 # job_tag (42, 141)
 # tag (39, 9)
 # bookmark (345, 267)
-# transaction (887, 568)
+# transaction (883, 500)
 # message (889, 334)
 # chatroom (659, 246)
 # contract (930, 56)

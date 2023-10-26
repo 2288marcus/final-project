@@ -334,7 +334,7 @@ const Chatroom: React.FC = () => {
           </IonButtons>
           <IonTitle>
             <div>{roomData.data?.room?.title}</div>
-            <small>{roomData.data?.room?.created_at.toLocaleString()}</small>
+            <small>{roomData.data?.room?.created_at?.toLocaleString()}</small>
           </IonTitle>
           {/* <IonCardTitle>{chatroom_title}</IonCardTitle>
           <IonCardSubtitle>Created at: {chatroom_created_at}</IonCardSubtitle> */}

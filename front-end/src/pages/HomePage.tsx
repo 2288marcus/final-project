@@ -12,13 +12,13 @@ import {
   IonSegmentButton,
   IonButton,
   IonIcon,
-  IonSearchbar,
   IonChip,
   IonInput,
   IonItem,
   IonLabel,
   IonListHeader,
   IonNote,
+  IonSearchbar,
 } from "@ionic/react";
 import "./HomePage.css";
 import useGet from "../hooks/useGet";
@@ -39,24 +39,23 @@ let jobListParser = object({
   jobList: array(jobCardParser),
 });
 
+let getTagListParser = object({
+  tagList: array(
+    object({
+      id: id(),
+      name: string(),
+      used: int(),
+    })
+  ),
+});
+
 const HomePage: React.FC = () => {
   const title = "Home";
 
   const [segment, setSegment] = useState<"demand" | "supply">("demand");
 
-  /////////////////////////////////////////////////
+  const [searchText, setSearchText] = useState("");
 
-  let getTagListParser = object({
-    tagList: array(
-      object({
-        id: id(),
-        name: string(),
-        used: int(),
-      })
-    ),
-  });
-
-  const commonTags = useGet("/tags", getTagListParser);
   type Tag = ParseResult<typeof getTagListParser>["tagList"][number];
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [newTag, setNewTag] = useState("");
@@ -75,10 +74,13 @@ const HomePage: React.FC = () => {
         toast.showError(err);
       });
   }, [newTag]);
-  /////////////////////////////////////////////////
 
   const toast = useToast();
-  let jobList = useGet("/jobs", jobListParser);
+
+  let jobList = useGet(
+    "/jobs/search?" + new URLSearchParams({ keyword: searchText }),
+    jobListParser
+  );
 
   useEvent<RemoveBookmarkEvent>("RemoveBookmark", (event) => {
     jobList.setData((data) => {
@@ -100,7 +102,7 @@ const HomePage: React.FC = () => {
 
   useEvent<AddBookmarkEvent>("AddBookmark", (event) => {
     jobList.setData((data) => {
-      console.log("update", { event, data });
+      // console.log("update", { event, data });
       if (!data?.jobList) return data;
       return {
         jobList: data.jobList.map((job) => {
@@ -148,24 +150,30 @@ const HomePage: React.FC = () => {
           <IonButtons slot="start">
             <IonMenuButton />
           </IonButtons>
-          <IonList class="SH">
-            <IonTitle>{title}</IonTitle>
-          </IonList>
+          {/* <IonList class="SH"> */}
+          <IonTitle>{title}</IonTitle>
+          {/* </IonList> */}
+        </IonToolbar>
+        <IonToolbar>
+          <IonSearchbar
+            value={searchText}
+            onIonInput={(e) => setSearchText(e.detail.value || "")}
+          ></IonSearchbar>
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen className="ion-padding">
-        <IonHeader collapse="condense">
+        {/* <IonHeader collapse="condense">
           <IonToolbar>
             <IonTitle size="large">{title}</IonTitle>
           </IonToolbar>
-        </IonHeader>
-        {/* /////////////////////////////// */}
-        <div>
+        </IonHeader> */}
+        {/* ///////////////////////////////////// */}
+        {/* <div className="flex-grow HalfInputField">
           <IonItem>
             <IonLabel position="fixed">Search:</IonLabel>
             <IonInput
-              placeholder="Enter"
               type="text"
+              placeholder="Tags"
               value={newTag}
               onIonInput={(e) => setNewTag(e.detail.value || "")}
             />
@@ -199,8 +207,28 @@ const HomePage: React.FC = () => {
             </IonChip>
           ))}
         </div>
-        {newTag && searchedTags.length > 0}
-        {/* /////////////////////////////// */}
+        {newTag && searchedTags.length > 0 ? (
+          <>
+            <IonListHeader>Suggested Tags:</IonListHeader>
+            <div className="ion-padding-horizontal d-flex">
+              {searchedTags.map((tag) => (
+                <IonChip
+                  key={tag.id}
+                  onClick={() => setSelectedTags([...selectedTags, tag.name])}
+                  hidden={selectedTags.includes(tag.name)}
+                >
+                  <div>
+                    <div>{tag.name}</div>
+                  </div>
+                </IonChip>
+              ))}
+            </div>
+          </>
+        ) : (
+          <></>
+        )} */}
+        {/* /////////////////////////////////// */}
+
         <IonSegment
           value={segment}
           onIonChange={(e) => setSegment(e.detail.value as any)}
