@@ -193,7 +193,7 @@ const ProfilePage: React.FC = () => {
                   />
                 </div>
 
-                <IonItem>
+                {/* <IonItem>
                   <IonLabel position="fixed">CV:</IonLabel>
 
                   <IonButtons>
@@ -205,7 +205,7 @@ const ProfilePage: React.FC = () => {
                       <IonIcon src={cloudUpload} slot="icon-only"></IonIcon>
                     </IonButton>
                   </IonButtons>
-                </IonItem>
+                </IonItem> */}
                 <div className="d-flex">
                   <IonButton
                     color="dark"

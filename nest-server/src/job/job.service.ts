@@ -149,20 +149,53 @@ export class JobService {
     })
   }
 
-  async getBookmarkList(user_id: number) {
+  async getBookmarkList(
+    // user_id: number
+    user_id: number | null,
+    filter: {
+      user_id: number | null
+      keyword: string | null
+    },
+  ) {
     let query = this.knex
       .from('bookmark')
       .innerJoin('job', 'job.id', 'bookmark.job_id')
       .innerJoin('user', 'user.id', 'bookmark.user_id')
-      // .where('bookmark.user_id', user_id)
       .groupBy('job.id', 'user.id')
       .orderByRaw(this.knex.raw('max(bookmark.id) desc'))
 
     let whereSQL = 'true'
     let whereBindings = []
 
-    whereSQL += ` and "user"."id" = ?`
-    whereBindings.push(user_id)
+    // whereSQL += ` and "user"."id" = ?`
+    // whereBindings.push(user_id)
+
+    if (filter.user_id) {
+      whereSQL += ` and "user"."id" = ?`
+      whereBindings.push(filter.user_id)
+    }
+
+    let keywords = filter.keyword?.split(' ') || []
+
+    for (let keyword of keywords) {
+      whereSQL += ` and (
+         "job"."description" ilike ?
+      or "job"."title" ilike ?
+      or "user"."username" ilike ?
+      or "job"."id" in (
+          select "job_tag"."job_id"
+          from "job_tag"
+          inner join "tag" on "tag"."id" = "job_tag"."tag_id"
+          where "tag"."name" ilike ?
+        )
+      )`
+      whereBindings.push(
+        '%' + keyword + '%',
+        '%' + keyword + '%',
+        '%' + keyword + '%',
+        '%' + keyword + '%',
+      )
+    }
 
     return this.queryJobList(query, whereSQL, whereBindings)
   }

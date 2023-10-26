@@ -4,12 +4,8 @@ import {
   IonRouterLink,
   IonAvatar,
   IonButtons,
-  IonButton,
-  IonIcon,
   IonChip,
 } from "@ionic/react";
-import { star, starOutline } from "ionicons/icons";
-import { useState } from "react";
 import { routes } from "../routes";
 import {
   object,
@@ -23,10 +19,6 @@ import {
   int,
   nullable,
 } from "cast.ts";
-import { post } from "../api/config";
-import useToast from "../hooks/useToast";
-import { AddBookmarkEvent, RemoveBookmarkEvent } from "../events";
-import { useEvent } from "react-use-event";
 import "./JobCard.css";
 
 export let jobCardParser = object({

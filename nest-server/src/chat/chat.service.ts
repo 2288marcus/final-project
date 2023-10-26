@@ -10,9 +10,6 @@ import { InjectModel } from 'nest-knexjs'
 export class ChatService {
   constructor(@InjectModel() private readonly knex: Knex) {}
 
-  authorize(authorization: any) {
-    throw new Error('Method not implemented.')
-  }
   async postMessage(input: {
     chatroom_id: number
     content: string

@@ -1,29 +1,45 @@
 import {
-  Body,
   Controller,
   Post,
   Get,
-  Headers,
-  Query,
   Param,
+  HttpException,
+  NotImplementedException,
 } from '@nestjs/common'
 import { ContractService } from './contract.service'
+import { env } from '../env'
 
 @Controller('contract')
 export class ContractController {
-  constructor(private readonly ContractService: ContractService) {}
+  constructor(private readonly contractService: ContractService) {}
 
   @Post(':contract_id/create-payment')
   async createPaymentIntent(@Param('contract_id') contract_id) {
-    const paymentIntent = await this.ContractService.createCheckout(contract_id)
+    const paymentIntent = await this.contractService.createCheckout(contract_id)
     return paymentIntent
   }
 
   @Get(':contract_id/confirm-payment')
   async confirmPaymentIntent(@Param('contract_id') contract_id) {
-    // console.log('confirmPaymentIntent ?????')
+    console.log('confirm stripe payment ?????', { contract_id })
     // return 'TODO'
-    // const paymentIntent = await this.ContractService.createCheckout(contract_id)
+    // const paymentIntent =
+    //   await this.contractService.confirmPaymentIntent(contract_id)
     // return paymentIntent
+
+    let json = await this.contractService.confirmCheckout(contract_id)
+
+    throw new NotImplementedException('TODO')
+
+    // return `<!DOCTYPE html><html>
+    // <head>
+    //   <meta http-equiv="Refresh" content="0; url='${env.APP_ORIGIN}/Chatroom/${room_id}" />
+    // </head>
+    // <body>
+    //   <p>
+    //     Redirecting to ${env.APP_ORIGIN}/Chatroom/${room_id} ...
+    //   </p>
+    // </body>
+    // </html>`
   }
 }

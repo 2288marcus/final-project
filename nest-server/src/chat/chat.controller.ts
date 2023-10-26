@@ -47,8 +47,6 @@ export class ChatController {
     @Headers('Authorization') authorization,
     @Param('chatroom_id') chatroom_id,
   ) {
-    console.log({ authorization })
-
     let user_id = await this.userService.authorize(authorization)
     // 获取消息
     return await this.chatService.getRoomData({ user_id, chatroom_id })

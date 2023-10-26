@@ -1,6 +1,6 @@
 import type { Knex } from 'knex'
 import * as dotenv from 'dotenv'
-import { env } from './env'
+import { env } from './src/env'
 
 // Update with your config settings.
 dotenv.config()
