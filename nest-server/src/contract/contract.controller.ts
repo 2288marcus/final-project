@@ -29,17 +29,17 @@ export class ContractController {
 
     let json = await this.contractService.confirmCheckout(contract_id)
 
-    throw new NotImplementedException('TODO')
+    // throw new NotImplementedException('TODO')
 
-    // return `<!DOCTYPE html><html>
-    // <head>
-    //   <meta http-equiv="Refresh" content="0; url='${env.APP_ORIGIN}/Chatroom/${room_id}" />
-    // </head>
-    // <body>
-    //   <p>
-    //     Redirecting to ${env.APP_ORIGIN}/Chatroom/${room_id} ...
-    //   </p>
-    // </body>
-    // </html>`
+    return `<!DOCTYPE html><html>
+    <head>
+      <meta http-equiv="Refresh" content="0; url='${env.APP_ORIGIN}/Chatroom/${contract_id}" />
+    </head>
+    <body>
+      <p>
+        Redirecting to ${env.APP_ORIGIN}/Chatroom/${contract_id} ...
+      </p>
+    </body>
+    </html>`
   }
 }
