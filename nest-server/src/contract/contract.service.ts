@@ -8,7 +8,7 @@ import { env } from '../env'
 import { Stripe } from 'stripe'
 import { InjectModel } from 'nest-knexjs'
 import { Knex } from 'knex'
-import { later } from '@beenotung/tslib/async/wait'
+// import { later } from '@beenotung/tslib/async/wait'
 
 const stripe = new Stripe(env.STRIPE_SECRET_KEY, {
   apiVersion: '2023-10-16',

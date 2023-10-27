@@ -122,12 +122,12 @@ export class ChatController {
   }
 
   @Get('transaction/:transaction_id/confirm-time')
-  async getTransactionConfirmTime(
+  async getTransactionConfirmDate(
     @Headers('Authorization') authorization,
     @Param('transaction_id') transaction_id,
   ) {
     let user_id = await this.userService.authorize(authorization)
     // 获取消息
-    return await this.chatService.getTransactionConfirmTime(transaction_id)
+    return await this.chatService.getTransactionConfirmDate(transaction_id)
   }
 }

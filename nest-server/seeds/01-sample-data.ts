@@ -82,8 +82,14 @@ export async function seed(knex: Knex): Promise<void> {
     tag_id: graphic_tag_id,
   })
 
+  let web_room_id = await seedRow('chatroom', 'job_id', {
+    job_id: web_job_id,
+    supplier_id: jane_smith_id,
+    demander_id: john_doe_id,
+  })
   let web_contract_id = await seedRow('contract', 'job_id', {
     job_id: web_job_id, // Foreign key referencing job.id
+    room_id: web_room_id,
     real_price: 5001,
     real_description: 'Web development services',
     estimated_finish_time: new Date(),
@@ -92,8 +98,14 @@ export async function seed(knex: Knex): Promise<void> {
     cancel_time: null,
   })
 
+  let design_room_id = await seedRow('chatroom', 'job_id', {
+    job_id: design_job_id,
+    supplier_id: john_doe_id,
+    demander_id: jane_smith_id,
+  })
   let design_contract_id = await seedRow('contract', 'job_id', {
     job_id: design_job_id, // Foreign key referencing job.id
+    room_id: design_room_id,
     real_price: 3001,
     real_description: 'Graphic design services',
     estimated_finish_time: new Date(),

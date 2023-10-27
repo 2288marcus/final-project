@@ -103,13 +103,13 @@ let getRoomDataParser = object({
     id: id(),
     username: string(),
   }),
-  transaction: optional(
-    object({
-      transaction_id: id(),
-      created_at: date(),
-      confirm_time: optional(date()),
-    })
-  ),
+  // transaction: optional(
+  //   object({
+  //     transaction_id: id(),
+  //     created_at: date(),
+  //     confirm_time: optional(date()),
+  //   })
+  // ),
 });
 
 interface Message {
@@ -342,10 +342,37 @@ const Chatroom: React.FC = () => {
   };
 
   const roomData = useGet(`/chat/room/${params.id}`, getRoomDataParser);
-  const transactionConfirmDate = useGet(
-    `/chat/transaction/${params.id}`,
-    getTransactionConfirmDateParser
-  );
+
+  // const transactionConfirmDate = async (transaction_id: number) => {
+  //   try {
+  //     let json = await fetch(
+  //       `${api_origin}/transaction/${transaction_id}/confirm-time`,
+  //       {
+  //         method: "GET",
+  //         headers: {
+  //           Accept: "application/json",
+  //           Authorization: getAuthorization(),
+  //         },
+  //       }
+  //     );
+  //     let result = await json.json();
+  //     console.log();
+
+  //     if (result.message && result.statusCode) {
+  //       throw new Error(result.message);
+  //     }
+  //     console.log("get transaction confirm time success");
+  //     roomData.reload();
+  //   } catch (error) {
+  //     console.log("get transaction confirm time fail:", error);
+  //     toast.showError(error);
+  //   }
+  // };
+
+  // const transactionConfirmDate = useGet(
+  //   `/chat/transaction/${params.id}`,
+  //   getTransactionConfirmDateParser
+  // );
   // console.log("roomData:", roomData);
 
   const [error, setError] = useState("");
@@ -486,7 +513,6 @@ const Chatroom: React.FC = () => {
                   {roomData.data?.contract?.created_at.toLocaleString()}
                   <br />
                   Payment Confirm time:
-                  {transactionConfirmDate.data?.transaction?.confirm_time?.toLocaleString()}
                   <br />
                   Confirm finish time:
                   {roomData.data?.contract?.confirm_finish_time?.toLocaleString()}

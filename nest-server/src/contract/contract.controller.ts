@@ -28,25 +28,25 @@ export class ContractController {
 
   @Get(':contract_id/confirm-payment')
   async confirmPaymentIntent(@Param('contract_id') contract_id) {
-    console.log('confirm stripe payment ?????', { contract_id })
+    console.log('confirm stripe payment', { contract_id })
     // return 'TODO'
     // const paymentIntent =
     //   await this.contractService.confirmPaymentIntent(contract_id)
     // return paymentIntent
 
-    let json = await this.contractService.confirmCheckout(contract_id)
+    // let json = await this.contractService.confirmCheckout(contract_id)
 
-    // throw new NotImplementedException('TODO')
+    // // throw new NotImplementedException('TODO')
 
-    return `<!DOCTYPE html><html>
-    <head>
-      <meta http-equiv="Refresh" content="0; url='${env.APP_ORIGIN}/Chatroom/${room_id}" />
-    </head>
-    <body>
-      <p>
-        Redirecting to ${env.APP_ORIGIN}/Chatroom/${room_id} ...
-      </p>
-    </body>
-    </html>`
+    // return `<!DOCTYPE html><html>
+    // <head>
+    //   <meta http-equiv="Refresh" content="0; url='${env.APP_ORIGIN}/Chatroom/${room_id}" />
+    // </head>
+    // <body>
+    //   <p>
+    //     Redirecting to ${env.APP_ORIGIN}/Chatroom/${room_id} ...
+    //   </p>
+    // </body>
+    // </html>`
   }
 }
