@@ -60,33 +60,32 @@ export class ChatService {
       .where({ chatroom_id: input.chatroom_id })
       .orderBy('message.created_at', 'asc')
 
-    // let contract = await this.knex
-    //   .select(
-    //     'contract.id as contract_id',
-    //     'contract.real_description',
-    //     'contract.created_at',
-    //     'contract.real_price',
-    //     'contract.confirm_finish_time',
-    //     'contract.real_finish_time',
-    //   )
-    //   .from('contract')
-    //   .where('contract.job_id', room.job_id)
-    //   .first()
-
-    let transaction = await this.knex
+    let contract = await this.knex
       .select(
-        'transaction.id as transaction_id',
-        'transaction.created_at',
-        'transaction.confirm_time',
+        'contract.id as contract_id',
+        'contract.real_description',
+        'contract.created_at',
+        'contract.real_price',
+        'contract.confirm_finish_time',
+        'contract.real_finish_time',
       )
-      .from('transaction')
-      // .where('transaction.contract_id', contract.id)
+      .from('contract')
+      .where('contract.room_id', input.chatroom_id)
       .first()
+
+    let transaction = !contract
+      ? null
+      : await this.knex
+          .select('transaction.confirm_time', 'transaction.id')
+          .from('transaction')
+          .where('transaction.contract_id', contract.contract_id)
+          .orderBy('id', 'desc')
+          .first()
 
     return {
       room,
       messages,
-      // contract,
+      contract,
       transaction,
       supplier: await this.selectRoomMember(room.supplier_id),
       demander: await this.selectRoomMember(room.demander_id),
@@ -148,6 +147,7 @@ export class ChatService {
         real_description: input.real_description,
         real_price: input.real_price,
         estimated_finish_time: input.estimated_finish_time,
+        room_id: input.chatroom_id,
       })
       .into('contract')
       .returning('id')

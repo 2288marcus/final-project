@@ -22,6 +22,7 @@ import {
   IonCardContent,
   IonRadioGroup,
   IonRadio,
+  IonDatetime,
 } from "@ionic/react";
 import {
   document,
@@ -56,6 +57,17 @@ import useAuth from "../hooks/useAuth";
 import { useParams } from "react-router";
 import useToast from "../hooks/useToast";
 import { routes } from "../routes";
+import { format_2_digit } from "@beenotung/tslib/format";
+
+function formatTimestamp(date: Date): string {
+  let y = date.getFullYear();
+  let m = format_2_digit(date.getMonth() + 1);
+  let d = format_2_digit(date.getDate());
+  let h = format_2_digit(date.getHours());
+  let min = format_2_digit(date.getMinutes());
+  let s = format_2_digit(date.getSeconds());
+  return `${y}-${m}-${d} ${h}:${min}:${s}`;
+}
 
 let getTransactionConfirmDateParser = object({
   transaction: optional(
@@ -103,13 +115,12 @@ let getRoomDataParser = object({
     id: id(),
     username: string(),
   }),
-  // transaction: optional(
-  //   object({
-  //     transaction_id: id(),
-  //     created_at: date(),
-  //     confirm_time: optional(date()),
-  //   })
-  // ),
+  transaction: optional(
+    object({
+      id: id(),
+      confirm_time: nullable(date()),
+    })
+  ),
 });
 
 interface Message {
@@ -468,13 +479,18 @@ const Chatroom: React.FC = () => {
                   {auth.state?.id == roomData.data.demander.id &&
                   contract_id ? (
                     <>
-                      <IonButton onClick={() => pay(contract_id)}>
+                      <IonButton
+                        onClick={() => pay(contract_id)}
+                        disabled={!!roomData.data.transaction?.confirm_time}
+                      >
                         Pay
                       </IonButton>
                       <IonButton
                         disabled={
                           roomData.data?.contract?.real_finish_time != null ||
-                          roomData.data?.contract?.confirm_finish_time == null
+                          roomData.data?.contract?.confirm_finish_time ==
+                            null ||
+                          !roomData.data.transaction?.confirm_time
                         }
                         onClick={() =>
                           createRealFinishTime(
@@ -490,7 +506,8 @@ const Chatroom: React.FC = () => {
                     <>
                       <IonButton
                         disabled={
-                          roomData.data?.contract?.confirm_finish_time != null
+                          roomData.data?.contract?.confirm_finish_time !=
+                            null || !roomData.data.transaction?.confirm_time
                         }
                         onClick={() =>
                           createConfirmFinishTime(
@@ -503,22 +520,64 @@ const Chatroom: React.FC = () => {
                     </>
                   ) : null}
                 </IonCardContent>
-                <IonCardContent>
-                  Description: {roomData.data?.contract?.real_description}
-                  <br />
-                  Price: ${roomData.data?.contract?.real_price.toLocaleString()}
-                  HKD
-                  <br />
-                  Estimated finish time:
-                  {roomData.data?.contract?.created_at.toLocaleString()}
-                  <br />
-                  Payment Confirm time:
-                  <br />
-                  Confirm finish time:
-                  {roomData.data?.contract?.confirm_finish_time?.toLocaleString()}
-                  <br />
-                  Real finish time:
-                  {roomData.data?.contract?.real_finish_time?.toLocaleString()}
+
+                <IonCardContent className="ion-no-padding">
+                  <IonItem>
+                    <IonInput
+                      label="Description"
+                      labelPlacement="stacked"
+                      readonly
+                      value={roomData.data?.contract?.real_description}
+                    ></IonInput>
+                  </IonItem>
+                  <IonItem>
+                    <IonInput
+                      label="Price"
+                      labelPlacement="stacked"
+                      readonly
+                      value={roomData.data?.contract?.real_price}
+                    ></IonInput>
+                  </IonItem>
+                  <IonItem>
+                    <IonInput
+                      label="Estimated finish time"
+                      labelPlacement="stacked"
+                      readonly
+                      value={formatTimestamp(
+                        roomData.data?.contract?.created_at
+                      )}
+                    ></IonInput>
+                  </IonItem>
+                  <IonItem>
+                    <IonInput
+                      label="Payment Confirm time"
+                      labelPlacement="stacked"
+                      readonly
+                      value={formatTimestamp(
+                        roomData.data?.transaction?.confirm_time!
+                      )}
+                    ></IonInput>
+                  </IonItem>
+                  <IonItem>
+                    <IonInput
+                      label="Confirm finish time"
+                      labelPlacement="stacked"
+                      readonly
+                      value={formatTimestamp(
+                        roomData.data?.contract?.confirm_finish_time!
+                      )}
+                    ></IonInput>
+                  </IonItem>
+                  <IonItem>
+                    <IonInput
+                      label="Real finish time"
+                      labelPlacement="stacked"
+                      readonly
+                      value={formatTimestamp(
+                        roomData.data?.contract?.real_finish_time!
+                      )}
+                    ></IonInput>
+                  </IonItem>
                 </IonCardContent>
               </IonCard>
             </>
@@ -526,16 +585,17 @@ const Chatroom: React.FC = () => {
           <IonListHeader>Rating</IonListHeader>
           <IonCard>
             <IonRadioGroup value="strawberries">
-              <IonRadio value="grapes">1</IonRadio>
-              <br />
-              <IonRadio value="strawberries">2</IonRadio>
-              <br />
-              <IonRadio value="pineapple">3</IonRadio>
-              <br />
-              <IonRadio value="cherries">4</IonRadio>
-              <br />
-              <IonRadio value="apple">5</IonRadio>
+              {[1, 2, 3, 4, 5].map((i) => (
+                <IonItem>
+                  <IonRadio value={i} key={i}>
+                    {i}
+                  </IonRadio>
+                </IonItem>
+              ))}
             </IonRadioGroup>
+            <div className="ion-text-center ion-margin">
+              <IonButton disabled>Submit Rating</IonButton>
+            </div>
           </IonCard>
         </IonContent>
       </IonModal>

@@ -77,13 +77,19 @@ export class ContractService {
     return { room_id }
   }
   //////////////////////////////////////////
-  async confirmCheckout(contract_id: number, id: number) {
-    // TODO check status from stripe(stripe:API)
+  async confirmCheckout(contract_id: number) {
+    //  check status from stripe(stripe:API)
+
+    let contract = await this.knex('contract')
+      .where({ id: contract_id })
+      .select('room_id')
+      .first()
+    if (!contract) throw new NotFoundException('contract not found')
+
     let transaction = await this.knex
       .select('transaction.stripe_checkout_session_id', 'transaction.id')
       .from('transaction')
       .where('transaction.contract_id', contract_id)
-
       .orderBy('id', 'desc')
       .first()
 
@@ -102,10 +108,11 @@ export class ContractService {
         .where('transaction.id', transaction.id)
         .returning('id')
 
-      return {}
+      return { room_id: contract.room_id }
     }
 
-    // throw new BadRequestException('payment not completed')
+    throw new BadRequestException('payment not completed')
+
     // async getTagList(query: { searchText: string }) {
     //   let tagList = await this.knex
     //     .select(
