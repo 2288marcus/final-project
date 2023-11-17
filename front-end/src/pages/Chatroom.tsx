@@ -60,6 +60,7 @@ import { routes } from "../routes";
 import { format_2_digit } from "@beenotung/tslib/format";
 
 function formatTimestamp(date: Date): string {
+  if (!date) return "";
   let y = date.getFullYear();
   let m = format_2_digit(date.getMonth() + 1);
   let d = format_2_digit(date.getDate());

@@ -100,7 +100,7 @@ export function InputField<T>(props: {
           placeholder={props.placeholder}
           helperText={props.helperText}
           errorText={props.errorText}
-          onIonChange={(e) =>
+          onIonInput={(e) =>
             setState?.({
               ...state,
               [props.field]: e.detail.value || "",
