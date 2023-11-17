@@ -70,7 +70,9 @@ export function JobCard(props: {
               </div>
             </IonRouterLink>
             <div>
-              <h1>&nbsp; {job.title} &nbsp;</h1>
+              <h1>
+                #{job.job_id} &nbsp; {job.title} &nbsp;
+              </h1>
               <p>${job.price.toLocaleString()}</p>
               <p>{job.description}</p>
             </div>

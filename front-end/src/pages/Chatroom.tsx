@@ -36,6 +36,7 @@ import {
   body,
   roseOutline,
   star,
+  refresh,
 } from "ionicons/icons";
 import React, { useState, useEffect, useRef, useLayoutEffect } from "react";
 import { api_origin, getAuthorization, post } from "../api/config";
@@ -59,7 +60,8 @@ import useToast from "../hooks/useToast";
 import { routes } from "../routes";
 import { format_2_digit } from "@beenotung/tslib/format";
 
-function formatTimestamp(date: Date): string {
+function formatTimestamp(date: Date | null | undefined): string {
+  if (!date) return "-";
   let y = date.getFullYear();
   let m = format_2_digit(date.getMonth() + 1);
   let d = format_2_digit(date.getDate());
@@ -434,6 +436,9 @@ const Chatroom: React.FC = () => {
             <IonButton onClick={() => setIsShowContractModal(true)}>
               <IonIcon icon={reader} slot="icon-only"></IonIcon>
             </IonButton>
+            <IonButton onClick={roomData.reload}>
+              <IonIcon icon={refresh} slot="icon-only"></IonIcon>
+            </IonButton>
           </IonButtons>
         </IonToolbar>
       </IonHeader>
@@ -554,7 +559,7 @@ const Chatroom: React.FC = () => {
                       labelPlacement="stacked"
                       readonly
                       value={formatTimestamp(
-                        roomData.data?.transaction?.confirm_time!
+                        roomData.data?.transaction?.confirm_time
                       )}
                     ></IonInput>
                   </IonItem>
@@ -564,7 +569,7 @@ const Chatroom: React.FC = () => {
                       labelPlacement="stacked"
                       readonly
                       value={formatTimestamp(
-                        roomData.data?.contract?.confirm_finish_time!
+                        roomData.data?.contract?.confirm_finish_time
                       )}
                     ></IonInput>
                   </IonItem>
@@ -574,7 +579,7 @@ const Chatroom: React.FC = () => {
                       labelPlacement="stacked"
                       readonly
                       value={formatTimestamp(
-                        roomData.data?.contract?.real_finish_time!
+                        roomData.data?.contract?.real_finish_time
                       )}
                     ></IonInput>
                   </IonItem>

@@ -33,6 +33,7 @@ import {
 } from "../events";
 import { useParams } from "react-router";
 import { routes } from "../routes";
+import useAuth from "../hooks/useAuth";
 
 let bookmarkParser = object({
   jobList: array(jobCardParser),
@@ -41,7 +42,9 @@ let bookmarkParser = object({
 const BookmarkList: React.FC = () => {
   const title = "Bookmark List";
 
-  const [segment, setSegment] = useState<"demand" | "supply">("demand");
+  const user_id = useAuth().state?.id;
+
+  const [segment, setSegment] = useState<"demand" | "supply">("supply");
 
   const [searchText, setSearchText] = useState("");
   const toast = useToast();
@@ -142,10 +145,16 @@ const BookmarkList: React.FC = () => {
                     key={index}
                     job={job}
                     buttons={[
-                      <IonButton onClick={() => startChatroom(job.job_id)}>
+                      <IonButton
+                        disabled={job.user_id == user_id}
+                        onClick={() => startChatroom(job.job_id)}
+                      >
                         chat
                       </IonButton>,
-                      <IonButton onClick={() => deleteBookmark(job.job_id)}>
+                      <IonButton
+                        disabled={job.user_id == user_id}
+                        onClick={() => deleteBookmark(job.job_id)}
+                      >
                         <IonIcon slot="icon-only" icon={star}></IonIcon>
                       </IonButton>,
                     ]}

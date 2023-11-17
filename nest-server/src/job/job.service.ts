@@ -160,7 +160,7 @@ export class JobService {
     let query = this.knex
       .from('bookmark')
       .innerJoin('job', 'job.id', 'bookmark.job_id')
-      .innerJoin('user', 'user.id', 'bookmark.user_id')
+      .innerJoin('user', 'user.id', 'job.user_id')
       .groupBy('job.id', 'user.id')
       .orderByRaw(this.knex.raw('max(bookmark.id) desc'))
 
@@ -170,8 +170,11 @@ export class JobService {
     // whereSQL += ` and "user"."id" = ?`
     // whereBindings.push(user_id)
 
+    whereSQL += ` and "bookmark"."user_id" = ?`
+    whereBindings.push(user_id)
+
     if (filter.user_id) {
-      whereSQL += ` and "user"."id" = ?`
+      whereSQL += ` and "job"."user_id" = ?`
       whereBindings.push(filter.user_id)
     }
 
